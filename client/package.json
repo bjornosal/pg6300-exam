@@ -21,20 +21,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "description": "Repository for exam in the course PG6300.",
-  "main": "server.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bjornosal/pg6300-exam.git"
-  },
-  "keywords": [
-    "exam"
-  ],
-  "author": "Bjørn Olav Salvesen",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/bjornosal/pg6300-exam/issues"
-  },
-  "homepage": "https://github.com/bjornosal/pg6300-exam#readme"
+  ]
 }
