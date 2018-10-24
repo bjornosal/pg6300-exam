@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./scss/App.scss";
-
+import Home from "./containers/Home";
+import Game from "./containers/Game";
+import Highscore from "./containers/Highscore";
+import { BrowserRouter, Switch, Route} from 'react-router-dom'
 class App extends Component {
   state = {
     data: null
@@ -20,15 +23,22 @@ class App extends Component {
     if (response.status !== 200) {
       throw Error(body.message);
     }
-
+    
     return body;
   };
-
+  
+  
   render() {
     return (
-      <div className="App">
-        <p>FROM SERVER: {this.state.data || "NOTHING YET"}</p>
-      </div>
+      <BrowserRouter>
+          <div>
+              <Switch>
+                  <Route exact path="/game" component={Game}/>
+                  <Route exact path="/highscore" component={Highscore}/>
+                  <Route exact path="/" component={Home}/>
+              </Switch>
+          </div>
+      </BrowserRouter>
     );
   }
 }

@@ -6,8 +6,11 @@
     "dotenv": "^6.1.0",
     "express": "^4.16.4"
   },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  },
   "scripts": {
-    "start": "node server",
+    "start": "nodemon server",
     "_prod": "cd client && npm run build && cd .. && node server"
   },
   "eslintConfig": {

@@ -13,9 +13,13 @@ app.get("/api/scores", (req, res) => {
   res.send({ score: 2000 });
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/client/build/index.html"));
-});
+
+
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "/client/build/index.html"));
+  });
+}
 
 /**
  * Use docker instead?
