@@ -14,7 +14,7 @@ class App extends Component {
   }
 
   performRequestToApi = async () => {
-    const response = await fetch("/server");
+    const response = await fetch("/api/scores");
     const body = await response.json();
 
     if (response.status !== 200) {
