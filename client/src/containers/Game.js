@@ -6,7 +6,7 @@ export default class Game extends Component {
     return (
       <div>
         <h2>Game</h2>
-        <Link to={"/game"}>Go back home</Link>
+        <Link to={"/"}>Go back home</Link>
       </div>
     )
   }
