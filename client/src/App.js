@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./scss/App.scss";
-import Home from "./containers/Home";
-import Game from "./containers/Game";
-import Highscore from "./containers/Highscore";
+import Home from "./containers/home/Home";
+import Game from "./containers/game/Game";
+import Highscore from "./containers/highscore/Highscore";
 import { BrowserRouter, Switch, Route} from 'react-router-dom'
+
 class App extends Component {
   state = {
     data: null

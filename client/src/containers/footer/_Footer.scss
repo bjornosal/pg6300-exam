@@ -1,0 +1,12 @@
+.footerContainer {
+    display: flex;
+    position: absolute;
+    height: 5em;
+    width: 100%;
+    background-color: $secondary-color;
+    bottom: 0; 
+    .footerLinkContainer {
+        flex: 1;
+        flex-grow: 1;
+    }
+}

@@ -1,3 +1,13 @@
-.App {
-    text-align: center;
-}
+//Globals
+@import "globals";
+@import "colors";
+
+//Containers
+@import "../containers/footer/Footer.scss";
+@import "../containers/header/Header.scss";
+@import "../containers/home/Home.scss";
+@import "../containers/game/Game.scss";
+@import "../containers/highscore/Highscore.scss";
+
+//Components
+@import "../components/footerLink/FooterLink"
