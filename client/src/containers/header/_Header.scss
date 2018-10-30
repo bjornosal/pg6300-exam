@@ -1,0 +1,41 @@
+.headerContainer {
+    display: flex;
+    height: 3em;
+    background-color: $color5;
+    padding: 0 calc(10%) 0 calc(10%);
+    box-shadow: 1px 1px .5px 1px $color1;
+
+    .headerLogo {
+        flex-grow: 2;
+    }
+
+    .headerLink {
+        position: relative; 
+        line-height: 3em;
+        padding: 0 1em 0 1em;
+    }
+
+    .headerNavigationContainer {
+        height: 100%;
+
+        .headerLogin {
+           
+        }
+
+        .headerSignUp {
+            background-color: $color2;
+            border-radius: 1px;
+            padding: .5em 1em .5em 1em;
+            text-decoration: none;
+            transition: background-color 2s;
+            color: $color5;
+            font-weight: bold;           
+        }
+        .headerSignUp:hover {
+            background-color: $color4;
+            transition: background-color .5s;          
+            
+        }
+
+    }
+}

@@ -1,6 +1,7 @@
 //Globals
-@import "globals";
 @import "colors";
+@import "globals";
+@import "buttons";
 
 //Containers
 @import "../containers/footer/Footer.scss";
@@ -8,6 +9,9 @@
 @import "../containers/home/Home.scss";
 @import "../containers/game/Game.scss";
 @import "../containers/leaderboard/Leaderboard.scss";
+@import "../containers/login/Login.scss";
+@import "../containers/quizMaker/QuizMaker.scss";
+@import "../containers/lobby/Lobby.scss";
 
 //Components
 @import "../components/footerLink/FooterLink"
