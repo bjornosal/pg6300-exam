@@ -9,7 +9,6 @@ export default function Header() {
       </Link>
 
       <div className="headerNavigationContainer">
-
         <Link to="/quizmaker" className="headerLink">
           New Quiz
         </Link>

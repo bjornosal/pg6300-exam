@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 export default class Leaderboard extends Component {
   render() {
     return (
-      <div>
+      <div className="leaderboardContainer">
         <h2>Leaderboard</h2>
       </div>
     )
