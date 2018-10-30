@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
-export default class Highscore extends Component {
+export default class Leaderboard extends Component {
   render() {
     return (
       <div>
-        <h2>Highscores</h2>
+        <h2>Leaderboard</h2>
       </div>
     )
   }

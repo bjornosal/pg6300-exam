@@ -11,9 +11,9 @@ export default function Footer() {
       />
       
       <FooterLink
-        to="/highscore"
-        header={"Highscore"}
-        description="Quick description of /highscore"
+        to="/leaderboard"
+        header={"Leaderboard"}
+        description="Quick description of /leaderboard"
       />
 
       <FooterLink

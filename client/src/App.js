@@ -3,8 +3,10 @@ import logo from "./logo.svg";
 import "./scss/App.scss";
 import Home from "./containers/home/Home";
 import Game from "./containers/game/Game";
-import Highscore from "./containers/highscore/Highscore";
-import { BrowserRouter, Switch, Route} from 'react-router-dom'
+import Leaderboard from "./containers/leaderboard/Leaderboard";
+import Footer from "./containers/footer/Footer";
+import Header from "./containers/header/Header";
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 class App extends Component {
   state = {
@@ -24,21 +26,24 @@ class App extends Component {
     if (response.status !== 200) {
       throw Error(body.message);
     }
-    
+
     return body;
   };
-  
-  
+
+
   render() {
     return (
       <BrowserRouter>
-          <div>
-              <Switch>
-                  <Route exact path="/game" component={Game}/>
-                  <Route exact path="/highscore" component={Highscore}/>
-                  <Route exact path="/" component={Home}/>
-              </Switch>
-          </div>
+        <div>
+          <Header />
+          <Switch>
+            <Route exact path="/game" component={Game} />
+            <Route exact path="/leaderboard" component={Leaderboard} />
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/" component={Home} />
+          </Switch>
+          <Footer />
+        </div>
       </BrowserRouter>
     );
   }
