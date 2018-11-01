@@ -1,19 +1,23 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 8080;
 const path = require("path");
 const bodyParser = require("body-parser");
+const pg = require("pg");
+const defaultDataInitializer = require("./defaultDataInitializer")
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "client/build")));
-}
+const port = process.env.PORT || 8080;
+
+defaultDataInitializer.connectToServerAndCreateTables();
+
+
+// if (process.env.NODE_ENV === "production") {
+app.use(express.static(path.join(__dirname, "client/build")));
+// }
 
 app.get("/api/scores", (req, res) => {
   res.send({ score: 2000 });
 });
-
-
 
 if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
