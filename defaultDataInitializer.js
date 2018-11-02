@@ -9,7 +9,7 @@ const client = new pg.Client(connection);
 const clientQuery = (queryText, tableName) => {
   client.query(queryText).then(
     res => {
-      console.log("TABLE '"+ tableName + "' HAS BEEN SET UP.");
+      console.log("TABLE '" + tableName + "' HAS BEEN SET UP.");
     },
     err => {
       console.error("Issues setting up: ", err);
@@ -17,7 +17,16 @@ const clientQuery = (queryText, tableName) => {
   );
 };
 
-
+const createUserQuery = queryText => {
+  client.query(queryText).then(
+    res => {
+      console.log("Created user");
+    },
+    err => {
+      console.log("Issues setting up: ", err);
+    }
+  );
+};
 
 module.exports = {
   connectToServerAndCreateTables: () => {
