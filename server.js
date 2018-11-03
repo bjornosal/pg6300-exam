@@ -10,7 +10,7 @@ const port = process.env.PORT || 8080;
 
 defaultDataInitializer.connectToServerAndCreateTables();
 
-
+//TODO: Implement this again?
 // if (process.env.NODE_ENV === "production") {
 app.use(express.static(path.join(__dirname, "client/build")));
 // }
