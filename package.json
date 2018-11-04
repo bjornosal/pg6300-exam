@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "nodemon server",
-    "dockerPostgres": "docker run -p 5432:5432 postgres:10",
+    "_pg": "docker run -p 5432:5432 postgres:10",
     "_prod": "cd client && npm run build && cd .. && node server"
   },
   "eslintConfig": {

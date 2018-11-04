@@ -4,6 +4,7 @@ const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 const pg = require("pg");
+const passport = require("passport");
 const defaultDataInitializer = require("./defaultDataInitializer")
 
 const port = process.env.PORT || 8080;
@@ -25,7 +26,5 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-/**
- * Use docker instead?
- */
+
 app.listen(port, () => console.log(`Listening on port ${port}`));

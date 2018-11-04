@@ -1,11 +1,11 @@
-export const setHighscore = (player, score) => ({
-  type: "SET_HIGHSCORE",
-  player,
-  score
+import { SET_HIGHSCORE, INCREASE_GAMES_PLAYED } from "../actionTypes";
+
+export const setHighscore = (payload) => ({
+  type: SET_HIGHSCORE,
+  payload
 });
 
-export const increaseGamesPlayed = (player, score) => ({
-    type: "INCREASE_GAMES_PLAYED",
-    player,
-    score
+export const increaseGamesPlayed = (payload) => ({
+    type: INCREASE_GAMES_PLAYED,
+    payload
 });
