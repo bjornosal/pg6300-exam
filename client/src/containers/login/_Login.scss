@@ -7,7 +7,7 @@
         text-align: center;
         color: $color5;
         span {
-            font-size: 3vw;
+            font-size: 2vw;
             color: $color4;
             font-weight: bold;
             
@@ -17,11 +17,11 @@
             input {
                 box-sizing: border-box;
                 background-color: $color5;
-                width: calc(51.5%);
-                height: 3em;
+                width: calc(51%);
+                height: 2em;
                 padding: .5em;
                 border-radius: 1px;
-                font-size: 1.5vw;
+                font-size: 1.2vw;
             }
         }
         .loginButtonContainer {
@@ -29,10 +29,10 @@
                 background-color: $color3;
                 border-radius: 1px;
                 width: calc(50%);
-                height: 3em;
+                height: 2em;
                 border: none;
                 cursor: pointer;
-                font-size: 1.7vw;
+                font-size: 1.3vw;
                 font-weight: bold;
                 transition-duration: .5s;
             }
