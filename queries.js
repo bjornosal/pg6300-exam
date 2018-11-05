@@ -86,13 +86,14 @@ const defaultDataInit = rocketLeagueQuestionQueries => {
 };
 
 const getUser = (username) => {
-  client
-    .query(findUserWithUsername, [username])
+  // console.log("QUERY",queryTexts.findUserWithUsername)
+  return client
+    .query(queryTexts.findUserWithUsername, [username])
     .then(res => {
-      console.log(res);
+      return console.log("SUCCESS: ", res.rows[0]);
     })
     .catch(err => {
-      console.log(err);
+      return console.log("ERROR: ", err);
     });
 }
 
@@ -107,6 +108,7 @@ const verifyUser = (username, password) => {
 }
 
 const createUser = async (username, password) => {
+  console.log("username", username)
   await bcrypt
     .hash(password, 12)
     .then(async hashedPassword => {

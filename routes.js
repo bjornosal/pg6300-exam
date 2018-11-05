@@ -3,11 +3,17 @@ const router = express.Router();
 const passport = require("passport");
 const queries = require("./queries");
 
-router.post("/api/login", (req, res) => {});
+router.post("/api/login", (req, res) => {
+  queries.getUser(req.body.username)
+  .then(result => {
+    console.log("LOGIN", result)
+  })
+  .catch(err => {
+    console.log("LOGIN ERR", err)
+  })
+});
 
 router.post("/api/signup", (req, res) => {
-  
-
     queries
       .createUser(req.body.username, req.body.password)
       .then(result => {

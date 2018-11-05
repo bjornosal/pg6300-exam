@@ -9,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const defaultDataInitializer = require("./defaultDataInitializer")
 const session = require("express-session");
 const routes = require('./routes');
-
+const queries = require("./queries")
 const port = process.env.PORT || 8080;
 
 // if (process.env.NODE_ENV !== "production") {
@@ -31,18 +31,18 @@ app.use(bodyParser.json());
 
 passport.use(new LocalStrategy(
   {
-    usernameField: 'userId',
+    usernameField: 'username',
     passwordField: 'password'
   },
-  function (userId, password, done) {
+  function (username, password, done) {
 
-    const ok = Repository.verifyUser(userId, password);
+    const ok = queries.verifyUser(username, password);
 
     if (!ok) {
       return done(null, false, { message: 'Invalid username/password' });
     }
 
-    const user = Repository.getUser(userId);
+    const user = queries.getUser(username);
     return done(null, user);
   }
 ));

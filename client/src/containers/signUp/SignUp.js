@@ -19,7 +19,6 @@ export default class SignUp extends Component {
     }
 
     const url = "/api/signup";
-    console.log(values)
     const payload = { username: values.username, password: values.password };
 
     let response;
