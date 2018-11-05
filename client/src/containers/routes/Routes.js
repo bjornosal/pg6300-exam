@@ -3,10 +3,12 @@ import Home from "../home/Home";
 import Game from "../game/Game";
 import Leaderboard from "../leaderboard/Leaderboard";
 import { Switch, Route } from "react-router-dom";
+import { reduxForm } from "redux-form"
 import SignUp from "../signUp/SignUp";
 import Login from "../login/Login";
 import Lobby from "../lobby/Lobby";
 import QuizMaker from "../quizMaker/QuizMaker";
+
 
 export default function Routes() {
   return (
