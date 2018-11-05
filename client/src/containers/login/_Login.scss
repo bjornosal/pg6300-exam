@@ -10,6 +10,7 @@
             font-size: 3vw;
             color: $color4;
             font-weight: bold;
+            
         }
         .inputContainer {
             padding: .5em;
@@ -33,6 +34,13 @@
                 cursor: pointer;
                 font-size: 1.7vw;
                 font-weight: bold;
+                transition-duration: .5s;
+            }
+            button:hover {
+                background-color: $color4;
+                color: $color5;
+                transition: background-color .5s;      
+                transition: color .4s;      
             }
         }
     }
