@@ -22,7 +22,7 @@ const SignUpForm = props => {
         label="Password"
       />
       <Field
-        name="repeat"
+        name="confirm"
         type="password"
         component={InputField}
         label="Repeat password"

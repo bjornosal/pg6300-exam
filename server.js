@@ -12,9 +12,9 @@ const routes = require('./routes');
 
 const port = process.env.PORT || 8080;
 
-if (process.env.NODE_ENV !== "production") {
-  defaultDataInitializer.connectToServerAndCreateTables();
-}
+// if (process.env.NODE_ENV !== "production") {
+defaultDataInitializer.connectToServerAndCreateTables();
+// }
 
 //TODO: Implement this again?
 // if (process.env.NODE_ENV === "production") {
@@ -22,29 +22,28 @@ app.use(express.static(path.join(__dirname, "client/build")));
 // }
 app.use(bodyParser.json());
 
-
-//FIXME: WHY
-app.use(session({
-  secret: 'a secret used to encrypt the session cookies',
-  resave: false,
-  saveUninitialized: false
-}));
+  //FIXME: WHY
+  app.use(session({
+    secret: 'a secret used to encrypt the session cookies',
+    resave: false,
+    saveUninitialized: false
+  }));
 
 passport.use(new LocalStrategy(
   {
-      usernameField: 'userId',
-      passwordField: 'password'
+    usernameField: 'userId',
+    passwordField: 'password'
   },
   function (userId, password, done) {
 
-      const ok = Repository.verifyUser(userId, password);
+    const ok = Repository.verifyUser(userId, password);
 
-      if (!ok) {
-          return done(null, false, {message: 'Invalid username/password'});
-      }
+    if (!ok) {
+      return done(null, false, { message: 'Invalid username/password' });
+    }
 
-      const user = Repository.getUser(userId);
-      return done(null, user);
+    const user = Repository.getUser(userId);
+    return done(null, user);
   }
 ));
 
@@ -57,9 +56,9 @@ passport.deserializeUser(function (id, done) {
   const user = Repository.getUser(id);
 
   if (user !== undefined) {
-      done(null, user);
+    done(null, user);
   } else {
-      done(null, false);
+    done(null, false);
   }
 });
 

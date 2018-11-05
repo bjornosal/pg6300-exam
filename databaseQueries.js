@@ -27,12 +27,14 @@ module.exports = {
     FOREIGN KEY (quiz_id) REFERENCES quiz(quiz_id)
 );`,
 
-	createNewUserWithUsernameQuery: `INSERT INTO user_information (username)
-	VALUES($1)`,
+	createNewUserWithUsernameQuery: `INSERT INTO user_information (username, password)
+	VALUES($1, $2)`,
 
 	createNewQuizQuery: `INSERT INTO quiz(name) VALUES($1)
 	ON CONFLICT ON CONSTRAINT quiz_name_key DO NOTHING RETURNING *`,
 
 	createNewQuestionQuery: `INSERT INTO question(quiz_id, question, answer_1, answer_2, answer_3, answer_4, correct)
-	VALUES($1, $2, $3, $4, $5, $6, $7)`
+	VALUES($1, $2, $3, $4, $5, $6, $7)`,
+
+	findUserWithUsername: `SELECT * FROM USER_INFORMATION WHERE USERNAME = $1`
 };
