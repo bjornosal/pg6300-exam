@@ -85,49 +85,52 @@ const defaultDataInit = rocketLeagueQuestionQueries => {
   });
 };
 
-const getUser = (username) => {
-  // console.log("QUERY",queryTexts.findUserWithUsername)
+const getUser = username => {
   return client
     .query(queryTexts.findUserWithUsername, [username])
     .then(res => {
-      return console.log("SUCCESS: ", res.rows[0]);
+      return res.rows.length > 0 ? res.rows[0] : undefined;
     })
     .catch(err => {
-      return console.log("ERROR: ", err);
+      return undefined;
     });
-}
+};
 
 const verifyUser = (username, password) => {
-  const user = getUser(id);
-
-  if (user === undefined) {
-    return false;
-  }
-
-  return user.password === password;
-}
+  return getUser(username)
+    .then(res => {
+      return bcrypt
+        .compare(password, res.password)
+        .then(res => {
+          return res;
+        })
+        .catch(err => {
+          return false;
+        });
+    })
+    .catch(err => {
+      return false;
+    });
+};
 
 const createUser = async (username, password) => {
-  console.log("username", username)
-  await bcrypt
+  return await bcrypt
     .hash(password, 12)
     .then(async hashedPassword => {
       try {
-        const res = await client.query(
+         await client.query(
           queryTexts.createNewUserWithUsernameQuery,
           [username, hashedPassword]
-        );
-        console.log("CREATE USER: ", res);
-        return true;
+          );
+          return true;
       } catch (err) {
-        console.log("ERROR USER: ", err);
         return false;
       }
     })
     .catch(err => {
       return false;
     });
-}
+};
 
 module.exports = {
   createTable,

@@ -28,7 +28,7 @@ module.exports = {
 );`,
 
 	createNewUserWithUsernameQuery: `INSERT INTO user_information (username, password)
-	VALUES($1, $2);`,
+	VALUES($1, $2) RETURNING *`,
 
 	createNewQuizQuery: `INSERT INTO quiz(name) VALUES($1)
 	ON CONFLICT ON CONSTRAINT quiz_name_key DO NOTHING RETURNING *;`,
