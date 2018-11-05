@@ -5,20 +5,69 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const pg = require("pg");
 const passport = require("passport");
+const LocalStrategy = require('passport-local').Strategy;
 const defaultDataInitializer = require("./defaultDataInitializer")
+const session = require("express-session");
+const routes = require('./routes');
 
 const port = process.env.PORT || 8080;
 
-defaultDataInitializer.connectToServerAndCreateTables();
+if (process.env.NODE_ENV !== "production") {
+  defaultDataInitializer.connectToServerAndCreateTables();
+}
 
 //TODO: Implement this again?
 // if (process.env.NODE_ENV === "production") {
 app.use(express.static(path.join(__dirname, "client/build")));
 // }
+app.use(bodyParser.json());
 
-app.get("/api/scores", (req, res) => {
-  res.send({ score: 2000 });
+
+//FIXME: WHY
+app.use(session({
+  secret: 'a secret used to encrypt the session cookies',
+  resave: false,
+  saveUninitialized: false
+}));
+
+passport.use(new LocalStrategy(
+  {
+      usernameField: 'userId',
+      passwordField: 'password'
+  },
+  function (userId, password, done) {
+
+      const ok = Repository.verifyUser(userId, password);
+
+      if (!ok) {
+          return done(null, false, {message: 'Invalid username/password'});
+      }
+
+      const user = Repository.getUser(userId);
+      return done(null, user);
+  }
+));
+
+passport.serializeUser(function (user, done) {
+  done(null, user.id);
 });
+
+passport.deserializeUser(function (id, done) {
+
+  const user = Repository.getUser(id);
+
+  if (user !== undefined) {
+      done(null, user);
+  } else {
+      done(null, false);
+  }
+});
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use('/', routes);
+
 
 if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
