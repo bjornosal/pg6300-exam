@@ -18,14 +18,14 @@ const createTableQuery = (queryText, tableName) => {
 };
 
 const insertIntoQuizQuery = (queryText, quizname, questionQueries) => {
-  client.query(queryText, quizname).then(
-    res => {
+  client
+    .query(queryText, quizname)
+    .then(res => {
       questionQueries(res.rows[0].quiz_id);
-    },
-    err => {
+    })
+    .catch(err => {
       console.log("Issues inserting: ", err);
-    }
-  );
+    });
 };
 
 const insertIntoQuestionQuery = (
@@ -114,7 +114,7 @@ module.exports = {
       createTableQuery(queries.createQuestionTableQuery, "QUESTION");
 
       //TODO: Consider using pool for the queries below?
-      
+
       insertIntoQuizQuery(
         queries.createNewQuizQuery,
         ["Rocket League"],

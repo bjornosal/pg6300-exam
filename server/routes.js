@@ -1,3 +1,5 @@
+const passport = require('passport')
+
 router.post('/api/login', passport.authenticate('local'), (req, res) => {
 
 });
