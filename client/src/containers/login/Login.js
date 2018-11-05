@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { reduxForm, Field } from 'redux-form';
-import LoginForm from '../../components/loginForm/LoginForm';
+import LoginForm from '../../forms/LoginForm';
 
 export default class Login extends Component {
 

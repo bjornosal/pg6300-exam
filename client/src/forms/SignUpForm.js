@@ -1,37 +1,35 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
-
+import InputField from '../components/inputField/InputField'
 /**
  * Inspired by Redux-Form examples - https://redux-form.com/7.4.2/examples/asyncvalidation/
  */
 
-const renderField = ({ input, label, type }) => (
-  <div>
-    <div className="inputContainer">
-      <input {...input} type={type} placeholder={label} />
-    </div>
-  </div>
-);
-
-const LoginForm = props => {
+const SignUpForm = props => {
   const { handleSubmit, isSubmitting } = props;
   return (
     <form onSubmit={handleSubmit}>
       <Field
         name="username"
         type="text"
-        component={renderField}
+        component={InputField}
         label="Username"
       />
       <Field
         name="password"
         type="password"
-        component={renderField}
+        component={InputField}
         label="Password"
       />
-      <div className="loginButtonContainer">
+      <Field
+        name="repeat"
+        type="password"
+        component={InputField}
+        label="Repeat password"
+      />
+      <div className="signUpButtonContainer">
         <button type="submit" disabled={isSubmitting}>
-          Log in
+          Sign up
         </button>
       </div>
     </form>
@@ -39,5 +37,5 @@ const LoginForm = props => {
 };
 
 export default reduxForm({
-  form: "login"
-})(LoginForm);
+  form: "signup"
+})(SignUpForm);

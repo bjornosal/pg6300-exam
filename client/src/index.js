@@ -1,20 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { createStore, combineReducers, applyMiddleware, compose  } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import App from "./App";
-import { createEpicMiddleware } from 'redux-observable';
-import { reducer as formReducer } from 'redux-form';
+import { createEpicMiddleware } from "redux-observable";
+import { reducer as formReducer } from "redux-form";
 import * as serviceWorker from "./serviceWorker";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
-  form: formReducer,
+  form: formReducer
 });
 
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(createEpicMiddleware())));
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(createEpicMiddleware()))
+);
 
 ReactDOM.render(
   <Provider store={store}>
