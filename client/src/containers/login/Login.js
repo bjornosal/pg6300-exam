@@ -23,10 +23,4 @@ class Login extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    TEST: "THE STATE"
-  };
-}
-
-export default connect(mapStateToProps, {})(Login)
+export default connect()(Login)

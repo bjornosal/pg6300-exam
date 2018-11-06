@@ -27,14 +27,15 @@ const loginEpic = action$ =>
   action$.pipe(
     ofType(LOGIN_USER),
     mergeMap(action => {
-      console.log("ACTION", action);
-      return handleLogin(action.payload).then(res => {
-        console.log("RESULT", res);
-        if (res !== 204) return { type: LOGIN_ERROR };
+      return handleLogin(action.payload)
+        .then(res => {
+          if (res !== 204) return { type: LOGIN_ERROR };
 
-        return {type: LOGIN_SUCCESS};
-      });
-    //   return {type: LOGIN_SUCCESS}
+          return { type: LOGIN_SUCCESS };
+        })
+        .catch(() => {
+          return { type: LOGIN_ERROR };
+        });
     })
   );
 

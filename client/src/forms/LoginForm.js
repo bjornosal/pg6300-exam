@@ -40,7 +40,7 @@ function mapStateToProps(state) {
 }
 
 export default reduxForm({
-  form: "login"
+  form: "loginForm"
 })(
   connect(
     mapStateToProps,
