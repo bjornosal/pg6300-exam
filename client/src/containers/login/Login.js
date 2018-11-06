@@ -2,15 +2,8 @@ import React, { Component } from "react";
 import LoginForm from "../../forms/LoginForm";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
-import { loginUser } from '../../actions/Login'
 
 class Login extends Component {
-  constructor(props) {
-    super(props);
-    
-    console.log("PROPS", props)
-  }
-
   render() {
     return (
       <div className="loginContainer">
@@ -22,5 +15,6 @@ class Login extends Component {
     );
   }
 }
+
 
 export default connect()(withRouter(Login))

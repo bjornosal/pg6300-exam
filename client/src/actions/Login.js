@@ -10,9 +10,9 @@ export const loginUser = payload => ({
 //   payload
 });
 
-export const loginSuccess = payload => ({
+export const loginSuccess = user => ({
   type: LOGIN_SUCCESS,
-  payload
+  user
 });
 
 export const loggedInUser = payload => ({
@@ -30,11 +30,15 @@ export const loginUserAsync = (payload, history) => {
     dispatch({ type: LOGIN_USER });
 
     login(payload).then(res => {
-      if (res === 204) {
-        history.push("/");
-        dispatch({ type: LOGIN_SUCCESS, payload: "123" });
+        // console.log("reslt from query", );
+        
+      if (res.status === 200) {
+          res.json().then(body => {
+              history.push("/");
+              dispatch({ type: LOGIN_SUCCESS, payload: body });
+             })
       } else {
-        dispatch({ type: LOGIN_ERROR, payload: "321" });
+        dispatch({ type: LOGIN_ERROR, payload: "LOGIN ERROR" });
       }
     });
   };
@@ -55,5 +59,6 @@ const login = async values => {
   } catch (err) {
     return;
   }
-  return response.status;
+
+  return response;
 };

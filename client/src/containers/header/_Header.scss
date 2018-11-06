@@ -4,20 +4,19 @@
     background-color: $color5;
     padding: 0 calc(10%) 0 calc(10%);
     box-shadow: 1px 1px .5px 1px $color1;
-
     .headerLogo {
         flex-grow: 2;
     }
-
     .headerLink {
-        position: relative; 
+        position: relative;
         line-height: 3em;
         padding: 0 1em 0 1em;
     }
-
     .headerNavigationContainer {
         height: 100%;
-
+        div {
+            display:inline;
+        }
         .headerSignUp {
             background-color: $color2;
             border-radius: 1px;
@@ -25,13 +24,12 @@
             text-decoration: none;
             transition: background-color 2s;
             color: $color5;
-            font-weight: bold;           
+            font-weight: bold;
         }
         .headerSignUp:hover {
             background-color: $color4;
-            transition: background-color .5s;          
-            
+            transition: background-color .5s;
         }
-
+        
     }
 }

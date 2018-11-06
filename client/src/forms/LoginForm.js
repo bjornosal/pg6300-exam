@@ -40,14 +40,16 @@ class LoginForm extends React.Component {
   };
 }
 
+const formName = "login";
+
 function mapStateToProps(state) {
   return {
-    user: state.form.login ? state.form.login.values : undefined
+    user: state.form[formName] ? state.form[formName].registeredFields : undefined
   };
 }
 
 export default reduxForm({
-  form: "loginForm"
+  form: formName
 })(
   connect(
     mapStateToProps,

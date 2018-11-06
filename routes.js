@@ -4,7 +4,8 @@ const passport = require("passport");
 const queries = require("./queries");
 
 router.post("/api/login", passport.authenticate("local"), (req, res) => {
-  res.status(204).send();
+  console.log("RESULT", req.user)
+  res.status(200).send(req.user);
 });
 
 router.post("/api/signup", (req, res) => {
@@ -20,7 +21,7 @@ router.post("/api/signup", (req, res) => {
           if (err) {
             return next(err);
           }
-
+    
           res.status(204).send();
         });
       });
