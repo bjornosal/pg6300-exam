@@ -1,25 +1,23 @@
-import React, { Component } from "react";
+import React from "react";
 import { Field, reduxForm } from "redux-form";
 import InputField from "../components/inputField/InputField";
 import { connect } from "react-redux";
-import { loginUser } from "../actions/Login";
-
+import { loginUserAsync } from "../actions/Login";
+import { withRouter } from 'react-router-dom'
 /**
  * Inspired by Redux-Form examples - https://redux-form.com/7.4.2/examples/asyncvalidation/
  */
 
-class LoginForm extends Component {
+class LoginForm extends React.Component {
 
-  loginUser(fields) {
-    const { loginUser, history } = this.props;
-
-    loginUser(fields, history);
+  onLogin = (fields) =>  {
+    this.props.loginUserAsync(fields, this.props.history)
   }
 
   render() {
-    const { handleSubmit, isSubmitting, loginUser } = this.props;
+    const { handleSubmit, isSubmitting } = this.props;
     return (
-      <form onSubmit={handleSubmit(loginUser)}>
+      <form onSubmit={handleSubmit(this.onLogin)}>
         <Field
           name="username"
           type="text"
@@ -44,8 +42,7 @@ class LoginForm extends Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.form.login ? state.form.login.values : undefined,
-    history: state.history
+    user: state.form.login ? state.form.login.values : undefined
   };
 }
 
@@ -54,6 +51,6 @@ export default reduxForm({
 })(
   connect(
     mapStateToProps,
-    { loginUser }
-  )(LoginForm)
+    { loginUserAsync }
+  )(withRouter(LoginForm))
 );

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 export default class Header extends Component {
   
   render() {
+    console.log("STATE/PROPS?", this.state)
     console.log("STATE/PROPS?", this.props)
 
     return (
