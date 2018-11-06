@@ -8,10 +8,6 @@ export default class SignUp extends Component {
   };
 
   async doSignUp(values) {
-    // const { username, password, confirm } = this.state;
-    // console.log("STATE: ", state)
-    // console.log("PROPS: ", props)
-
     if (values.confirm !== values.password) {
       // this.setState({ errorMsg: "Passwords do not match" });
       console.log("Passwords do not match.")

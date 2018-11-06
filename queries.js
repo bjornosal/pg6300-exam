@@ -70,7 +70,6 @@ const defaultDataInit = rocketLeagueQuestionQueries => {
       console.log("DROPPING TABLE USER_INFORMATION FAILED", err);
     });
 
-    console.log("CREATING DATABASE THINGS");
     createTable(queryTexts.createUserInformationTableQuery, "USER_INFORMATION");
     createTable(queryTexts.createQuizTableQuery, "QUIZ");
     createTable(queryTexts.createQuestionTableQuery, "QUESTION");

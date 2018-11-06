@@ -1,15 +1,17 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
-import InputField from '../components/inputField/InputField'
+import InputField from "../components/inputField/InputField";
+import { connect } from "react-redux";
+import { loginUser } from "../actions/Login";
 
 /**
  * Inspired by Redux-Form examples - https://redux-form.com/7.4.2/examples/asyncvalidation/
  */
 
 const LoginForm = props => {
-  const { handleSubmit, isSubmitting } = props;
+  const { handleSubmit, isSubmitting, loginUser } = props;
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(loginUser)}>
       <Field
         name="username"
         type="text"
@@ -31,6 +33,17 @@ const LoginForm = props => {
   );
 };
 
+function mapStateToProps(state) {
+  return {
+    TEST: "THE STATE"
+  };
+}
+
 export default reduxForm({
   form: "login"
-})(LoginForm);
+})(
+  connect(
+    mapStateToProps,
+    { loginUser }
+  )(LoginForm)
+);

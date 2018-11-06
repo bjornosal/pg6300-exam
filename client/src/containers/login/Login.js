@@ -1,13 +1,19 @@
 import React, { Component } from "react";
 import LoginForm from "../../forms/LoginForm";
 import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
+import { loginUser } from '../../actions/Login'
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+
+    console.log("PROPS", props)
+  }
+
 
   async handleLogin(values) {
-
     const url = "/api/login";
-
     const payload = { username: values.username, password: values.password };
 
     let response;
@@ -21,27 +27,16 @@ class Login extends Component {
         body: JSON.stringify(payload)
       });
     } catch (err) {
-      // this.setState({ errorMsg: "Failed to connect to server: " + err });
       return;
     }
 
     if (response.status === 401) {
-      // this.setState({ errorMsg: "Invalid username/password" });
       return;
     }
 
     if (response.status !== 204) {
-      /*  this.setState({
-         errorMsg:
-           "Error when connecting to server: status code " + response.status
-       }); */
       return;
     }
-
-    // this.setState({ errorMsg: null });
-    // this.props.updateLoggedInUserId(userId);
-    // this.props.history.push("/");
-    // console.log("PROPS", this.props)
   }
 
   render() {
@@ -56,4 +51,14 @@ class Login extends Component {
   }
 }
 
-export default withRouter(Login)
+function mapStateToProps(state) {
+  return {
+    TEST: "THE STATE"
+  };
+}
+
+const mapDispatchToProps = dispatch => ({
+  loginUser: () => dispatch(loginUser)
+ });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
