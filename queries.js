@@ -81,6 +81,7 @@ const defaultDataInit = rocketLeagueQuestionQueries => {
       ["Rocket League"],
       rocketLeagueQuestionQueries
     );
+    createUser("1","1");
   });
 };
 

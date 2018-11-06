@@ -12,7 +12,7 @@ class App extends Component {
   componentDidMount() {
     this.performRequestToApi()
       .then(res => this.setState({ data: res.server }))
-      .catch(err => console.error("ERROR: ", err));
+      .catch(err => console.error("ERROR: ", {err}));
   }
 
   performRequestToApi = async () => {

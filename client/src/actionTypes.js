@@ -1,4 +1,6 @@
 export const INCREASE_GAMES_PLAYED = "INCREASE_GAMES_PLAYED";
 export const SET_HIGHSCORE = "SET_HIGHSCORE";
 export const LOGIN_USER = "LOGIN_USER";
+export const LOGIN_ERROR = "LOGIN_ERROR";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGGED_IN_USER = "LOGGED_IN_USER";

@@ -35,7 +35,7 @@ const LoginForm = props => {
 
 function mapStateToProps(state) {
   return {
-    TEST: "THE STATE"
+    user: state.form.login ? state.form.login.values : undefined
   };
 }
 

@@ -39,7 +39,6 @@ passport.use(
     },
     async (username, password, done) => {
       const verified = await queries.verifyUser(username, password);
-
       if (!verified) {
         return done(null, false, { message: "Invalid username/password" });
       }
