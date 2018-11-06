@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function Header({}) {
+  console.log("yes, this is props", state);
   return (
     <div className="headerContainer">
       <Link to="/" className="headerLink headerLogo">
@@ -20,11 +21,12 @@ export default function Header() {
         <Link to="/Leaderboard" className="headerLink">
           Leaderboard
         </Link>
-
+        
+{true &&
         <Link to="/login" className="headerLink headerLogin">
           Log In
         </Link>
-
+}
         <Link to="/signup" className="headerLink headerSignUp">
           Sign Up
         </Link>
