@@ -1,6 +1,9 @@
-export default (state = [], action) => {
+import { INCREASE_GAMES_PLAYED } from "../actionTypes";
+
+const leaderboard = (state = [], action) => {
     switch (action.type) {
-        case "INCREASE_GAMES_PLAYED":
+        case INCREASE_GAMES_PLAYED:
+            console.log("INCREASED THE GAMES")
             return [...state, {
                 //Information for the stuff
             }]
@@ -12,3 +15,5 @@ export default (state = [], action) => {
             return state;
     }
 }
+
+export default leaderboard;
