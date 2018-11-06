@@ -3,15 +3,8 @@ const router = express.Router();
 const passport = require("passport");
 const queries = require("./queries");
 
-router.post("/api/login", (req, res) => {
-  queries
-    .verifyUser(req.body.username, req.body.password)
-    .then(result => {
-      console.log("LOGIN", result);
-    })
-    .catch(err => {
-      console.log("LOGIN ERR", err);
-    });
+router.post("/api/login", passport.authenticate("local"), (req, res) => {
+  res.status(204).send();
 });
 
 router.post("/api/signup", (req, res) => {
@@ -33,8 +26,8 @@ router.post("/api/signup", (req, res) => {
       });
     })
     .catch(err => {
-      console.log("ERROR", err);
-      res.status(400).send();
+      //TODO: Is this correct?
+      res.status(500).send();
     });
 });
 

@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import LoginForm from '../../forms/LoginForm';
+import React, { Component } from "react";
+import LoginForm from "../../forms/LoginForm";
+import { withRouter } from "react-router-dom";
 
-export default class Login extends Component {
+class Login extends Component {
 
   async handleLogin(values) {
-    // const { userId, password } = this.state;
 
     const url = "/api/login";
 
@@ -31,16 +31,17 @@ export default class Login extends Component {
     }
 
     if (response.status !== 204) {
-     /*  this.setState({
-        errorMsg:
-          "Error when connecting to server: status code " + response.status
-      }); */
+      /*  this.setState({
+         errorMsg:
+           "Error when connecting to server: status code " + response.status
+       }); */
       return;
     }
 
     // this.setState({ errorMsg: null });
     // this.props.updateLoggedInUserId(userId);
     // this.props.history.push("/");
+    // console.log("PROPS", this.props)
   }
 
   render() {
@@ -51,6 +52,8 @@ export default class Login extends Component {
           <LoginForm onSubmit={this.handleLogin} />
         </div>
       </div>
-    )
+    );
   }
 }
+
+export default withRouter(Login)

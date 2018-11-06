@@ -5,11 +5,11 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const pg = require("pg");
 const passport = require("passport");
-const LocalStrategy = require('passport-local').Strategy;
-const defaultDataInitializer = require("./defaultDataInitializer")
+const LocalStrategy = require("passport-local").Strategy;
+const defaultDataInitializer = require("./defaultDataInitializer");
 const session = require("express-session");
-const routes = require('./routes');
-const queries = require("./queries")
+const routes = require("./routes");
+const queries = require("./queries");
 const port = process.env.PORT || 8080;
 
 // if (process.env.NODE_ENV !== "production") {
@@ -22,57 +22,61 @@ app.use(express.static(path.join(__dirname, "client/build")));
 // }
 app.use(bodyParser.json());
 
-  //FIXME: WHY
-  app.use(session({
-    secret: 'a secret used to encrypt the session cookies',
+//FIXME: WHY
+app.use(
+  session({
+    secret: "a secret used to encrypt the session cookies",
     resave: false,
     saveUninitialized: false
-  }));
+  })
+);
 
-passport.use(new LocalStrategy(
-  {
-    usernameField: 'username',
-    passwordField: 'password'
-  },
-  function (username, password, done) {
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "username",
+      passwordField: "password"
+    },
+    async (username, password, done) => {
+      const verified = await queries.verifyUser(username, password);
 
-    const ok = queries.verifyUser(username, password);
+      if (!verified) {
+        return done(null, false, { message: "Invalid username/password" });
+      }
 
-    if (!ok) {
-      return done(null, false, { message: 'Invalid username/password' });
+      const user = await queries.getUser(username);
+      return done(null, user);
     }
-
-    const user = queries.getUser(username);
-    return done(null, user);
-  }
-));
+  )
+);
 
 passport.serializeUser(function (user, done) {
-  done(null, user.id);
+  done(null, user.username);
 });
 
-passport.deserializeUser(function (id, done) {
-
-  const user = Repository.getUser(id);
-
-  if (user !== undefined) {
-    done(null, user);
-  } else {
-    done(null, false);
-  }
+passport.deserializeUser(function (username, done) {
+  queries
+    .getUser(username)
+    .then(res => {
+      if (res !== undefined) {
+        done(null, res);
+      } else {
+        done(null, false);
+      }
+    })
+    .catch(err => {
+      done(null, false);
+    });
 });
-
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/', routes);
-
+app.use("/", routes);
 
 if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "/client/build/index.html"));
   });
 }
-
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
