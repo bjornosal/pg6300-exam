@@ -1,4 +1,4 @@
-import { map, mapTo, mergeMap } from "rxjs/operators";
+import { mergeMap } from "rxjs/operators";
 import { LOGIN_USER, LOGIN_ERROR, LOGIN_SUCCESS } from "../actionTypes";
 import { ofType } from "redux-observable";
 
@@ -23,21 +23,24 @@ const handleLogin = async values => {
   return response.status;
 };
 
-const loginEpic = action$ =>
-  action$.pipe(
+const loginEpic = (action$, state$) => {
+  return action$.pipe(
     ofType(LOGIN_USER),
     mergeMap(action => {
+      console.log(state$)
+
       return handleLogin(action.payload)
         .then(res => {
-          if (res !== 204) return { type: LOGIN_ERROR };
-
+          if (res !== 204) { return { type: LOGIN_ERROR }; }
+          // return action.history.push("/");
           return { type: LOGIN_SUCCESS };
         })
         .catch(() => {
+          // return action.history.push("/");
           return { type: LOGIN_ERROR };
         });
     })
   );
-  
+};
 
 export default loginEpic;

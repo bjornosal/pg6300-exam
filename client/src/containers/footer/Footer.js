@@ -1,6 +1,8 @@
 import React from "react";
 import FooterLink from "../../components/footerLink/FooterLink"
 
+
+
 export default function Footer() {
   return (
     <div className="footerContainer">

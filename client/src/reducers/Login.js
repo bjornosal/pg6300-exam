@@ -6,7 +6,7 @@ const login = (state = [], action) => {
       console.log("LOGIN USER = START");
       return {...state, loginError: false}
     case LOGIN_SUCCESS:
-
+      console.log(LOGIN_SUCCESS);
       return {...state, loggedIn: true}
     case LOGIN_ERROR:
       console.log(LOGIN_ERROR);
