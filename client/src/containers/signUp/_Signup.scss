@@ -1,7 +1,7 @@
 .signUpContainer {
     .signUpFormContainer {
         width: 50%;
-        float: none; // background-color: $color5;
+        float: none; 
         margin: 0 auto;
         margin-top: calc(10%);
         text-align: center;
@@ -10,7 +10,6 @@
             font-size: 2vw;
             color: $color4;
             font-weight: bold;
-            
         }
         .inputContainer {
             padding: .5em;
@@ -35,14 +34,23 @@
                 font-size: 1.3vw;
                 font-weight: bold;
                 transition-duration: .5s;
-                margin-top:.5em;
+                margin-top: .5em;
             }
             button:hover {
                 background-color: $color4;
                 color: $color5;
-                transition: background-color .5s;      
-                transition: color .4s;      
+                transition: background-color .5s;
+                transition: color .4s;
             }
+        }
+        .errorBox {
+            border: .3em solid  $color2;
+            margin-left: calc(25% - .3em);
+            margin-top: 1em;
+            font-size: 1.3vw;
+            font-weight: bold;
+            width: calc(50%);
+            color: $color5;
         }
     }
 }

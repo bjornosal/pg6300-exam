@@ -42,7 +42,7 @@ export const loginUserAsync = (payload, history) => {
           dispatch({ type: LOGIN_SUCCESS, payload: body });
         });
       } else {
-        dispatch({ type: LOGIN_ERROR, payload: "LOGIN ERROR" });
+        dispatch({ type: LOGIN_ERROR, payload: {} });
       }
     });
   };
@@ -62,21 +62,15 @@ export const logoutUser = (history) => {
 
 export const checkUserToken = () => {
   return dispatch => {
-    console.log("HELLO")
     checkLoggedInState().then(res => {
 
-      console.log("RESULT FROM CHECK", res)
-
       if (res === 401)
-        return
+        return;
 
       if (res.status === 200) {
         res.json().then(body => {
-          console.log("BODY", body)
           dispatch({ type: UPDATE_LOGIN_STATUS, payload: { user: body }});
         }) 
-
-
       }
     })
 

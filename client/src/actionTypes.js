@@ -6,3 +6,6 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGGED_IN_USER = "LOGGED_IN_USER";
 export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const UPDATE_LOGIN_STATUS = "UPDATE_LOGIN_STATUS";
+export const SIGN_UP_USER = "SIGN_UP_USER";
+export const SIGN_UP_ERROR = "SIGN_UP_ERROR";
+export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";

@@ -1,41 +1,74 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
-import InputField from '../components/inputField/InputField'
+import InputField from "../components/inputField/InputField";
+import { connect } from "react-redux";
+import { signUpUser, signUpUserAsync } from "../actions/SignUp";
+import { withRouter } from "react-router-dom";
+
 /**
  * Inspired by Redux-Form examples - https://redux-form.com/7.4.2/examples/asyncvalidation/
  */
 
-const SignUpForm = props => {
-  const { handleSubmit, isSubmitting } = props;
-  return (
-    <form onSubmit={handleSubmit}>
-      <Field
-        name="username"
-        type="text"
-        component={InputField}
-        label="Username"
-      />
-      <Field
-        name="password"
-        type="password"
-        component={InputField}
-        label="Password"
-      />
-      <Field
-        name="confirm"
-        type="password"
-        component={InputField}
-        label="Repeat password"
-      />
-      <div className="signUpButtonContainer">
-        <button type="submit" disabled={isSubmitting}>
-          Sign up
-        </button>
+class SignUpForm extends React.Component {
+  handleSignUp = fields => {
+    // console.log("PROPS", this.props);
+    this.props.signUpUserAsync(fields, this.props.history);
+  };
+
+  componentDidMount = () => {
+    console.log("MOUNTED")
+    this.props.signUpUser();
+  }
+
+  render() {
+    const { handleSubmit, isSubmitting } = this.props;
+    return (
+      <div>
+        <form onSubmit={handleSubmit(this.handleSignUp)}>
+          <Field
+            name="username"
+            type="text"
+            component={InputField}
+            label="Username"
+          />
+          <Field
+            name="password"
+            type="password"
+            component={InputField}
+            label="Password"
+          />
+          <Field
+            name="confirm"
+            type="password"
+            component={InputField}
+            label="Repeat password"
+          />
+          <div className="signUpButtonContainer">
+            <button type="submit" disabled={isSubmitting}>
+              Sign up
+            </button>
+          </div>
+        </form>
+        {this.props.signUp.loginError &&
+          <div className="errorBox">{this.props.signUp.errorMsg}</div>
+        }
       </div>
-    </form>
-  );
-};
+    );
+  }
+}
+
+function mapStateToProps(state) {
+  console.log(state.signUp)
+  return {
+    signUp: state.signUp
+  };
+}
 
 export default reduxForm({
   form: "signup"
-})(SignUpForm);
+})(
+  connect(
+    mapStateToProps,
+    { signUpUser, signUpUserAsync }
+  )(withRouter(SignUpForm))
+);

@@ -19,7 +19,7 @@ router.post("/api/signup", (req, res) => {
         req.session.save(err => {
           if (err) return next(err);
           
-          res.status(204).send();
+          res.status(200).send(req.user);
         });
       });
     })
