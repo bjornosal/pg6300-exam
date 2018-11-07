@@ -1,16 +1,21 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
-import socketClient from 'socket.io-client';
+import io from 'socket.io-client';
 
 class Game extends Component {
-
+  socket; 
   componentWillMount = () => {
-    const socket = socketClient(window.location.origin);
+    this.socket = io("/games");
+    this.socket.on("hostEvent", () => {
+      console.log("IM THE HOST")
+    })
 
-
-    
   }
 
+ 
+  componentWillUnmount = () => {
+    this.socket.close();
+  }
   
   render() {
     return (

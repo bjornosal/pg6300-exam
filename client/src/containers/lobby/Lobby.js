@@ -1,6 +1,20 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import io from 'socket.io-client';
 
-export default class Lobby extends Component {
+class Lobby extends Component {
+
+  socket; 
+  componentWillMount = () => {
+    this.socket = io("/lobby");
+
+
+  }
+
+
+  componentWillUnmount = () => {
+    this.socket.close();
+  }
   render() {
     return (
       <div className="lobbyContainer">
@@ -9,3 +23,4 @@ export default class Lobby extends Component {
     )
   }
 }
+export default connect()(Lobby)
