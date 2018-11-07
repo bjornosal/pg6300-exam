@@ -62,7 +62,7 @@ export const logoutUser = (history) => {
 
 export const checkUserToken = () => {
   return dispatch => {
-    checkLoggedInState().then(res => {
+   return checkLoggedInState().then(res => {
 
       if (res === 401)
         return;
@@ -70,6 +70,7 @@ export const checkUserToken = () => {
       if (res.status === 200) {
         res.json().then(body => {
           dispatch({ type: UPDATE_LOGIN_STATUS, payload: { user: body }});
+          return true;
         }) 
       }
     })

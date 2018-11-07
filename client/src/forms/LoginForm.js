@@ -14,6 +14,13 @@ class LoginForm extends React.Component {
     this.props.loginUserAsync(fields, this.props.history)
   }
 
+  componentDidUpdate = () => {
+    //Close as it gets. Handle this on backend?
+    if(this.props.loggedIn) {
+      this.props.history.push("/");
+    }
+  }
+
   render() {
     const { handleSubmit, isSubmitting } = this.props;
     return (
@@ -44,6 +51,7 @@ const formName = "login";
 
 function mapStateToProps(state) {
   return {
+    loggedIn: state.login ?  state.login.loggedIn : false,    
     user: state.form[formName] ? state.form[formName].registeredFields : undefined
   };
 }

@@ -3,6 +3,7 @@ import { Field, reduxForm } from "redux-form";
 import InputField from "../components/inputField/InputField";
 import { connect } from "react-redux";
 import { signUpUser, signUpUserAsync } from "../actions/SignUp";
+import { checkUserToken } from "../actions/Login";
 import { withRouter } from "react-router-dom";
 
 /**
@@ -16,8 +17,14 @@ class SignUpForm extends React.Component {
   };
 
   componentDidMount = () => {
-    console.log("MOUNTED")
     this.props.signUpUser();
+  }
+
+  componentDidUpdate = () => {
+    //Close as it gets. Handle this on backend?
+    if(this.props.loggedIn) {
+      this.props.history.push("/");
+    }
   }
 
   render() {
@@ -58,8 +65,8 @@ class SignUpForm extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log(state.signUp)
   return {
+    loggedIn: state.login ?  state.login.loggedIn : false,
     signUp: state.signUp
   };
 }
