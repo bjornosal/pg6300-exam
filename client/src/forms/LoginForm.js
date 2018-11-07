@@ -49,7 +49,7 @@ class LoginForm extends React.Component {
 
 const formName = "login";
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     loggedIn: state.login ?  state.login.loggedIn : false,    
     user: state.form[formName] ? state.form[formName].registeredFields : undefined

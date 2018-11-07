@@ -38,7 +38,7 @@ class App extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     loggedIn: state.login ?  state.login.loggedIn : false,
   };

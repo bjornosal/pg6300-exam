@@ -66,8 +66,8 @@ class Header extends Component {
     );
   }
 }
-function mapStateToProps(state) {
-  // console.log("HEADER", state);
+
+const mapStateToProps = (state) => {
   return {
     loggedIn: state.login.loggedIn,
     userId: state.login.user ? state.login.user.user_id : undefined,

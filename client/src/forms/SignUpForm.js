@@ -63,7 +63,7 @@ class SignUpForm extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     loggedIn: state.login ?  state.login.loggedIn : false,
     signUp: state.signUp
