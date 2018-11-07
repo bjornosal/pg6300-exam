@@ -1,0 +1,73 @@
+.homeContainer {
+    .gameModeContainer {
+        position: relative;
+        margin: 0 auto;
+        width: 55em;
+        height: 20em;
+        display: flex;
+        margin-top: 15em;
+        .gamemodeChooser {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.2);
+            width: 25em;
+            height: 25em;
+            border-radius: .1em;
+            bottom: 0;
+            .gameModeInfo {
+                color: $color5;
+                position: absolute;
+                bottom: 30%;
+                font-size: 1.2em;
+                text-align: center;
+                width: 100%;
+            }
+        }
+        .gameModeAuto {
+            .gamemodeButton {
+                background-color: $color4;
+                color: $color5;
+            }
+        }
+        .gameModeLobby {
+            right: 0;
+            .gamemodeButton {
+                background-color: $color2;
+                color: $color5;
+            }
+        }
+        .gamemodeButton {
+            position: absolute;
+            border-radius: 1px;
+            bottom: 0;
+            border: 0;
+            width: 75%;
+            margin: 12.5%;
+            height: 2.5em;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .gamemodeButton:hover {
+            cursor: pointer;
+            box-shadow: inset 0 0 500px rgba(0, 0, 0, 0.2);
+        }
+        .gameModeImageContainer {
+            position: absolute;
+            margin-left: calc(20% - 5px);
+            width: 60%;
+            height: 60%;
+            top: -25%;
+            border-radius: 100%;
+            border: 5px solid white;
+            overflow: hidden;
+            background-color: $color3;
+            
+            .gameModeImage {
+                position: absolute;
+                height: 75%;
+                width: 75%;
+                bottom: 10%;
+                left: 12.5%;
+            }
+        }
+    }
+}
