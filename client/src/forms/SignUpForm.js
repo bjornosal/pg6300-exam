@@ -3,7 +3,6 @@ import { Field, reduxForm } from "redux-form";
 import InputField from "../components/inputField/InputField";
 import { connect } from "react-redux";
 import { signUpUser, signUpUserAsync } from "../actions/SignUp";
-import { checkUserToken } from "../actions/Login";
 import { withRouter } from "react-router-dom";
 
 /**

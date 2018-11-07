@@ -8,14 +8,17 @@ import Login from "../login/Login";
 import Lobby from "../lobby/Lobby";
 import QuizMaker from "../quizMaker/QuizMaker";
 
-
-export default function Routes() {
+export default function Routes({ loggedIn }) {
   return (
     <Switch>
+      {(loggedIn === undefined || !loggedIn) && (
+        <Route exact path="/signup" component={SignUp} />
+      )}
+      {(loggedIn === undefined || !loggedIn) && (
+        <Route exact path="/login" component={Login} />
+      )}
       <Route exact path="/game" component={Game} />
       <Route exact path="/leaderboard" component={Leaderboard} />
-      <Route exact path="/signup" component={SignUp} />
-      <Route exact path="/login" component={Login} />
       <Route exact path="/lobby" component={Lobby} />
       <Route exact path="/quizmaker" component={QuizMaker} />
       <Route exact path="/home" component={Home} />

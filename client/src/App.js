@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import Routes from "./containers/routes/Routes";
 import Footer from "./containers/footer/Footer";
 import Header from "./containers/header/Header";
+import { connect } from "react-redux";
 
 class App extends Component {
   componentDidMount() {
@@ -29,7 +30,7 @@ class App extends Component {
       <BrowserRouter>
         <div>
           <Header />
-          <Routes />
+          <Routes loggedIn={this.props.loggedIn}/>
           <Footer />
         </div>
       </BrowserRouter>
@@ -37,4 +38,10 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    loggedIn: state.login ?  state.login.loggedIn : false,
+  };
+}
+
+export default connect(mapStateToProps)(App);
