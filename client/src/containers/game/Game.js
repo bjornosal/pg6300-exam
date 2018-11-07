@@ -1,11 +1,23 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
+import socketClient from 'socket.io-client';
 
-export default class Game extends Component {
+class Game extends Component {
+
+  componentWillMount = () => {
+    const socket = socketClient(window.location.origin);
+
+
+    
+  }
+
+  
   render() {
     return (
       <div className="gameContainer">
-        <h2>Game</h2>
       </div>
     );
   }
 }
+
+export default connect()(Game)

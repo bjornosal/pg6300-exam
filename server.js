@@ -3,7 +3,6 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
-const pg = require("pg");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const defaultDataInitializer = require("./defaultDataInitializer");
@@ -11,10 +10,12 @@ const session = require("express-session");
 const routes = require("./routes");
 const queries = require("./queries");
 const port = process.env.PORT || 8080;
+const socketHandler = require("./sockets/socketHandler")
+const http = require('http').Server(app);
 
-// if (process.env.NODE_ENV !== "production") {
+socketHandler.start(http);
+
 defaultDataInitializer.connectToServerAndCreateTables();
-// }
 
 //TODO: Implement this again?
 // if (process.env.NODE_ENV === "production") {
@@ -78,4 +79,4 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+http.listen(port, () => console.log(`Listening on port ${port}`));

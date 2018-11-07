@@ -11,7 +11,7 @@ class Home extends Component {
         <div className="gameModeContainer">
           <div className="gamemodeChooser gameModeAuto">
             <div className="gameModeImageContainer">
-              <img className="gameModeImage" src={questionmark} />
+              <img className="gameModeImage" src={questionmark} alt="" />
             </div>
             <p className="gameModeInfo">Automatically join a game. </p>
             <Link
@@ -27,7 +27,7 @@ class Home extends Component {
           </div>
           <div className="gamemodeChooser gameModeLobby">
             <div className="gameModeImageContainer">
-              <img className="gameModeImage" src={listIcon} />
+              <img className="gameModeImage" src={listIcon} alt="" />
             </div>
             <p className="gameModeInfo">
               Go to the lobby to find a game there!
