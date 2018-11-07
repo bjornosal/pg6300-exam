@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { logoutUser } from "../../actions/Login";
+import { logoutUser, checkUserToken } from "../../actions/Login";
 
 class Header extends Component {
   isLoggedIn = () => {
@@ -11,6 +11,14 @@ class Header extends Component {
 
   doLogout = () => {
     this.props.logoutUser(this.props.history);
+  }
+
+  getLoggedInUser = () => {
+    this.props.checkUserToken();
+  }
+
+  componentWillMount = () => {
+    this.getLoggedInUser();
   }
 
   render() {
@@ -69,5 +77,6 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { logoutUser }
+  { logoutUser,
+    checkUserToken }
 )(withRouter(Header));

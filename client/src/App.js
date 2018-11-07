@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./scss/App.scss";
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter } from "react-router-dom";
 import Routes from "./containers/routes/Routes";
 import Footer from "./containers/footer/Footer";
 import Header from "./containers/header/Header";
 
-
 class App extends Component {
-
   componentDidMount() {
     this.performRequestToApi()
       .then(res => this.setState({ data: res.server }))
-      .catch(err => console.error("ERROR: ", {err}));
+      .catch(err => console.error("ERROR: ", { err }));
   }
 
   performRequestToApi = async () => {
@@ -25,7 +23,6 @@ class App extends Component {
 
     return body;
   };
-
 
   render() {
     return (

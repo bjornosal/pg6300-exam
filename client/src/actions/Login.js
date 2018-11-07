@@ -3,7 +3,8 @@ import {
   LOGGED_IN_USER,
   LOGIN_SUCCESS,
   LOGIN_ERROR,
-  LOGOUT_SUCCESS
+  LOGOUT_SUCCESS,
+  UPDATE_LOGIN_STATUS
 } from "../actionTypes";
 
 export const loginUser = payload => ({
@@ -35,8 +36,6 @@ export const loginUserAsync = (payload, history) => {
     dispatch({ type: LOGIN_USER });
 
     login(payload).then(res => {
-      // console.log("reslt from query", );
-
       if (res.status === 200) {
         res.json().then(body => {
           history.push("/");
@@ -53,13 +52,36 @@ export const logoutUser = (history) => {
   return dispatch => {
 
     doLogout().then(res => {
-        if(res === 204) {
-            history.push("/");
-            dispatch({ type: LOGOUT_SUCCESS });
-        }
-    }) 
+      if (res === 204) {
+        history.push("/");
+        dispatch({ type: LOGOUT_SUCCESS });
+      }
+    })
   };
 };
+
+export const checkUserToken = () => {
+  return dispatch => {
+    console.log("HELLO")
+    checkLoggedInState().then(res => {
+
+      console.log("RESULT FROM CHECK", res)
+
+      if (res === 401)
+        return
+
+      if (res.status === 200) {
+        res.json().then(body => {
+          console.log("BODY", body)
+          dispatch({ type: UPDATE_LOGIN_STATUS, payload: { user: body }});
+        }) 
+
+
+      }
+    })
+
+  }
+}
 
 const doLogout = async () => {
   const url = "/api/logout";
@@ -87,6 +109,24 @@ const login = async values => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    return;
+  }
+
+  return response;
+};
+
+const checkLoggedInState = async () => {
+  const url = "/api/user";
+  // const payload = { username: values.username, password: values.password };
+  let response;
+  try {
+    response = await fetch(url, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json"
+      },
     });
   } catch (err) {
     return;
