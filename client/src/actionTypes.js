@@ -4,3 +4,4 @@ export const LOGIN_USER = "LOGIN_USER";
 export const LOGIN_ERROR = "LOGIN_ERROR";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGGED_IN_USER = "LOGGED_IN_USER";
+export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";

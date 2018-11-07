@@ -18,10 +18,8 @@ router.post("/api/signup", (req, res) => {
       }
       passport.authenticate("local")(req, res, () => {
         req.session.save(err => {
-          if (err) {
-            return next(err);
-          }
-    
+          if (err) return next(err);
+          
           res.status(204).send();
         });
       });
@@ -32,7 +30,11 @@ router.post("/api/signup", (req, res) => {
     });
 });
 
-router.post("/api/logout", (req, res) => {});
+router.post('/api/logout', function(req, res){
+
+  req.logout();
+  res.status(204).send();
+});
 
 router.get("/api/user", (req, res) => {});
 

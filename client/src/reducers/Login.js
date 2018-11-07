@@ -1,4 +1,4 @@
-import { LOGIN_USER, LOGIN_ERROR, LOGIN_SUCCESS } from "../actionTypes";
+import { LOGIN_USER, LOGIN_ERROR, LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../actionTypes";
 
 const login = (state = [], action) => {
   switch (action.type) {
@@ -15,6 +15,9 @@ const login = (state = [], action) => {
     case LOGIN_ERROR:
       console.log(LOGIN_ERROR);
       return { ...state, loggedIn: false, loginError: true };
+    case LOGOUT_SUCCESS: 
+      console.log(LOGOUT_SUCCESS);
+      return { ...state, loggedIn: false };
     default:
       return state;
   }
