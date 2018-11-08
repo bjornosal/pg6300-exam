@@ -39,15 +39,16 @@ const start = server => {
     });
 
     socket.on("disconnect", () => {
-      if (roomToHost.get(currentRoom) === socket.id) clearRoom(games, currentRoom);
+      if (roomToHost.get(currentRoom) === socket.id)
+        clearRoom(games, currentRoom);
 
       console.log("user disconnected");
     });
   });
 
-  const lobbyNamespace = io.of("/lobby");
+  const lobby = io.of("/lobby");
 
-  lobbyNamespace.on("connection", socket => {
+  lobby.on("connection", socket => {
     console.log("a user connected to the lobby");
 
     socket.on("disconnect", () => {
@@ -71,8 +72,10 @@ const clearRoom = (namespace, room) => {
 const joinRoom = (socket, username, room) => {
   if (!isUserAlreadyInRoom(username, room)) {
     socket.join(room);
-    console.log(username, "JOINED", room);
     roomToPlayers.set(room, roomToPlayers.get(room).concat(username));
+    socket.emit("initialJoin", roomToPlayers.get(room));
+    console.log(username, "JOINED", room);
+    socket.to(room).emit("playerJoin", username);
   } else {
     socket.emit("update", { error: "You are already in this room." });
   }
@@ -83,6 +86,10 @@ const isUserAlreadyInRoom = (username, room) => {
     ? roomToPlayers.get(room).includes(username)
     : false;
 };
+
+const leaveRoom = (socket, username, room) => {
+  
+}
 
 /**
  *  @author: arcuri82

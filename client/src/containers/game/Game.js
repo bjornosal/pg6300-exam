@@ -6,27 +6,37 @@ import { withRouter } from "react-router-dom";
 
 class Game extends Component {
   socket;
-
-  authenticateSocket = socket => {
-    // console.log("PROPS", this.props);
-    this.props.authenticateUserSocket(socket);
-  };
+  isHost; 
 
   componentWillMount = () => {
     this.socket = io("/games");
     this.authenticateSocket(this.socket);
+    this.onHostEvent(); 
 
-    this.socket.on("hostEvent", () => {
-      console.log("IM THE HOST");
+    this.socket.on("playerJoin", (data) => {
+      console.log("Cow say what?", data);
     });
 
-    this.socket.on("update", (data) => {
-      console.log("Cow say what?",data);
+    this.socket.on("initialJoin", (data) => {
+      console.log("Existing players: ", data);
     });
+
+    console.log("RENDERED AGAIN")
   };
 
   componentWillUnmount = () => {
     this.socket.close();
+  };
+
+
+  onHostEvent = () => {
+    this.socket.on("hostEvent", () => {
+      this.isHost = true;
+    });
+  }
+
+  authenticateSocket = socket => {
+    this.props.authenticateUserSocket(socket, this.props.history);
   };
 
   render() {
@@ -34,43 +44,6 @@ class Game extends Component {
   }
 }
 
-/**
- * @author arcuri82
- * Code from course material in PG6300, by lecturer Andrea Arcuri.
- */
-/* const authenticateSocket = async socket => {
-  const url = "/api/wstoken";
-
-  let response;
-
-  try {
-    response = await fetch(url, {
-      method: "post"
-    });
-  } catch (err) {
-    this.setState({ errorMsg: "Failed to connect to server: " + err });
-    return;
-  }
-
-  if (response.status === 401) {
-    //this could happen if the session has expired
-    this.setState({ errorMsg: "You should log in first" });
-    this.props.updateLoggedInUserId(null);
-    return;
-  }
-
-  if (response.status !== 201) {
-    this.setState({
-      errorMsg:
-        "Error when connecting to server: status code " + response.status
-    });
-    return;
-  }
-
-  const payload = await response.json();
-
-  this.socket.emit("login", payload);
-}; */
 
 const mapStateToProps = state => {
   return {};

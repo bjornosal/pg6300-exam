@@ -1,12 +1,11 @@
-import { AUTH_USER_SOCKET, START_GAME, AUTH_USER_SOCKET_ERROR } from "../actionTypes";
+import {
+  AUTH_USER_SOCKET,
+  START_GAME,
+  LOGIN_ERROR
+} from "../actionTypes";
 
 export const authUserSocket = () => ({
   type: AUTH_USER_SOCKET
-});
-
-export const failAuthUserSocket = payload => ({
-  type: AUTH_USER_SOCKET_ERROR,
-  payload
 });
 
 export const startGame = payload => ({
@@ -14,14 +13,15 @@ export const startGame = payload => ({
   payload
 });
 
-export const authenticateUserSocket = socket => {
+export const authenticateUserSocket = (socket, history) => {
   return dispatch => {
     authenticateSocket(socket).then(res => {
       if (res.status === 201) {
         dispatch(authUserSocket());
         dispatch(startGame);
       } else {
-        dispatch(failAuthUserSocket(res));
+        history.push("/login");
+        dispatch({ type: LOGIN_ERROR });
       }
     });
   };
