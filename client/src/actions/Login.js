@@ -48,35 +48,33 @@ export const loginUserAsync = (payload, history) => {
   };
 };
 
-export const logoutUser = (history) => {
+export const logoutUser = history => {
   return dispatch => {
-
     doLogout().then(res => {
       if (res === 204) {
         history.push("/");
         dispatch({ type: LOGOUT_SUCCESS });
       }
-    })
+    });
   };
 };
 
 export const checkUserToken = () => {
   return dispatch => {
-   return checkLoggedInState().then(res => {
-
-      if (res === 401)
+    return checkLoggedInState().then(res => {
+      if (res === 401) {
+        dispatch({ type: UPDATE_LOGIN_STATUS, payload: { user: undefined } });
         return;
-
+      }
       if (res.status === 200) {
         res.json().then(body => {
-          dispatch({ type: UPDATE_LOGIN_STATUS, payload: { user: body }});
+          dispatch({ type: UPDATE_LOGIN_STATUS, payload: { user: body } });
           return true;
-        }) 
+        });
       }
-    })
-
-  }
-}
+    });
+  };
+};
 
 const doLogout = async () => {
   const url = "/api/logout";
@@ -121,7 +119,7 @@ const checkLoggedInState = async () => {
       method: "get",
       headers: {
         "Content-Type": "application/json"
-      },
+      }
     });
   } catch (err) {
     return;

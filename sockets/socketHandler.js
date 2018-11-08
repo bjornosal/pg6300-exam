@@ -1,10 +1,11 @@
 const socketIo = require("socket.io");
 const uuid = require("uuid/v4");
-const tokenHandler = require("./tokenHandler")
+const tokenHandler = require("./tokenHandler");
 let io;
 
 //{roomId: xyz, hostId: zyx}
 const roomToHost = new Map();
+const roomToPlayers = new Map();
 let players = [];
 let currentRoom;
 
@@ -13,53 +14,33 @@ const start = server => {
   const games = io.of("/games");
 
   games.on("connection", socket => {
-
-
-    socket.on('login', (data) => {
-      console.log("LOGINDATA:", data)
+    socket.on("login", data => {
       const generatedId = generateUniqueId(data);
 
       if (generatedId.error !== undefined) {
         socket.emit("update", generatedId);
-        return
+        return;
       }
 
       const username = data.username;
-      console.log("size", roomToHost.size)
+
       if (roomToHost.size === 0) {
         currentRoom = uuid();
         roomToHost.set(currentRoom, socket.id);
         games.to(roomToHost.get(currentRoom)).emit("hostEvent");
         players.push(username);
         socket.join(currentRoom);
-        console.log("players", players);
-        console.log("CREATED A ROOM WITH HOST");
-      } else {
-        if (!players.includes(username)) {
-          socket.join(currentRoom);
-          console.log("JOINED A ROOM");
+        roomToPlayers.set(currentRoom, [username]);
 
-        } else {
-          socket.emit("update", { error: "You are already in this room." })
-        }
+        console.log("CREATED A ROOM WITH HOST - ", username);
+      } else {
+        joinRoom(socket, username, currentRoom);
       }
     });
 
-    // console.log("ID",socket.id);
-    // console.log("SOCKET",games.connected);
-
     socket.on("disconnect", () => {
-      if (roomToHost.get(currentRoom) === socket.id)
-        games.in(currentRoom).clients((error, ids) => {
-          if (error) throw error;
-          // console.log("IDS:", ids);
-          ids.forEach(id => {
-            games.connected[id].leave(currentRoom)
-            console.log(id);
-          });
-          roomToHost.delete(currentRoom)
-        })
-      // console.log(games.connected)
+      if (roomToHost.get(currentRoom) === socket.id) clearRoom(games, currentRoom);
+
       console.log("user disconnected");
     });
   });
@@ -75,16 +56,40 @@ const start = server => {
   });
 };
 
-const isUserAlreadyInRoom = (userId, room) => {
+const clearRoom = (namespace, room) => {
+  namespace.in(room).clients((error, ids) => {
+    if (error) throw error;
+    ids.forEach(id => {
+      namespace.connected[id].leave(room);
+    });
 
-}
+    roomToHost.delete(room);
+    roomToPlayers.delete(room);
+  });
+};
+
+const joinRoom = (socket, username, room) => {
+  if (!isUserAlreadyInRoom(username, room)) {
+    socket.join(room);
+    console.log(username, "JOINED", room);
+    roomToPlayers.set(room, roomToPlayers.get(room).concat(username));
+  } else {
+    socket.emit("update", { error: "You are already in this room." });
+  }
+};
+
+const isUserAlreadyInRoom = (username, room) => {
+  return roomToPlayers.get(room)
+    ? roomToPlayers.get(room).includes(username)
+    : false;
+};
 
 /**
  *  @author: arcuri82
  *  Code from course material in PG6300, by lecturer Andrea Arcuri.
  *  Adapting for my use.
  */
-const generateUniqueId = (data) => {
+const generateUniqueId = data => {
   if (data === null || data === undefined) {
     return { error: "No payload provided" };
   }
@@ -96,12 +101,12 @@ const generateUniqueId = (data) => {
 
   const userId = tokenHandler.consumeToken(token);
 
-  console.log("userId", userId)
+  console.log("userId", userId);
   if (userId === null || userId === undefined) {
     return { error: "Invalid token" };
   }
 
   return userId;
-}
+};
 
 module.exports = { start };
