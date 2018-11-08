@@ -24,29 +24,27 @@ const game = (state = [], action) => {
       };
     case JOIN_GAME:
       console.log(JOIN_GAME);
-      console.log("action", action);
       return {
         ...state,
         [action.room]: {
           players:
             state.players && state.players.length > 0
-              ? state.players.concat(action.username)
+              ? [...state[action.room].players, action.username]
               : action.username,
           isHost: action.isHost
         }
       };
     case PLAYER_JOIN:
       console.log(PLAYER_JOIN);
-      console.log("action", action);
+      console.log("PLAYER JOIN STATE", state)
       return {
         ...state,
         [action.room]: {
-          players: [...state[action.room].players, ...action.username]
+          players: [...state[action.room].players, action.username]
         }
       };
     case PLAYER_LEAVE:
       console.log(PLAYER_LEAVE);
-      console.log("action", action);
       let playerIndex = state[action.room].players.indexOf(action.username);
       /**
        * Source for removing with spread operator to keep immutability.
