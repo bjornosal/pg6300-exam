@@ -31,7 +31,6 @@ const start = server => {
       if (rooms.get(currentRoom) === socket.id)
         games.in(currentRoom).clients((error, ids) => {
           if (error) throw error;
-          //TODO: Continue here.  
           // console.log("IDS:", ids);
           ids.forEach(id => {
             games.connected[id].leave(currentRoom)

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const queries = require("./queries");
+const token = require("./sockets/tokenHandler")
 
 router.post("/api/login", passport.authenticate("local"), (req, res) => {
   res.status(200).send(req.user);
@@ -44,6 +45,24 @@ router.get('/api/user', function (req, res) {
 
   res.status(200).json({userId: req.user.user_id, username: req.user.username});
 });
+
+
+/**
+ * @author arcuri82
+ * Code from course material in PG6300, by lecturer Andrea Arcuri. 
+ */
+router.post('/api/wstoken', function (req, res) {
+
+  if(!req.user){
+      res.status(401).send();
+      return;
+  }
+
+  const t = token.createToken(req.user.id);
+
+  res.status(201).json({wstoken: t});
+});
+
 
 router.get("/api/scores", (req, res) => {
   res.send({ score: 2000 });
