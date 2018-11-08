@@ -1,6 +1,6 @@
 const socketIo = require("socket.io");
 const uuid = require("uuid/v4");
-
+const tokenHandler = require("./tokenHandler")
 let io;
 
 //{roomId: xyz, hostId: zyx}
@@ -13,17 +13,28 @@ const start = server => {
 
   games.on("connection", socket => {
 
-    if (rooms.size === 0) {
-      currentRoom = uuid();
-      rooms.set(currentRoom, socket.id);
-      games.to(rooms.get(currentRoom)).emit("hostEvent");
-      socket.join(currentRoom);
-      console.log("CREATED A ROOM WITH HOST")
-    } else {
-      socket.join(currentRoom);
-      console.log("JOINED A ROOM");
-      
-    }
+
+    socket.on('login', (data) => {
+      console.log("LOGINDATA:", data)
+      const userId = getUserId(data);
+      if (userId === null)
+        socket.emit("update", userId);
+
+      if (rooms.size === 0) {
+        currentRoom = uuid();
+        rooms.set(currentRoom, socket.id);
+        games.to(rooms.get(currentRoom)).emit("hostEvent");
+        socket.join(currentRoom);
+        console.log("CREATED A ROOM WITH HOST")
+      } else {
+        socket.join(currentRoom);
+        console.log("JOINED A ROOM");
+
+      }
+
+
+    });
+
     // console.log("ID",socket.id);
     // console.log("SOCKET",games.connected);
 
@@ -36,8 +47,9 @@ const start = server => {
             games.connected[id].leave(currentRoom)
             console.log(id);
           });
+          rooms.delete(currentRoom)
         })
-        // console.log(games.connected)
+      // console.log(games.connected)
       console.log("user disconnected");
     });
   });
@@ -52,5 +64,30 @@ const start = server => {
     });
   });
 };
+
+/**
+ *  @author: arcuri82
+ *  Code from course material in PG6300, by lecturer Andrea Arcuri.
+ *  Adapting for my use.
+ */
+const getUserId = (data) => {
+  if (data === null || data === undefined) {
+    return { error: "No payload provided" };
+  }
+
+  const token = data.wstoken;
+
+  if (token === null || token === undefined) {
+    return { error: "Missing token" };
+  }
+
+  const userId = tokenHandler.consumeToken(token);
+
+  if (userId === null || userId === undefined) {
+    return { error: "Invalid token" };
+  }
+
+  return userId;
+}
 
 module.exports = { start };
