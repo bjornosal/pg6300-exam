@@ -4,7 +4,8 @@ import {
   START_GAME,
   JOIN_GAME,
   PLAYER_JOIN,
-  PLAYER_LEAVE
+  PLAYER_LEAVE,
+  HOST_GAME
 } from "../actionTypes";
 
 const game = (state = [], action) => {
@@ -22,8 +23,8 @@ const game = (state = [], action) => {
         loginError: false,
         errorMsg: "TRYING TO START THE GAME"
       };
-    case JOIN_GAME:
-      console.log(JOIN_GAME);
+    case HOST_GAME:
+      console.log(HOST_GAME);
       return {
         ...state,
         [action.room]: {
@@ -31,17 +32,28 @@ const game = (state = [], action) => {
             state.players && state.players.length > 0
               ? [...state[action.room].players, action.username]
               : action.username,
-          isHost: action.isHost
+          isHost: action.isHost,
+          host: action.username
         }
       };
-    case PLAYER_JOIN:
-      console.log(PLAYER_JOIN);
-      console.log("PLAYER JOIN STATE", state)
+    case JOIN_GAME:
+      console.log(JOIN_GAME);
       return {
         ...state,
         [action.room]: {
-          players: [...state[action.room].players, action.username]
+          players:action.players,
+          host: action.host
         }
+      };
+    case PLAYER_JOIN:
+      return {
+        ...state,
+        [action.room]: {
+          ...state[action.room],
+              players: [...state[action.room].players, action.username]
+        }
+        
+        
       };
     case PLAYER_LEAVE:
       console.log(PLAYER_LEAVE);
@@ -53,6 +65,7 @@ const game = (state = [], action) => {
       return {
         ...state,
         [action.room]: {
+          ...state[action.room],
             players: [...state[action.room].players.slice(0,playerIndex),
             ...state[action.room].players.slice(playerIndex + 1,playerIndex.length)]
         }

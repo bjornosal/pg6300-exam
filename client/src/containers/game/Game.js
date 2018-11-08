@@ -3,6 +3,7 @@ import io from "socket.io-client";
 import { connect } from "react-redux";
 import {
   authenticateUserSocket,
+  hostGame,
   joinGame,
   playerJoin,
   playerLeave
@@ -22,11 +23,8 @@ class Game extends Component {
     this.socket = io("/games");
     this.authenticateSocket(this.socket);
     this.onHostEvent();
-    this.onInitialJoin();
+    this.onJoinGame();
     this.onPlayerJoin();
-    setTimeout(() => {
-      console.log("THE ROOM", currentRoom);
-    }, 3000);
   };
 
   componentWillUnmount = () => {
@@ -36,27 +34,25 @@ class Game extends Component {
   onHostEvent = () => {
     this.socket.on("hostJoin", data => {
       currentRoom = data.room;
-      this.props.joinGame(data.room, data.username, true);
+      this.props.hostGame(data.room, data.username, true);
     });
   };
 
-  onInitialJoin = () => {
-    this.socket.on("initialJoin", data => {
+  onJoinGame = () => {
+    this.socket.on("joinGame", data => {
       currentRoom = data.room;
-      this.props.joinGame(data.room, data.username, false);
+      this.props.joinGame(data.room, data.players, data.host);
     });
   };
 
   onPlayerJoin = () => {
     this.socket.on("playerJoin", data => {
-      console.log("Player joined", data.username);
-      this.props.playerJoin(data.room, data.username);
+      this.props.playerJoin(data.room, data.username );
     });
   };
 
   onPlayerLeave = () => {
     this.socket.on("playerLeave", data => {
-      console.log("Player left", data.username);
       this.props.playerLeave(data.room, data.username);
     });
   };
@@ -79,8 +75,8 @@ class Game extends Component {
           </div>
           <div className="playersContainer">
             {(this.props.players && this.props.players instanceof Array) ? (
-              this.props.players.map(player => (
-                <div className="player">{player}</div>
+              this.props.players.map((player, key) => (
+                <div key={key} className="player">{player}</div>
               ))
             ) : (
               <div className="player">
@@ -107,7 +103,7 @@ class Game extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state.game[currentRoom] ? state.game[currentRoom].players : "");
+  console.log("STATE: ",state);
   return {
     players: state.game[currentRoom]
       ? state.game[currentRoom].players
@@ -126,5 +122,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { authenticateUserSocket, joinGame, playerJoin, playerLeave }
+  { authenticateUserSocket, joinGame, playerJoin, playerLeave, hostGame }
 )(withRouter(Game));

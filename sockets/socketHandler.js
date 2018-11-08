@@ -6,7 +6,8 @@ let io;
 //{roomId: xyz, hostId: zyx}
 const roomToHost = new Map();
 const roomToPlayers = new Map();
-// const socketToUsername = new Map();
+//TODO: Add usernames to this shizzle.
+const socketToUsername = new Map();
 
 let players = [];
 let currentRoom;
@@ -38,7 +39,7 @@ const start = server => {
 
         console.log("CREATED A ROOM WITH HOST - ", username);
       } else {
-        joinRoom(socket, username, currentRoom);
+        joinRoom(socket, username, currentRoom, roomToHost.get(currentRoom));
       }
     });
 
@@ -73,11 +74,12 @@ const clearRoom = (namespace, room) => {
   });
 };
 
-const joinRoom = (socket, username, room) => {
+const joinRoom = (socket, username, room, host) => {
   if (!isUserAlreadyInRoom(username, room)) {
     socket.join(room);
     roomToPlayers.set(room, roomToPlayers.get(room).concat(username));
-    socket.emit("initialJoin", { room, username: roomToPlayers.get(room) });
+    socket.emit("joinGame", { room, players: roomToPlayers.get(room), host });
+    console.log("PLAYERS IN ROOM: ", roomToPlayers.get(room))
     console.log(username, "JOINED", room);
     socket.to(room).emit("playerJoin", {room, username});
   } else {
