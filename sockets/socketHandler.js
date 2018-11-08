@@ -27,7 +27,7 @@ const start = server => {
       if (roomToHost.size === 0) {
         currentRoom = uuid();
         roomToHost.set(currentRoom, socket.id);
-        games.to(roomToHost.get(currentRoom)).emit("hostEvent");
+        games.to(roomToHost.get(currentRoom)).emit("hostJoin", { currentRoom, username });
         players.push(username);
         socket.join(currentRoom);
         roomToPlayers.set(currentRoom, [username]);

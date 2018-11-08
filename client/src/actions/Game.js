@@ -1,8 +1,4 @@
-import {
-  AUTH_USER_SOCKET,
-  START_GAME,
-  LOGIN_ERROR
-} from "../actionTypes";
+import { AUTH_USER_SOCKET, START_GAME, LOGIN_ERROR, JOIN_GAME } from "../actionTypes";
 
 export const authUserSocket = () => ({
   type: AUTH_USER_SOCKET
@@ -12,6 +8,13 @@ export const startGame = payload => ({
   type: START_GAME,
   payload
 });
+
+export const joinGame = (room, username, isHost) => ({
+    type: JOIN_GAME,
+    room,
+    username,
+    isHost
+})
 
 export const authenticateUserSocket = (socket, history) => {
   return dispatch => {
@@ -26,7 +29,13 @@ export const authenticateUserSocket = (socket, history) => {
     });
   };
 };
-
+/* 
+export const joinGame = (room, player, isHost) => {
+  return dispatch => {
+      
+  };
+};
+ */
 /**
  * @author arcuri82
  * Code from course material in PG6300, by lecturer Andrea Arcuri.

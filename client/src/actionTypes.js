@@ -12,3 +12,4 @@ export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
 export const AUTH_USER_SOCKET = "AUTH_USER_SOCKET";
 export const AUTH_USER_SOCKET_ERROR = "AUTH_USER_SOCKET_ERROR";
 export const START_GAME = "START_GAME";
+export const JOIN_GAME = "JOIN_GAME";

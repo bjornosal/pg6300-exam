@@ -1,37 +1,45 @@
 import React, { Component } from "react";
 import io from "socket.io-client";
 import { connect } from "react-redux";
-import { authenticateUserSocket } from "../../actions/Game";
+import { authenticateUserSocket, joinGame } from "../../actions/Game";
 import { withRouter } from "react-router-dom";
 
 class Game extends Component {
-  socket;
-  isHost; 
+
+  constructor(props) {
+    super(props);
+    // this.isHost = false;
+    this.socket = undefined;
+  }
 
   componentWillMount = () => {
     this.socket = io("/games");
     this.authenticateSocket(this.socket);
-    this.onHostEvent(); 
-
-    this.socket.on("playerJoin", (data) => {
-      console.log("Cow say what?", data);
-    });
-
-    this.socket.on("initialJoin", (data) => {
-      console.log("Existing players: ", data);
-    });
-
-    console.log("RENDERED AGAIN")
+    this.onHostEvent();
+    this.onInitialJoin();
+    this.onPlayerJoin();
   };
 
   componentWillUnmount = () => {
     this.socket.close();
   };
 
-
   onHostEvent = () => {
-    this.socket.on("hostEvent", () => {
-      this.isHost = true;
+    this.socket.on("hostJoin", (data) => {
+      this.props.joinGame(data.currentRoom, data.username, true);
+    });
+  };
+
+  onInitialJoin = () => {
+    this.socket.on("initialJoin", data => {
+      console.log("DATA", data)
+      this.props.joinGame(data.currentRoom, data.username, false)
+    });
+  }
+
+  onPlayerJoin = () => {
+    this.socket.on("playerJoin", data => {
+      console.log("Cow say what?", data);
     });
   }
 
@@ -44,12 +52,11 @@ class Game extends Component {
   }
 }
 
-
 const mapStateToProps = state => {
   return {};
 };
 
 export default connect(
   mapStateToProps,
-  { authenticateUserSocket }
+  { authenticateUserSocket, joinGame }
 )(withRouter(Game));

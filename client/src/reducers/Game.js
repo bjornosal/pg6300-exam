@@ -1,4 +1,4 @@
-import { AUTH_USER_SOCKET, AUTH_USER_SOCKET_ERROR, START_GAME } from "../actionTypes";
+import { AUTH_USER_SOCKET, AUTH_USER_SOCKET_ERROR, START_GAME, JOIN_GAME } from "../actionTypes";
 
 const game = (state = [], action) => {
   switch (action.type) {
@@ -22,6 +22,16 @@ const game = (state = [], action) => {
         ...state,
         loginError: false,
         errorMsg: "TRYING TO START THE GAME"
+      };
+    case JOIN_GAME:
+      console.log(JOIN_GAME);
+      console.log("action", action)
+      return {
+        ...state,
+        username: action.username,
+        room: action.room,
+        isHost: action.isHost
+
       };
     default:
       return state;
