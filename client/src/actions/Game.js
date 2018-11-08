@@ -1,4 +1,4 @@
-import { AUTH_USER_SOCKET, START_GAME, LOGIN_ERROR, JOIN_GAME } from "../actionTypes";
+import { AUTH_USER_SOCKET, START_GAME, LOGIN_ERROR, JOIN_GAME, PLAYER_JOIN, PLAYER_LEAVE } from "../actionTypes";
 
 export const authUserSocket = () => ({
   type: AUTH_USER_SOCKET
@@ -16,6 +16,18 @@ export const joinGame = (room, username, isHost) => ({
     isHost
 })
 
+export const playerJoin = (room, username) => ({
+    type: PLAYER_JOIN,
+    room,
+    username
+})
+
+export const playerLeave = (room, username) => ({
+    type: PLAYER_LEAVE,
+    room,
+    username
+})
+
 export const authenticateUserSocket = (socket, history) => {
   return dispatch => {
     authenticateSocket(socket).then(res => {
@@ -29,13 +41,7 @@ export const authenticateUserSocket = (socket, history) => {
     });
   };
 };
-/* 
-export const joinGame = (room, player, isHost) => {
-  return dispatch => {
-      
-  };
-};
- */
+
 /**
  * @author arcuri82
  * Code from course material in PG6300, by lecturer Andrea Arcuri.

@@ -6,6 +6,8 @@ let io;
 //{roomId: xyz, hostId: zyx}
 const roomToHost = new Map();
 const roomToPlayers = new Map();
+// const socketToUsername = new Map();
+
 let players = [];
 let currentRoom;
 
@@ -27,7 +29,9 @@ const start = server => {
       if (roomToHost.size === 0) {
         currentRoom = uuid();
         roomToHost.set(currentRoom, socket.id);
-        games.to(roomToHost.get(currentRoom)).emit("hostJoin", { currentRoom, username });
+        games
+          .to(roomToHost.get(currentRoom))
+          .emit("hostJoin", { room: currentRoom, username });
         players.push(username);
         socket.join(currentRoom);
         roomToPlayers.set(currentRoom, [username]);
@@ -73,9 +77,9 @@ const joinRoom = (socket, username, room) => {
   if (!isUserAlreadyInRoom(username, room)) {
     socket.join(room);
     roomToPlayers.set(room, roomToPlayers.get(room).concat(username));
-    socket.emit("initialJoin", roomToPlayers.get(room));
+    socket.emit("initialJoin", { room, username: roomToPlayers.get(room) });
     console.log(username, "JOINED", room);
-    socket.to(room).emit("playerJoin", username);
+    socket.to(room).emit("playerJoin", {room, username});
   } else {
     socket.emit("update", { error: "You are already in this room." });
   }
@@ -87,9 +91,7 @@ const isUserAlreadyInRoom = (username, room) => {
     : false;
 };
 
-const leaveRoom = (socket, username, room) => {
-  
-}
+const leaveRoom = (socket, username, room) => {};
 
 /**
  *  @author: arcuri82

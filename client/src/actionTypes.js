@@ -13,3 +13,5 @@ export const AUTH_USER_SOCKET = "AUTH_USER_SOCKET";
 export const AUTH_USER_SOCKET_ERROR = "AUTH_USER_SOCKET_ERROR";
 export const START_GAME = "START_GAME";
 export const JOIN_GAME = "JOIN_GAME";
+export const PLAYER_JOIN = "PLAYER_JOIN";
+export const PLAYER_LEAVE = "PLAYER_LEAVE";
