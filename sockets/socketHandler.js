@@ -4,7 +4,8 @@ const tokenHandler = require("./tokenHandler")
 let io;
 
 //{roomId: xyz, hostId: zyx}
-const rooms = new Map();
+const roomToHost = new Map();
+let players = [];
 let currentRoom;
 
 const start = server => {
@@ -16,30 +17,39 @@ const start = server => {
 
     socket.on('login', (data) => {
       console.log("LOGINDATA:", data)
-      const userId = getUserId(data);
-      if (userId === null)
-        socket.emit("update", userId);
+      const generatedId = generateUniqueId(data);
 
-      if (rooms.size === 0) {
-        currentRoom = uuid();
-        rooms.set(currentRoom, socket.id);
-        games.to(rooms.get(currentRoom)).emit("hostEvent");
-        socket.join(currentRoom);
-        console.log("CREATED A ROOM WITH HOST")
-      } else {
-        socket.join(currentRoom);
-        console.log("JOINED A ROOM");
-
+      if (generatedId.error !== undefined) {
+        socket.emit("update", generatedId);
+        return
       }
 
+      const username = data.username;
+      console.log("size", roomToHost.size)
+      if (roomToHost.size === 0) {
+        currentRoom = uuid();
+        roomToHost.set(currentRoom, socket.id);
+        games.to(roomToHost.get(currentRoom)).emit("hostEvent");
+        players.push(username);
+        socket.join(currentRoom);
+        console.log("players", players);
+        console.log("CREATED A ROOM WITH HOST");
+      } else {
+        if (!players.includes(username)) {
+          socket.join(currentRoom);
+          console.log("JOINED A ROOM");
 
+        } else {
+          socket.emit("update", { error: "You are already in this room." })
+        }
+      }
     });
 
     // console.log("ID",socket.id);
     // console.log("SOCKET",games.connected);
 
     socket.on("disconnect", () => {
-      if (rooms.get(currentRoom) === socket.id)
+      if (roomToHost.get(currentRoom) === socket.id)
         games.in(currentRoom).clients((error, ids) => {
           if (error) throw error;
           // console.log("IDS:", ids);
@@ -47,7 +57,7 @@ const start = server => {
             games.connected[id].leave(currentRoom)
             console.log(id);
           });
-          rooms.delete(currentRoom)
+          roomToHost.delete(currentRoom)
         })
       // console.log(games.connected)
       console.log("user disconnected");
@@ -65,16 +75,19 @@ const start = server => {
   });
 };
 
+const isUserAlreadyInRoom = (userId, room) => {
+
+}
+
 /**
  *  @author: arcuri82
  *  Code from course material in PG6300, by lecturer Andrea Arcuri.
  *  Adapting for my use.
  */
-const getUserId = (data) => {
+const generateUniqueId = (data) => {
   if (data === null || data === undefined) {
     return { error: "No payload provided" };
   }
-
   const token = data.wstoken;
 
   if (token === null || token === undefined) {
@@ -83,6 +96,7 @@ const getUserId = (data) => {
 
   const userId = tokenHandler.consumeToken(token);
 
+  console.log("userId", userId)
   if (userId === null || userId === undefined) {
     return { error: "Invalid token" };
   }

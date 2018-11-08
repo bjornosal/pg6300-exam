@@ -50,6 +50,7 @@ router.get('/api/user', function (req, res) {
 /**
  * @author arcuri82
  * Code from course material in PG6300, by lecturer Andrea Arcuri. 
+ * Adapted to fit my use.
  */
 router.post('/api/wstoken', function (req, res) {
 
@@ -58,9 +59,8 @@ router.post('/api/wstoken', function (req, res) {
       return;
   }
 
-  const t = token.createToken(req.user.id);
-
-  res.status(201).json({wstoken: t});
+  const generatedToken = token.createToken(req.user.user_id);
+  res.status(201).json({wstoken: generatedToken, username: req.user.username});
 });
 
 

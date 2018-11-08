@@ -2,7 +2,7 @@ const crypto = require("crypto");
 
 /**
  *  @author: arcuri82
- *  Code from course material in PG6300, by lecturer Andrea Arcuri.
+ *  Code from course material inPG6300, by lecturer Andrea Arcuri.
  *  Map from random tokens to userId
  */
    

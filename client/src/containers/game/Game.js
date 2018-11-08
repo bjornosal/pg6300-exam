@@ -19,6 +19,10 @@ class Game extends Component {
     this.socket.on("hostEvent", () => {
       console.log("IM THE HOST");
     });
+
+    this.socket.on("update", (data) => {
+      console.log("Cow say what?",data);
+    });
   };
 
   componentWillUnmount = () => {
