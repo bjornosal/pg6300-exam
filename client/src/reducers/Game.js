@@ -39,10 +39,11 @@ const game = (state = [], action) => {
       };
     case JOIN_GAME:
       console.log(JOIN_GAME);
+      console.log("players", action.players)
       return {
         ...state,
         [action.room]: {
-          players:action.players,
+          players: action.players,
           host: action.host,
           quiz: action.quiz
         }

@@ -40,6 +40,7 @@ class Game extends Component {
 
   onJoinGame = () => {
     this.socket.on("joinGame", data => {
+      console.log("JOIN GAME DATA", data)
       currentRoom = data.room;
       this.props.joinGame(data.room, data.players, data.host, data.quiz);
     });
@@ -61,6 +62,15 @@ class Game extends Component {
     this.props.authenticateUserSocket(socket, this.props.history);
   };
 
+  startGame = () => {
+    //TODO: Emit to room that the game is starting.
+    alert("Start game");
+  };
+
+  informWaitingForMorePlayers = () => {
+    alert("Waiting for more players");
+  }
+
   render() {
     return (
       <div className="gameContainer">
@@ -73,7 +83,9 @@ class Game extends Component {
                 : "I don't know how many questions there are."}
             </p>
             <p className="quizHost">
-              Hosted by: {(this.props.isHost ? "YOU" : "") || (this.props.host ? this.props.host : "Unknown")}
+              Hosted by:{" "}
+              {(this.props.isHost ? "YOU" : "") ||
+                (this.props.host ? this.props.host : "Unknown")}
             </p>
           </div>
           <div className="playersContainer">
@@ -91,7 +103,16 @@ class Game extends Component {
           </div>
           <div className="buttonContainer">
             {this.props.isHost && (
-              <button className="quizButton startButton">Start Game</button>
+              <button
+                className="quizButton startButton"
+                onClick={
+                  this.props.players instanceof Array && this.props.players > 1
+                    ? this.startGame
+                    : this.informWaitingForMorePlayers
+                }
+              >
+                Start Game
+              </button>
             )}
             <button
               className={

@@ -7,7 +7,7 @@ let io;
 
 const roomToHost = new Map();
 const roomToPlayers = new Map();
-
+const socketToUsername = new Map();
 
 let players = [];
 let currentRoom;
@@ -32,6 +32,7 @@ const start = server => {
       }
 
       const username = data.username;
+      socketToUsername.set(socket.id, username);
 
       if (roomToHost.size === 0) {
         currentRoom = uuid();
@@ -42,7 +43,7 @@ const start = server => {
           .emit("hostJoin", { room: currentRoom, username, quiz: currentQuiz });
         players.push(username);
         socket.join(currentRoom);
-        roomToPlayers.set(currentRoom, [username]);
+        roomToPlayers.set(currentRoom, new Set([username]));
       } else {
         joinRoom(
           socket,
@@ -57,9 +58,11 @@ const start = server => {
       if (
         roomToHost.get(currentRoom) !== undefined &&
         roomToHost.get(currentRoom).socketId === socket.id
-      )
+      ) {
         clearRoom(games, currentRoom);
-
+      } else {
+        leaveRoom(socketToUsername.get(socket.id), currentRoom);
+      }
       console.log("user disconnected");
     });
   });
@@ -90,9 +93,8 @@ const clearRoom = (namespace, room) => {
 const joinRoom = (socket, username, room, host) => {
   if (!isUserAlreadyInRoom(username, room)) {
     socket.join(room);
-    roomToPlayers.set(room, roomToPlayers.get(room).concat(username));
-    socket.emit("joinGame", { room, players: roomToPlayers.get(room), host, quiz: currentQuiz });
-    console.log("PLAYERS IN ROOM: ", roomToPlayers.get(room));
+    roomToPlayers.set(room, roomToPlayers.get(room).add(username));
+    socket.emit("joinGame", { room, players: [...roomToPlayers.get(room)], host, quiz: currentQuiz });
     console.log(username, "JOINED", room);
     socket.to(room).emit("playerJoin", { room, username });
   } else {
@@ -102,11 +104,14 @@ const joinRoom = (socket, username, room, host) => {
 
 const isUserAlreadyInRoom = (username, room) => {
   return roomToPlayers.get(room)
-    ? roomToPlayers.get(room).includes(username)
+    ? roomToPlayers.get(room).has(username)
     : false;
 };
 
-const leaveRoom = (socket, username, room) => {};
+const leaveRoom = (username, room) => {
+  roomToPlayers.get(room) ? roomToPlayers.get(room).delete(username) : "";
+  roomToPlayers.set(room, (roomToPlayers.get(room) && roomToPlayers.get(room).size > 1) ? [...roomToPlayers.get(room)] : []);
+};
 
 const getRandomQuiz = () => {
   return queries.getAmountOfQuizzes().then(amountOfQuizzes => {
@@ -116,6 +121,10 @@ const getRandomQuiz = () => {
     })
   })
 }
+
+const enoughPlayersInRoom = (room) => {
+  return roomToPlayers.get(room).size > 1;
+} 
 
 /**
  *  @author: arcuri82
