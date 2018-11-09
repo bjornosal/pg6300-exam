@@ -58,13 +58,18 @@ class Game extends Component {
     });
   };
 
+  onGameStart = () => {
+    this.socket.on("startingGame")
+  }
+
+
   authenticateSocket = socket => {
     this.props.authenticateUserSocket(socket, this.props.history);
   };
 
   startGame = () => {
     //TODO: Emit to room that the game is starting.
-    alert("Start game");
+    this.socket.emit("startGame", currentRoom);
   };
 
   informWaitingForMorePlayers = () => {
@@ -106,7 +111,7 @@ class Game extends Component {
               <button
                 className="quizButton startButton"
                 onClick={
-                  this.props.players instanceof Array && this.props.players > 1
+                  this.props.players instanceof Array && this.props.players.length > 1
                     ? this.startGame
                     : this.informWaitingForMorePlayers
                 }
@@ -129,7 +134,6 @@ class Game extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log("STATE: ", state);
   return {
     players: state.game[currentRoom]
       ? state.game[currentRoom].players

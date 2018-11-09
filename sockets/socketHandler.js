@@ -1,22 +1,22 @@
 const socketIo = require("socket.io");
 const uuid = require("uuid/v4");
 const tokenHandler = require("./tokenHandler");
-const queries = require("../queries")
+const queries = require("../queries");
 
 let io;
 
 const roomToHost = new Map();
 const roomToPlayers = new Map();
 const socketToUsername = new Map();
+const activeGames = new Set();
 
-let players = [];
-let currentRoom;
-let currentQuiz;
+let currentRoom = null;
+let currentQuiz = null;
 /**
- * Shell of this taken from the course code. 
+ * Shell of this taken from the course code.
  * Most code written by me.
  * @author arcuri82 and bjornosal
- * @param {*} server 
+ * @param {*} server
  */
 const start = server => {
   io = socketIo(server);
@@ -34,32 +34,45 @@ const start = server => {
       const username = data.username;
       socketToUsername.set(socket.id, username);
 
-      if (roomToHost.size === 0) {
+      if (currentRoom === null) {
         currentRoom = uuid();
         roomToHost.set(currentRoom, { socketId: socket.id, username });
         currentQuiz = await getRandomQuiz();
         games
           .to(roomToHost.get(currentRoom).socketId)
           .emit("hostJoin", { room: currentRoom, username, quiz: currentQuiz });
-        players.push(username);
         socket.join(currentRoom);
-        roomToPlayers.set(currentRoom, new Set([username]));
+        roomToPlayers.set(currentRoom, new Set(username));
       } else {
         joinRoom(
           socket,
           username,
           currentRoom,
-          roomToHost.get(currentRoom).username
+          roomToHost.get(currentRoom)
+            ? roomToHost.get(currentRoom).username
+            : "Unknown"
         );
+      }
+    });
+
+    socket.on("startGame", data => {
+      if (currentRoom !== null && currentQuiz !== null) {
+        activeGames.add({ room: currentRoom, quiz: currentQuiz });
+
+        currentRoom = null;
+        currentQuiz = null;
+        console.log(activeGames);
       }
     });
 
     socket.on("disconnect", () => {
       if (
         roomToHost.get(currentRoom) !== undefined &&
-        roomToHost.get(currentRoom).socketId === socket.id
+        roomToHost.get(currentRoom).socketId === socket.id &&
+        roomToPlayers.get(currentRoom).size > 1
       ) {
-        clearRoom(games, currentRoom);
+        updateHost(currentRoom);
+        //TODO: Leave room after host has been updated.
       } else {
         leaveRoom(socketToUsername.get(socket.id), currentRoom);
       }
@@ -91,10 +104,19 @@ const clearRoom = (namespace, room) => {
 };
 
 const joinRoom = (socket, username, room, host) => {
-  if (!isUserAlreadyInRoom(username, room)) {
+  if (
+    !isUserAlreadyInRoom(username, room) &&
+    roomToPlayers.get(room) !== undefined
+  ) {
+    console.log("players in room:", roomToPlayers.get(room));
     socket.join(room);
     roomToPlayers.set(room, roomToPlayers.get(room).add(username));
-    socket.emit("joinGame", { room, players: [...roomToPlayers.get(room)], host, quiz: currentQuiz });
+    socket.emit("joinGame", {
+      room,
+      players: [...roomToPlayers.get(room)],
+      host,
+      quiz: currentQuiz
+    });
     console.log(username, "JOINED", room);
     socket.to(room).emit("playerJoin", { room, username });
   } else {
@@ -103,28 +125,58 @@ const joinRoom = (socket, username, room, host) => {
 };
 
 const isUserAlreadyInRoom = (username, room) => {
-  return roomToPlayers.get(room)
+  return roomToPlayers.get(room) && roomToPlayers.get(room).size > 1
     ? roomToPlayers.get(room).has(username)
     : false;
 };
 
 const leaveRoom = (username, room) => {
-  roomToPlayers.get(room) ? roomToPlayers.get(room).delete(username) : "";
-  roomToPlayers.set(room, (roomToPlayers.get(room) && roomToPlayers.get(room).size > 1) ? [...roomToPlayers.get(room)] : []);
+  roomToPlayers.get(room) !== undefined
+    ? roomToPlayers.get(room).delete(username)
+    : "";
+  roomToPlayers.set(
+    room,
+    roomToPlayers.get(room) && roomToPlayers.get(room).size > 0
+      ? roomToPlayers.get(room)
+      : new Set()
+  );
+};
+
+const updateHost = room => {
+  console.log("room to host before", roomToHost);
+  const players = roomToPlayers.get(room).values();
+  let newHostUsername;
+  let potentialHost = players.next().value;
+  while (newHostUsername === undefined && potentialHost !== undefined) {
+    if (potentialHost !== roomToHost.get(room).username) {
+      newHostUsername = potentialHost;
+    } else {
+      potentialHost = players.next().value;
+    }
+  }
+
+  if (newHostUsername === undefined) return;
+
+  //Source: https://stackoverflow.com/questions/47135661/how-to-get-a-key-in-a-javascript-map-by-its-value
+  let newHostKey = [...socketToUsername.entries()]
+    .filter(({ 1: v }) => v === newHostUsername)
+    .map(([k]) => k);
+
+  roomToHost.set(room, { socketId: newHostKey[0], username: newHostUsername });
 };
 
 const getRandomQuiz = () => {
   return queries.getAmountOfQuizzes().then(amountOfQuizzes => {
-    const randomQuizId = Math.floor((Math.random() * amountOfQuizzes) + 1);
+    const randomQuizId = Math.floor(Math.random() * amountOfQuizzes + 1);
     return queries.getQuizWithQuestionsById(randomQuizId).then(quiz => {
       return quiz;
-    })
-  })
-}
+    });
+  });
+};
 
-const enoughPlayersInRoom = (room) => {
+const enoughPlayersInRoom = room => {
   return roomToPlayers.get(room).size > 1;
-} 
+};
 
 /**
  *  @author: arcuri82

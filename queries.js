@@ -82,6 +82,7 @@ const defaultDataInit = rocketLeagueQuestionQueries => {
       rocketLeagueQuestionQueries
     );
     createUser("1", "1");
+    createUser("2", "2");
   });
 };
 

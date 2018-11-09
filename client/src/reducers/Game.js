@@ -39,7 +39,7 @@ const game = (state = [], action) => {
       };
     case JOIN_GAME:
       console.log(JOIN_GAME);
-      console.log("players", action.players)
+      console.log("players", action.players);
       return {
         ...state,
         [action.room]: {
@@ -49,13 +49,16 @@ const game = (state = [], action) => {
         }
       };
     case PLAYER_JOIN:
-      return {
-        ...state,
-        [action.room]: {
-          ...state[action.room],
-              players: [...state[action.room].players, action.username]
-        }
-      };
+      if (!state[action.room].players.includes(action.username))
+        return {
+          ...state,
+          [action.room]: {
+            ...state[action.room],
+            players: [...state[action.room].players, action.username]
+          }
+        };
+      return state;
+
     case PLAYER_LEAVE:
       console.log(PLAYER_LEAVE);
       let playerIndex = state[action.room].players.indexOf(action.username);
@@ -67,8 +70,13 @@ const game = (state = [], action) => {
         ...state,
         [action.room]: {
           ...state[action.room],
-            players: [...state[action.room].players.slice(0,playerIndex),
-            ...state[action.room].players.slice(playerIndex + 1,playerIndex.length)]
+          players: [
+            ...state[action.room].players.slice(0, playerIndex),
+            ...state[action.room].players.slice(
+              playerIndex + 1,
+              playerIndex.length
+            )
+          ]
         }
       };
     default:
