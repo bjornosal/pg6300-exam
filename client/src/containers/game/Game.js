@@ -34,14 +34,14 @@ class Game extends Component {
   onHostEvent = () => {
     this.socket.on("hostJoin", data => {
       currentRoom = data.room;
-      this.props.hostGame(data.room, data.username, true);
+      this.props.hostGame(data.room, data.username, true, data.quiz);
     });
   };
 
   onJoinGame = () => {
     this.socket.on("joinGame", data => {
       currentRoom = data.room;
-      this.props.joinGame(data.room, data.players, data.host);
+      this.props.joinGame(data.room, data.players, data.host, data.quiz);
     });
   };
 
@@ -69,7 +69,7 @@ class Game extends Component {
             <h2 className="quizName">{this.props.quizName || "Quiz X"}</h2>
             <p className="quizQuestions">
               {this.props.questions
-                ? this.props.questions.length + " questions."
+                ? this.props.questions.length + " questions"
                 : "I don't know how many questions there are."}
             </p>
             <p className="quizHost">

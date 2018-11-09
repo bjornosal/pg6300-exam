@@ -33,7 +33,8 @@ const game = (state = [], action) => {
               ? [...state[action.room].players, action.username]
               : action.username,
           isHost: action.isHost,
-          host: action.username
+          host: action.username,
+          quiz: action.quiz
         }
       };
     case JOIN_GAME:
@@ -42,7 +43,8 @@ const game = (state = [], action) => {
         ...state,
         [action.room]: {
           players:action.players,
-          host: action.host
+          host: action.host,
+          quiz: action.quiz
         }
       };
     case PLAYER_JOIN:

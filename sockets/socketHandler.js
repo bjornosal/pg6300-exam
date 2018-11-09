@@ -1,6 +1,8 @@
 const socketIo = require("socket.io");
 const uuid = require("uuid/v4");
 const tokenHandler = require("./tokenHandler");
+const queries = require("../queries")
+
 let io;
 
 const roomToHost = new Map();
@@ -9,7 +11,7 @@ const roomToPlayers = new Map();
 
 let players = [];
 let currentRoom;
-
+let currentQuiz;
 /**
  * Shell of this taken from the course code. 
  * Most code written by me.
@@ -21,7 +23,7 @@ const start = server => {
   const games = io.of("/games");
 
   games.on("connection", socket => {
-    socket.on("login", data => {
+    socket.on("login", async data => {
       const generatedId = generateUniqueId(data);
 
       if (generatedId.error !== undefined) {
@@ -34,14 +36,13 @@ const start = server => {
       if (roomToHost.size === 0) {
         currentRoom = uuid();
         roomToHost.set(currentRoom, { socketId: socket.id, username });
+        currentQuiz = await getRandomQuiz();
         games
           .to(roomToHost.get(currentRoom).socketId)
-          .emit("hostJoin", { room: currentRoom, username });
+          .emit("hostJoin", { room: currentRoom, username, quiz: currentQuiz });
         players.push(username);
         socket.join(currentRoom);
         roomToPlayers.set(currentRoom, [username]);
-
-        console.log("CREATED A ROOM WITH HOST - ", username);
       } else {
         joinRoom(
           socket,
@@ -90,7 +91,7 @@ const joinRoom = (socket, username, room, host) => {
   if (!isUserAlreadyInRoom(username, room)) {
     socket.join(room);
     roomToPlayers.set(room, roomToPlayers.get(room).concat(username));
-    socket.emit("joinGame", { room, players: roomToPlayers.get(room), host });
+    socket.emit("joinGame", { room, players: roomToPlayers.get(room), host, quiz: currentQuiz });
     console.log("PLAYERS IN ROOM: ", roomToPlayers.get(room));
     console.log(username, "JOINED", room);
     socket.to(room).emit("playerJoin", { room, username });
@@ -106,6 +107,15 @@ const isUserAlreadyInRoom = (username, room) => {
 };
 
 const leaveRoom = (socket, username, room) => {};
+
+const getRandomQuiz = () => {
+  return queries.getAmountOfQuizzes().then(amountOfQuizzes => {
+    const randomQuizId = Math.floor((Math.random() * amountOfQuizzes) + 1);
+    return queries.getQuizWithQuestionsById(randomQuizId).then(quiz => {
+      return quiz;
+    })
+  })
+}
 
 /**
  *  @author: arcuri82

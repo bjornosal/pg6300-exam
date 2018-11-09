@@ -7,7 +7,7 @@ import Header from "./containers/header/Header";
 import { connect } from "react-redux";
 
 class App extends Component {
-  componentDidMount() {
+ /*  componentDidMount() {
     this.performRequestToApi()
       .then(res => this.setState({ data: res.server }))
       .catch(err => console.error("ERROR: ", { err }));
@@ -23,7 +23,7 @@ class App extends Component {
 
     return body;
   };
-
+ */
   render() {
     return (
       <BrowserRouter>

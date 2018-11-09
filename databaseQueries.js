@@ -36,5 +36,11 @@ module.exports = {
 	createNewQuestionQuery: `INSERT INTO question(quiz_id, question, answer_1, answer_2, answer_3, answer_4, correct)
 	VALUES($1, $2, $3, $4, $5, $6, $7);`,
 
-	findUserWithUsername: `SELECT * FROM user_information WHERE username = $1;`
+	findUserWithUsername: `SELECT * FROM user_information WHERE username = $1;`,
+
+	getAmountOfQuizzes: `SELECT COUNT(*) FROM quiz`,
+
+	getQuizById: `SELECT * from quiz WHERE quiz_id = $1`,
+
+	getAllQuestionsByQuizId: `SELECT * from question where quiz_id = $1`
 };

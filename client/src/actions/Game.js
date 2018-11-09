@@ -17,18 +17,20 @@ export const startGame = payload => ({
   payload
 });
 
-export const hostGame = (room, username, isHost) => ({
+export const hostGame = (room, username, isHost, quiz) => ({
   type: HOST_GAME,
   room,
   username,
-  isHost
+  isHost,
+  quiz
 });
 
-export const joinGame = (room, players, host) => ({
+export const joinGame = (room, players, host, quiz) => ({
   type: JOIN_GAME,
   room,
   players,
-  host
+  host,
+  quiz
 });
 
 export const playerJoin = (room, username) => ({

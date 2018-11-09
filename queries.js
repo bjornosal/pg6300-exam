@@ -81,7 +81,7 @@ const defaultDataInit = rocketLeagueQuestionQueries => {
       ["Rocket League"],
       rocketLeagueQuestionQueries
     );
-    createUser("1","1");
+    createUser("1", "1");
   });
 };
 
@@ -118,11 +118,11 @@ const createUser = async (username, password) => {
     .hash(password, 12)
     .then(async hashedPassword => {
       try {
-         await client.query(
-          queryTexts.createNewUserWithUsernameQuery,
-          [username, hashedPassword]
-          );
-          return true;
+        await client.query(queryTexts.createNewUserWithUsernameQuery, [
+          username,
+          hashedPassword
+        ]);
+        return true;
       } catch (err) {
         return false;
       }
@@ -132,6 +132,43 @@ const createUser = async (username, password) => {
     });
 };
 
+const getAmountOfQuizzes = async () => {
+  return client
+    .query(queryTexts.getAmountOfQuizzes)
+    .then(res => {
+      return res.rows[0].count;
+    })
+    .catch(err => {
+      return 0;
+    });
+};
+
+const getQuizById = async id => {
+  return client
+    .query(queryTexts.getQuizById, [id])
+    .then(res => {
+      return res.rows[0];
+    })
+    .catch(err => {
+      return -1;
+    });
+};
+
+const getAllQuestionsByQuizId = async id => {
+  return client
+  .query(queryTexts.getAllQuestionsByQuizId, [id])
+  .then(res => {
+    return res.rows
+  })
+}
+
+const getQuizWithQuestionsById = async id => {
+  const quiz = await getQuizById(id); 
+  const quizQuestions = await getAllQuestionsByQuizId(id);
+  quiz["questions"] = quizQuestions;
+  return quiz;
+}
+
 module.exports = {
   createTable,
   createQuiz,
@@ -139,5 +176,7 @@ module.exports = {
   getUser,
   verifyUser,
   createUser,
-  defaultDataInit
+  defaultDataInit,
+  getAmountOfQuizzes,
+  getQuizWithQuestionsById
 };

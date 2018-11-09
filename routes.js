@@ -4,6 +4,12 @@ const passport = require("passport");
 const queries = require("./queries");
 const token = require("./sockets/tokenHandler")
 
+
+/**
+ * Auth endpoints taken from course repository. 
+ * Adapted to suit my own needs, and added database functionality.
+ * @author arcuri82 and bjornosal
+ */
 router.post("/api/login", passport.authenticate("local"), (req, res) => {
   res.status(200).send(req.user);
 });
@@ -52,7 +58,7 @@ router.get('/api/user', function (req, res) {
  * Code from course material in PG6300, by lecturer Andrea Arcuri. 
  * Adapted to fit my use.
  */
-router.post('/api/wstoken', function (req, res) {
+router.post('/api/wstoken', (req, res) =>  {
 
   if(!req.user){
       res.status(401).send();
@@ -64,7 +70,11 @@ router.post('/api/wstoken', function (req, res) {
 });
 
 
-router.get("/api/scores", (req, res) => {
+router.get("/api/quizzes", (req, res) => {
+  queries.getAmountOfQuizzes()
+  .then(res => {
+    console.log("Quiz? ", res)
+  })
   res.send({ score: 2000 });
 });
 
