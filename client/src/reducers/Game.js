@@ -12,7 +12,7 @@ const game = (state = [], action) => {
   switch (action.type) {
     case AUTH_USER_SOCKET:
       console.log(AUTH_USER_SOCKET);
-      return { ...state, loginError: false, errorMsg: "UNKNOWN ERROR" };
+      return { ...state, loginError: false };
     case AUTH_USER_SOCKET_ERROR:
       console.log(AUTH_USER_SOCKET_ERROR);
       return { ...state, loginError: true, errorMsg: action.payload };

@@ -47,7 +47,7 @@ class Game extends Component {
 
   onPlayerJoin = () => {
     this.socket.on("playerJoin", data => {
-      this.props.playerJoin(data.room, data.username );
+      this.props.playerJoin(data.room, data.username);
     });
   };
 
@@ -72,11 +72,16 @@ class Game extends Component {
                 ? this.props.questions.length + " questions."
                 : "I don't know how many questions there are."}
             </p>
+            <p className="quizHost">
+              Hosted by: {(this.props.isHost ? "YOU" : "") || (this.props.host ? this.props.host : "Unknown")}
+            </p>
           </div>
           <div className="playersContainer">
-            {(this.props.players && this.props.players instanceof Array) ? (
+            {this.props.players && this.props.players instanceof Array ? (
               this.props.players.map((player, key) => (
-                <div key={key} className="player">{player}</div>
+                <div key={key} className="player">
+                  {player}
+                </div>
               ))
             ) : (
               <div className="player">
@@ -103,7 +108,7 @@ class Game extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log("STATE: ",state);
+  console.log("STATE: ", state);
   return {
     players: state.game[currentRoom]
       ? state.game[currentRoom].players
@@ -116,7 +121,8 @@ const mapStateToProps = state => {
     questions:
       state.game[currentRoom] && state.game[currentRoom].quiz
         ? state.game[currentRoom].quiz.questions
-        : undefined
+        : undefined,
+    host: state.game[currentRoom] ? state.game[currentRoom].host : undefined
   };
 };
 

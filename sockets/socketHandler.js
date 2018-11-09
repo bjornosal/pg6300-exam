@@ -3,15 +3,19 @@ const uuid = require("uuid/v4");
 const tokenHandler = require("./tokenHandler");
 let io;
 
-//{roomId: xyz, hostId: zyx}
 const roomToHost = new Map();
 const roomToPlayers = new Map();
-//TODO: Add usernames to this shizzle.
-const socketToUsername = new Map();
+
 
 let players = [];
 let currentRoom;
 
+/**
+ * Shell of this taken from the course code. 
+ * Most code written by me.
+ * @author arcuri82 and bjornosal
+ * @param {*} server 
+ */
 const start = server => {
   io = socketIo(server);
   const games = io.of("/games");
@@ -29,9 +33,9 @@ const start = server => {
 
       if (roomToHost.size === 0) {
         currentRoom = uuid();
-        roomToHost.set(currentRoom, socket.id);
+        roomToHost.set(currentRoom, { socketId: socket.id, username });
         games
-          .to(roomToHost.get(currentRoom))
+          .to(roomToHost.get(currentRoom).socketId)
           .emit("hostJoin", { room: currentRoom, username });
         players.push(username);
         socket.join(currentRoom);
@@ -39,12 +43,20 @@ const start = server => {
 
         console.log("CREATED A ROOM WITH HOST - ", username);
       } else {
-        joinRoom(socket, username, currentRoom, roomToHost.get(currentRoom));
+        joinRoom(
+          socket,
+          username,
+          currentRoom,
+          roomToHost.get(currentRoom).username
+        );
       }
     });
 
     socket.on("disconnect", () => {
-      if (roomToHost.get(currentRoom) === socket.id)
+      if (
+        roomToHost.get(currentRoom) !== undefined &&
+        roomToHost.get(currentRoom).socketId === socket.id
+      )
         clearRoom(games, currentRoom);
 
       console.log("user disconnected");
@@ -79,9 +91,9 @@ const joinRoom = (socket, username, room, host) => {
     socket.join(room);
     roomToPlayers.set(room, roomToPlayers.get(room).concat(username));
     socket.emit("joinGame", { room, players: roomToPlayers.get(room), host });
-    console.log("PLAYERS IN ROOM: ", roomToPlayers.get(room))
+    console.log("PLAYERS IN ROOM: ", roomToPlayers.get(room));
     console.log(username, "JOINED", room);
-    socket.to(room).emit("playerJoin", {room, username});
+    socket.to(room).emit("playerJoin", { room, username });
   } else {
     socket.emit("update", { error: "You are already in this room." });
   }
