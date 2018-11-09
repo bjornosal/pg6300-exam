@@ -54,8 +54,6 @@ const game = (state = [], action) => {
           ...state[action.room],
               players: [...state[action.room].players, action.username]
         }
-        
-        
       };
     case PLAYER_LEAVE:
       console.log(PLAYER_LEAVE);

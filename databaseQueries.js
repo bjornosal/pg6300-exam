@@ -18,11 +18,8 @@ module.exports = {
 	question_id SERIAL, 
 	quiz_id int, 
 	question varchar(255),
-	answer_1 varchar(255), 
-	answer_2 varchar(255),
-	answer_3 varchar(255),
-	answer_4 varchar(255),
-	correct varchar(255),
+	answers varchar(255) [], 
+	correct int,
 	PRIMARY KEY (question_id),
     FOREIGN KEY (quiz_id) REFERENCES quiz(quiz_id)
 );`,
@@ -33,8 +30,8 @@ module.exports = {
 	createNewQuizQuery: `INSERT INTO quiz(name) VALUES($1)
 	ON CONFLICT ON CONSTRAINT quiz_name_key DO NOTHING RETURNING *;`,
 
-	createNewQuestionQuery: `INSERT INTO question(quiz_id, question, answer_1, answer_2, answer_3, answer_4, correct)
-	VALUES($1, $2, $3, $4, $5, $6, $7);`,
+	createNewQuestionQuery: `INSERT INTO question(quiz_id, question, answers, correct)
+	VALUES($1, $2, $3, $4);`,
 
 	findUserWithUsername: `SELECT * FROM user_information WHERE username = $1;`,
 
