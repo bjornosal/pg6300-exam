@@ -18,8 +18,15 @@ let currentRoom;
 class Game extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      countdownTimer: 5
+    };
+
     this.socket = undefined;
     currentRoom = null;
+    // eslint-disable-next-line
+    let countdown = null;
   }
 
   componentWillMount = () => {
@@ -35,20 +42,34 @@ class Game extends Component {
 
   componentWillUnmount = () => {
     this.socket.close();
+    if (this.countdown !== null) {
+      clearInterval(this.countdown);
+    }
   };
 
   onHostEvent = () => {
     this.socket.on("hostJoin", data => {
       currentRoom = data.room;
-      this.props.hostGame(data.room, data.username, true, data.quiz);
+      this.props.hostGame(
+        data.room,
+        data.username,
+        true,
+        data.quiz.name,
+        data.quiz.questions.length
+      );
     });
   };
 
   onJoinGame = () => {
     this.socket.on("joinGame", data => {
-      console.log("JOIN GAME DATA", data);
       currentRoom = data.room;
-      this.props.joinGame(data.room, data.players, data.host, data.quiz);
+      this.props.joinGame(
+        data.room,
+        data.players,
+        data.host,
+        data.quiz.name,
+        data.quiz.questions.length
+      );
     });
   };
 
@@ -88,11 +109,21 @@ class Game extends Component {
     this.socket.on("startingGame", data => {
       this.props.history.push("/game/" + data.room);
       this.props.startingGame(data.room, data.quiz);
+      this.startCountdownTimer();
     });
   };
 
   informWaitingForMorePlayers = () => {
     alert("Waiting for more players");
+  };
+
+  startCountdownTimer = () => {
+    this.countdown = setInterval(() => {
+      this.setState(state => {
+        return { countdownTimer: state.countdownTimer - 1 };
+      });
+      if (this.state.countdownTimer === 0) clearInterval(this.countdown);
+    }, 1000);
   };
 
   render() {
@@ -104,8 +135,8 @@ class Game extends Component {
             <div className="quizInformation">
               <h2 className="quizName">{this.props.quizName || "Quiz X"}</h2>
               <p className="quizQuestions">
-                {this.props.questions
-                  ? this.props.questions.length + " questions"
+                {this.props.amountOfQuestions
+                  ? this.props.amountOfQuestions + " questions"
                   : "I don't know how many questions there are."}
               </p>
               <p className="quizHost">
@@ -151,7 +182,16 @@ class Game extends Component {
             </div>
           </div>
         )}
-        { /*TODO: Continue with implementing the countdown and the active game container */<div className="activeGameContainer" />}
+        {this.props.isStarting && !this.props.isStarted && (
+          /*TODO: Continue with implementing the countdown and the active game container */
+          <div className="gameInformationContainer countdownContainer">
+            <div className="countdownTimer">{this.state.countdownTimer}</div>
+          </div>
+        )}
+        {!this.props.isStarting && this.props.isStarted && (
+          /*TODO: Continue with implementing the countdown and the active game container */
+          <div className="gameInformationContainer activeGameContainer" />
+        )}
       </div>
     );
   }
@@ -164,14 +204,12 @@ const mapStateToProps = state => {
       ? state.game[currentRoom].players
       : undefined,
     isHost: state.game[currentRoom] ? state.game[currentRoom].isHost : false,
-    quizName:
-      state.game[currentRoom] && state.game[currentRoom].quiz
-        ? state.game[currentRoom].quiz.name
-        : undefined,
-    questions:
-      state.game[currentRoom] && state.game[currentRoom].quiz
-        ? state.game[currentRoom].quiz.questions
-        : undefined,
+    quizName: state.game[currentRoom]
+      ? state.game[currentRoom].quizName
+      : "Unknown",
+    amountOfQuestions: state.game[currentRoom]
+      ? state.game[currentRoom].amountOfQuestions
+      : 0,
     host: state.game[currentRoom] ? state.game[currentRoom].host : undefined,
     isStarting: state.game[currentRoom]
       ? state.game[currentRoom].isStarting

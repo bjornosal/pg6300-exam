@@ -60,7 +60,7 @@ const start = server => {
       if (currentRoom !== null && currentQuiz !== null) {
         activeGames.set(currentRoom, { quiz: currentQuiz });
 
-        games.emit("startingGame", {
+        games.to(currentRoom).emit("startingGame", {
           room: currentRoom,
           quiz: activeGames.get(currentRoom)
             ? activeGames.get(currentRoom).quiz
@@ -124,6 +124,7 @@ const joinRoom = (socket, username, room, host) => {
     console.log("players in room:", roomToPlayers.get(room));
     socket.join(room);
     roomToPlayers.set(room, roomToPlayers.get(room).add(username));
+    //TODO: Does this need a to?
     socket.emit("joinGame", {
       room,
       players: [...roomToPlayers.get(room)],

@@ -78,4 +78,25 @@
             }
         }
     }
+    .countdownContainer{
+        
+        .countdownTimer{
+            width: 100;
+            height: 100%;
+            color: $color5;
+            text-align: center;
+            font-size: 25em;
+            line-height: 100%;
+            animation: changeFontSize .999999s ease-out 5;
+        }
+
+        @keyframes changeFontSize {
+            0% {
+              font-size: 10em;
+            }
+            100% {
+                font-size: 25em;
+            }
+          }
+    }
 }

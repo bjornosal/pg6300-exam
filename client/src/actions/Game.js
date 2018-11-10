@@ -21,20 +21,22 @@ export const startGame = payload => ({
   payload
 });
 
-export const hostGame = (room, username, isHost, quiz) => ({
+export const hostGame = (room, username, isHost, quizName, amountOfQuestions) => ({
   type: HOST_GAME,
   room,
   username,
   isHost,
-  quiz
+  quizName,
+  amountOfQuestions
 });
 
-export const joinGame = (room, players, host, quiz) => ({
+export const joinGame = (room, players, host,  quizName, amountOfQuestions) => ({
   type: JOIN_GAME,
   room,
   players,
   host,
-  quiz
+  quizName,
+  amountOfQuestions
 });
 
 export const playerJoin = (room, username) => ({
@@ -60,15 +62,17 @@ export const hostChange = (room, username) => ({
   username
 });
 
-const startingQuiz = (room, question) => ({
+const startingQuiz = (room, quizId, question, answers) => ({
   type: GAME_STARTING,
   room,
-  question
+  quizId,
+  question,
+  answers
 });
 
-export const startingGame = (room, question) => {
+export const startingGame = (room, quiz) => {
   return dispatch => {
-    dispatch(startingQuiz(room, question));
+    dispatch(startingQuiz(room, quiz.quiz_id, quiz.questions[0].question, quiz.questions[0].answers));
     setTimeout(() => {
       dispatch({ type: GAME_STARTED, room });
     }, 5000);

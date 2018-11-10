@@ -38,7 +38,8 @@ const game = (state = [], action) => {
               : action.username,
           isHost: action.isHost,
           host: action.username,
-          quiz: action.quiz
+          quizName: action.quizName,
+          amountOfQuestions: action.amountOfQuestions
         }
       };
     case JOIN_GAME:
@@ -48,7 +49,8 @@ const game = (state = [], action) => {
         [action.room]: {
           players: action.players,
           host: action.host,
-          quiz: action.quiz
+          quizName: action.quizName,
+          amountOfQuestions: action.amountOfQuestions
         }
       };
     case PLAYER_JOIN:
@@ -88,7 +90,7 @@ const game = (state = [], action) => {
         ...state,
         [action.room]: {
           ...state[action.room],
-            host: action.username 
+          host: action.username
         }
       };
     case NEW_HOST:
@@ -97,7 +99,7 @@ const game = (state = [], action) => {
         ...state,
         [action.room]: {
           ...state[action.room],
-            isHost: true 
+          isHost: true
         }
       };
     case GAME_STARTING:
@@ -115,6 +117,7 @@ const game = (state = [], action) => {
         ...state,
         [action.room]: {
           ...state[action.room],
+          isStarting: false,
           isStarted: true
         }
       };
