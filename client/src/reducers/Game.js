@@ -104,15 +104,18 @@ const game = (state = [], action) => {
       };
     case GAME_STARTING:
       console.log(GAME_STARTING);
-      return {
+       return {
         ...state,
         [action.room]: {
           ...state[action.room],
-          isStarting: true
+          isStarting: true,
+          question: action.question,
+          answers: action.answers
         }
       };
     case GAME_STARTED:
       console.log(GAME_STARTED);
+      
       return {
         ...state,
         [action.room]: {

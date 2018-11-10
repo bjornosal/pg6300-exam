@@ -31,20 +31,14 @@ const createQuestion = (
   queryText,
   quizId,
   question,
-  [answer1,
-  answer2,
-  answer3,
-  answer4],
+  answers,
   correct
 ) => {
   client
     .query(queryText, [
       quizId,
       question,
-      [answer1,
-      answer2,
-      answer3,
-      answer4],
+      answers,
       correct
     ])
     .then(res => {

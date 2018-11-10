@@ -20,7 +20,8 @@ class Game extends Component {
     super(props);
 
     this.state = {
-      countdownTimer: 5
+      countdownTimer: 5,
+      questionCountdownTimer: 10
     };
 
     this.socket = undefined;
@@ -30,6 +31,7 @@ class Game extends Component {
   }
 
   componentWillMount = () => {
+    this.props.history.push("/game");
     this.socket = io("/games");
     this.authenticateSocket(this.socket);
     this.onHostEvent();
@@ -190,7 +192,19 @@ class Game extends Component {
         )}
         {!this.props.isStarting && this.props.isStarted && (
           /*TODO: Continue with implementing the countdown and the active game container */
-          <div className="gameInformationContainer activeGameContainer" />
+          <div className="gameInformationContainer activeGameContainer">
+            <div className="questionMainContainer">
+              <div className="questionContainer">
+                <div className="question">{this.props.question}</div>
+                <p className="questionCountdown">{this.state.questionCountdownTimer}</p>
+              </div>
+              <div className="answersContainer">
+                {this.props.answers.map((answer, key) => (
+                  <button key={key} className="answer">{answer}</button>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );
@@ -216,7 +230,13 @@ const mapStateToProps = state => {
       : false,
     isStarted: state.game[currentRoom]
       ? state.game[currentRoom].isStarted
-      : false
+      : false,
+      question: state.game[currentRoom] 
+      ? state.game[currentRoom].question
+      : "Missing Question",
+      answers: state.game[currentRoom]
+      ? state.game[currentRoom].answers
+      : ["I don't know."]
   };
 };
 

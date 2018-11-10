@@ -10,7 +10,10 @@ const rocketLeagueQuestionQueries = quiz_id => {
     ["Superstar",
       "Grand Master",
       "Grand Champion",
-      "Challenger"],
+      "Challenger",
+      "Tear, Sweat And Blood",
+      "Ultimate Challenger",
+      "Diamond"],
     2
   );
   queries.createQuestion(
