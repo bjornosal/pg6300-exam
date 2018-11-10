@@ -71,9 +71,9 @@ const start = server => {
         roomToPlayers.get(currentRoom).size > 1
       ) {
         updateHost(games, currentRoom);
-        leaveRoom(socketToUsername.get(socket.id), currentRoom);
+        leaveRoom(socket, currentRoom);
       } else {
-        leaveRoom(socketToUsername.get(socket.id), currentRoom);
+        leaveRoom(socket, currentRoom);
       }
       console.log("user disconnected");
     });
@@ -129,7 +129,8 @@ const isUserAlreadyInRoom = (username, room) => {
     : false;
 };
 
-const leaveRoom = (username, room) => {
+const leaveRoom = (socket, room) => {
+  const username = socketToUsername.get(socket.id); 
   roomToPlayers.get(room) !== undefined
     ? roomToPlayers.get(room).delete(username)
     : "";
@@ -139,6 +140,7 @@ const leaveRoom = (username, room) => {
       ? roomToPlayers.get(room)
       : new Set()
   );
+  socketToUsername.delete(socket.id);
 };
 
 const updateHost = (namespace, room) => {
@@ -159,7 +161,6 @@ const updateHost = (namespace, room) => {
   let newHostKey = [...socketToUsername.entries()]
     .filter(({ 1: v }) => v === newHostUsername)
     .map(([k]) => k);
-
   roomToHost.set(room, { socketId: newHostKey[0], username: newHostUsername });
   namespace.to(newHostKey[0]).emit("newHost", { room: room });
   namespace.emit("hostChange", { room: room, username: newHostUsername });
@@ -176,6 +177,7 @@ const getRandomQuiz = () => {
 
 const enoughPlayersInRoom = room => {
   return roomToPlayers.get(room).size > 1;
+
 };
 
 /**
