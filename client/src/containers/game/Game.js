@@ -6,7 +6,9 @@ import {
   hostGame,
   joinGame,
   playerJoin,
-  playerLeave
+  playerLeave,
+  hostChange,
+  newHost
 } from "../../actions/Game";
 import { withRouter } from "react-router-dom";
 
@@ -25,6 +27,8 @@ class Game extends Component {
     this.onHostEvent();
     this.onJoinGame();
     this.onPlayerJoin();
+    this.onHostChange();
+    this.onNewHost();
   };
 
   componentWillUnmount = () => {
@@ -40,7 +44,7 @@ class Game extends Component {
 
   onJoinGame = () => {
     this.socket.on("joinGame", data => {
-      console.log("JOIN GAME DATA", data)
+      console.log("JOIN GAME DATA", data);
       currentRoom = data.room;
       this.props.joinGame(data.room, data.players, data.host, data.quiz);
     });
@@ -59,9 +63,21 @@ class Game extends Component {
   };
 
   onGameStart = () => {
-    this.socket.on("startingGame")
-  }
+    //TODO: rename
+    this.socket.on("startingGame");
+  };
 
+  onNewHost = () => {
+    this.socket.on("newHost", data => {
+      this.props.newHost(data.room);
+    });
+  };
+
+  onHostChange = () => {
+    this.socket.on("hostChange", data => {
+      this.props.hostChange(data.room, data.username);
+    });
+  };
 
   authenticateSocket = socket => {
     this.props.authenticateUserSocket(socket, this.props.history);
@@ -74,7 +90,7 @@ class Game extends Component {
 
   informWaitingForMorePlayers = () => {
     alert("Waiting for more players");
-  }
+  };
 
   render() {
     return (
@@ -111,7 +127,8 @@ class Game extends Component {
               <button
                 className="quizButton startButton"
                 onClick={
-                  this.props.players instanceof Array && this.props.players.length > 1
+                  this.props.players instanceof Array &&
+                  this.props.players.length > 1
                     ? this.startGame
                     : this.informWaitingForMorePlayers
                 }
@@ -153,5 +170,13 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { authenticateUserSocket, joinGame, playerJoin, playerLeave, hostGame }
+  {
+    authenticateUserSocket,
+    joinGame,
+    playerJoin,
+    playerLeave,
+    hostGame,
+    hostChange,
+    newHost
+  }
 )(withRouter(Game));

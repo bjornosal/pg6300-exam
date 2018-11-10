@@ -5,7 +5,9 @@ import {
   JOIN_GAME,
   PLAYER_JOIN,
   PLAYER_LEAVE,
-  HOST_GAME
+  HOST_GAME,
+  HOST_CHANGE,
+  NEW_HOST
 } from "../actionTypes";
 
 const game = (state = [], action) => {
@@ -39,7 +41,6 @@ const game = (state = [], action) => {
       };
     case JOIN_GAME:
       console.log(JOIN_GAME);
-      console.log("players", action.players);
       return {
         ...state,
         [action.room]: {
@@ -77,6 +78,24 @@ const game = (state = [], action) => {
               playerIndex.length
             )
           ]
+        }
+      };
+    case HOST_CHANGE:
+      console.log(HOST_CHANGE);
+      return {
+        ...state,
+        [action.room]: {
+          ...state[action.room],
+            host: action.username 
+        }
+      };
+    case NEW_HOST:
+      console.log(HOST_CHANGE);
+      return {
+        ...state,
+        [action.room]: {
+          ...state[action.room],
+            isHost: true 
         }
       };
     default:

@@ -61,7 +61,6 @@ const start = server => {
 
         currentRoom = null;
         currentQuiz = null;
-        console.log(activeGames);
       }
     });
 
@@ -71,8 +70,8 @@ const start = server => {
         roomToHost.get(currentRoom).socketId === socket.id &&
         roomToPlayers.get(currentRoom).size > 1
       ) {
-        updateHost(currentRoom);
-        //TODO: Leave room after host has been updated.
+        updateHost(games, currentRoom);
+        leaveRoom(socketToUsername.get(socket.id), currentRoom);
       } else {
         leaveRoom(socketToUsername.get(socket.id), currentRoom);
       }
@@ -142,8 +141,7 @@ const leaveRoom = (username, room) => {
   );
 };
 
-const updateHost = room => {
-  console.log("room to host before", roomToHost);
+const updateHost = (namespace, room) => {
   const players = roomToPlayers.get(room).values();
   let newHostUsername;
   let potentialHost = players.next().value;
@@ -163,6 +161,8 @@ const updateHost = room => {
     .map(([k]) => k);
 
   roomToHost.set(room, { socketId: newHostKey[0], username: newHostUsername });
+  namespace.to(newHostKey[0]).emit("newHost", { room: room });
+  namespace.emit("hostChange", { room: room, username: newHostUsername });
 };
 
 const getRandomQuiz = () => {

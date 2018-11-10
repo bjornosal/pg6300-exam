@@ -5,7 +5,9 @@ import {
   JOIN_GAME,
   PLAYER_JOIN,
   HOST_GAME,
-  PLAYER_LEAVE
+  PLAYER_LEAVE,
+  NEW_HOST,
+  HOST_CHANGE
 } from "../actionTypes";
 
 export const authUserSocket = () => ({
@@ -41,6 +43,17 @@ export const playerJoin = (room, username) => ({
 
 export const playerLeave = (room, username) => ({
   type: PLAYER_LEAVE,
+  room,
+  username
+});
+
+export const newHost = (room) => ({
+  type: NEW_HOST,
+  room
+});
+
+export const hostChange = (room, username) => ({
+  type: HOST_CHANGE,
   room,
   username
 });
