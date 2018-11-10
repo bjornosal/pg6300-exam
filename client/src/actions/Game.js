@@ -7,7 +7,9 @@ import {
   HOST_GAME,
   PLAYER_LEAVE,
   NEW_HOST,
-  HOST_CHANGE
+  HOST_CHANGE,
+  GAME_STARTING,
+  GAME_STARTED
 } from "../actionTypes";
 
 export const authUserSocket = () => ({
@@ -47,7 +49,7 @@ export const playerLeave = (room, username) => ({
   username
 });
 
-export const newHost = (room) => ({
+export const newHost = room => ({
   type: NEW_HOST,
   room
 });
@@ -57,6 +59,21 @@ export const hostChange = (room, username) => ({
   room,
   username
 });
+
+const startingQuiz = (room, question) => ({
+  type: GAME_STARTING,
+  room,
+  question
+});
+
+export const startingGame = (room, question) => {
+  return dispatch => {
+    dispatch(startingQuiz(room, question));
+    setTimeout(() => {
+      dispatch({ type: GAME_STARTED, room });
+    }, 5000);
+  };
+};
 
 export const authenticateUserSocket = (socket, history) => {
   return dispatch => {

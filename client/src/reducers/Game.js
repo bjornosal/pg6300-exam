@@ -7,7 +7,9 @@ import {
   PLAYER_LEAVE,
   HOST_GAME,
   HOST_CHANGE,
-  NEW_HOST
+  NEW_HOST,
+  GAME_STARTING,
+  GAME_STARTED
 } from "../actionTypes";
 
 const game = (state = [], action) => {
@@ -96,6 +98,24 @@ const game = (state = [], action) => {
         [action.room]: {
           ...state[action.room],
             isHost: true 
+        }
+      };
+    case GAME_STARTING:
+      console.log(GAME_STARTING);
+      return {
+        ...state,
+        [action.room]: {
+          ...state[action.room],
+          isStarting: true
+        }
+      };
+    case GAME_STARTED:
+      console.log(GAME_STARTED);
+      return {
+        ...state,
+        [action.room]: {
+          ...state[action.room],
+          isStarted: true
         }
       };
     default:

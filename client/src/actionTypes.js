@@ -18,3 +18,5 @@ export const PLAYER_JOIN = "PLAYER_JOIN";
 export const PLAYER_LEAVE = "PLAYER_LEAVE";
 export const NEW_HOST = "NEW_HOST";
 export const HOST_CHANGE = "HOST_CHANGE";
+export const GAME_STARTING = "GAME_STARTING";
+export const GAME_STARTED = "GAME_STARTED";

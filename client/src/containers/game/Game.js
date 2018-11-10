@@ -8,7 +8,8 @@ import {
   playerJoin,
   playerLeave,
   hostChange,
-  newHost
+  newHost,
+  startingGame
 } from "../../actions/Game";
 import { withRouter } from "react-router-dom";
 
@@ -63,13 +64,6 @@ class Game extends Component {
     });
   };
 
-  onGameStart = () => {
-    //TODO: rename
-    this.socket.on("startingGame", data => {
-      console.log("Start game data", data);
-    });
-  };
-
   onNewHost = () => {
     this.socket.on("newHost", data => {
       this.props.newHost(data.room);
@@ -90,6 +84,13 @@ class Game extends Component {
     this.socket.emit("startGame", currentRoom);
   };
 
+  onGameStart = () => {
+    this.socket.on("startingGame", data => {
+      this.props.history.push("/game/" + data.room);
+      this.props.startingGame(data.room, data.quiz);
+    });
+  };
+
   informWaitingForMorePlayers = () => {
     alert("Waiting for more players");
   };
@@ -97,62 +98,67 @@ class Game extends Component {
   render() {
     return (
       <div className="gameContainer">
-        <div className="gameInformationContainer">
-          <div className="quizInformation">
-            <h2 className="quizName">{this.props.quizName || "Quiz X"}</h2>
-            <p className="quizQuestions">
-              {this.props.questions
-                ? this.props.questions.length + " questions"
-                : "I don't know how many questions there are."}
-            </p>
-            <p className="quizHost">
-              Hosted by:{" "}
-              {(this.props.isHost ? "YOU" : "") ||
-                (this.props.host ? this.props.host : "Unknown")}
-            </p>
-          </div>
-          <div className="playersContainer">
-            {this.props.players && this.props.players instanceof Array ? (
-              this.props.players.map((player, key) => (
-                <div key={key} className="player">
-                  {player}
+        {/* TODO: Move the entire container into it's own component */}
+        {!this.props.isStarting && !this.props.isStarted && (
+          <div className="gameInformationContainer">
+            <div className="quizInformation">
+              <h2 className="quizName">{this.props.quizName || "Quiz X"}</h2>
+              <p className="quizQuestions">
+                {this.props.questions
+                  ? this.props.questions.length + " questions"
+                  : "I don't know how many questions there are."}
+              </p>
+              <p className="quizHost">
+                Hosted by:{" "}
+                {(this.props.isHost ? "YOU" : "") ||
+                  (this.props.host ? this.props.host : "Unknown")}
+              </p>
+            </div>
+            <div className="playersContainer">
+              {this.props.players && this.props.players instanceof Array ? (
+                this.props.players.map((player, key) => (
+                  <div key={key} className="player">
+                    {player}
+                  </div>
+                ))
+              ) : (
+                <div className="player">
+                  {this.props.players ? this.props.players : "No players yet."}
                 </div>
-              ))
-            ) : (
-              <div className="player">
-                {this.props.players ? this.props.players : "No players yet."}
-              </div>
-            )}
-          </div>
-          <div className="buttonContainer">
-            {this.props.isHost && (
+              )}
+            </div>
+            <div className="buttonContainer">
+              {this.props.isHost && (
+                <button
+                  className="quizButton startButton"
+                  onClick={
+                    this.props.players instanceof Array &&
+                    this.props.players.length > 1
+                      ? this.startGame
+                      : this.informWaitingForMorePlayers
+                  }
+                >
+                  Start Game
+                </button>
+              )}
               <button
-                className="quizButton startButton"
-                onClick={
-                  this.props.players instanceof Array &&
-                  this.props.players.length > 1
-                    ? this.startGame
-                    : this.informWaitingForMorePlayers
+                className={
+                  this.props.isHost ? "quizButton leaveButton" : "quizButton"
                 }
               >
-                Start Game
+                Leave Game
               </button>
-            )}
-            <button
-              className={
-                this.props.isHost ? "quizButton leaveButton" : "quizButton"
-              }
-            >
-              Leave Game
-            </button>
+            </div>
           </div>
-        </div>
+        )}
+        { /*TODO: Continue with implementing the countdown and the active game container */<div className="activeGameContainer" />}
       </div>
     );
   }
 }
 
 const mapStateToProps = state => {
+  //TODO: Move the check for state.game[currentRoom] outside the return statement
   return {
     players: state.game[currentRoom]
       ? state.game[currentRoom].players
@@ -166,7 +172,13 @@ const mapStateToProps = state => {
       state.game[currentRoom] && state.game[currentRoom].quiz
         ? state.game[currentRoom].quiz.questions
         : undefined,
-    host: state.game[currentRoom] ? state.game[currentRoom].host : undefined
+    host: state.game[currentRoom] ? state.game[currentRoom].host : undefined,
+    isStarting: state.game[currentRoom]
+      ? state.game[currentRoom].isStarting
+      : false,
+    isStarted: state.game[currentRoom]
+      ? state.game[currentRoom].isStarted
+      : false
   };
 };
 
@@ -179,6 +191,7 @@ export default connect(
     playerLeave,
     hostGame,
     hostChange,
-    newHost
+    newHost,
+    startingGame
   }
 )(withRouter(Game));

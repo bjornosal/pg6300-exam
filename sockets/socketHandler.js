@@ -83,6 +83,12 @@ const start = server => {
       } else {
         leaveRoom(socket, currentRoom);
       }
+
+      if(roomToPlayers.get(currentRoom).size === 0) {
+        currentRoom = null;
+        currentQuiz = null;
+      }
+
       console.log("user disconnected");
     });
   });
