@@ -29,6 +29,7 @@ class Game extends Component {
     this.onPlayerJoin();
     this.onHostChange();
     this.onNewHost();
+    this.onGameStart();
   };
 
   componentWillUnmount = () => {
@@ -64,7 +65,9 @@ class Game extends Component {
 
   onGameStart = () => {
     //TODO: rename
-    this.socket.on("startingGame");
+    this.socket.on("startingGame", data => {
+      console.log("Start game data", data);
+    });
   };
 
   onNewHost = () => {
@@ -84,7 +87,6 @@ class Game extends Component {
   };
 
   startGame = () => {
-    //TODO: Emit to room that the game is starting.
     this.socket.emit("startGame", currentRoom);
   };
 

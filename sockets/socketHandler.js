@@ -8,7 +8,7 @@ let io;
 const roomToHost = new Map();
 const roomToPlayers = new Map();
 const socketToUsername = new Map();
-const activeGames = new Set();
+const activeGames = new Map();
 
 let currentRoom = null;
 let currentQuiz = null;
@@ -55,9 +55,17 @@ const start = server => {
       }
     });
 
-    socket.on("startGame", data => {
+    socket.on("startGame", () => {
+      //TODO: Make this usable for any room, not just the current one.
       if (currentRoom !== null && currentQuiz !== null) {
-        activeGames.add({ room: currentRoom, quiz: currentQuiz });
+        activeGames.set(currentRoom, { quiz: currentQuiz });
+
+        games.emit("startingGame", {
+          room: currentRoom,
+          quiz: activeGames.get(currentRoom)
+            ? activeGames.get(currentRoom).quiz
+            : { error: "No quiz" }
+        });
 
         currentRoom = null;
         currentQuiz = null;
@@ -130,7 +138,7 @@ const isUserAlreadyInRoom = (username, room) => {
 };
 
 const leaveRoom = (socket, room) => {
-  const username = socketToUsername.get(socket.id); 
+  const username = socketToUsername.get(socket.id);
   roomToPlayers.get(room) !== undefined
     ? roomToPlayers.get(room).delete(username)
     : "";
@@ -158,9 +166,10 @@ const updateHost = (namespace, room) => {
   if (newHostUsername === undefined) return;
 
   //Source: https://stackoverflow.com/questions/47135661/how-to-get-a-key-in-a-javascript-map-by-its-value
-  let newHostKey = [...socketToUsername.entries()]
+  const newHostKey = [...socketToUsername.entries()]
     .filter(({ 1: v }) => v === newHostUsername)
     .map(([k]) => k);
+
   roomToHost.set(room, { socketId: newHostKey[0], username: newHostUsername });
   namespace.to(newHostKey[0]).emit("newHost", { room: room });
   namespace.emit("hostChange", { room: room, username: newHostUsername });
@@ -177,7 +186,6 @@ const getRandomQuiz = () => {
 
 const enoughPlayersInRoom = room => {
   return roomToPlayers.get(room).size > 1;
-
 };
 
 /**
