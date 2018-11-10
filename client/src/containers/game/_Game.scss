@@ -2,7 +2,7 @@
     .gameInformationContainer {
         background-color: rgba(0, 0, 0, 0.2);
         width: calc(50em - 1em);
-        height: calc(30em - 1em);
+        min-height: calc(30em - 1em);
         border-radius: .1em;
         margin: auto;
         margin-top: 5em;
@@ -101,7 +101,6 @@
         .questionMainContainer {
             color: $color5;
             text-align: center;
-
             .questionContainer {
                 .question {
                     font-size: 2em;
@@ -123,20 +122,55 @@
                 flex-wrap: wrap;
                 justify-content: flex-start;
                 padding: 1em;
-                
                 .answer {
                     width: calc(50% - .4em);
                     margin: .2em .2em;
                     flex-grow: 2;
-                    height: 5em;
+                    height: 2em;
                     background-color: $color4;
                     border: none;
+                    font-size: 2em;
+                    color: $color5;
                 }
-
                 .answer:hover {
                     cursor: pointer;
                     text-decoration: none;
                     background-color: $color2;
+                }
+                .answerWaiting {
+                    font-size: 3em;
+                    width: 100%;
+                    text-align: center;
+                    line-height: 2em;
+                }
+
+                /**
+                * @author: Martin Wolf
+                * Retrieved at the 10.11.2018
+                * Source: https://martinwolf.org/before-2018/blog/2015/01/pure-css-savingloading-dots-animation/
+                */
+                @keyframes blink {
+                    0% {
+                        opacity: .2;
+                    }
+                    20% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: .2;
+                    }
+                }
+                .answerWaiting span {
+                    animation-name: blink;
+                    animation-duration: 1.4s;
+                    animation-iteration-count: infinite;
+                    animation-fill-mode: both;
+                }
+                .answerWaiting span:nth-child(2) {
+                    animation-delay: .2s;
+                }
+                .answerWaiting span:nth-child(3) {
+                    animation-delay: .4s;
                 }
             }
         }

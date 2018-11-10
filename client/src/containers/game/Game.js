@@ -18,16 +18,21 @@ let currentRoom;
 class Game extends Component {
   constructor(props) {
     super(props);
+    
+    // eslint-disable-next-line
+    let countdown = null;
+    // eslint-disable-next-line
+    let questionCountdown = null;
 
     this.state = {
       countdownTimer: 5,
-      questionCountdownTimer: 10
+      questionCountdownTimer: 10,
+      answered: false
     };
 
     this.socket = undefined;
     currentRoom = null;
-    // eslint-disable-next-line
-    let countdown = null;
+    
   }
 
   componentWillMount = () => {
@@ -112,12 +117,26 @@ class Game extends Component {
       this.props.history.push("/game/" + data.room);
       this.props.startingGame(data.room, data.quiz);
       this.startCountdownTimer();
+      setTimeout(() => {
+        this.startQuestionCountdownTimer(10);
+        setTimeout(() => {
+          //TODO: Move to next "score" screen.
+          //TODO: Can this be in the thunk?
+        }, 10000);
+      }, 5000);
     });
   };
 
   informWaitingForMorePlayers = () => {
     alert("Waiting for more players");
   };
+
+
+  answerQuestion = (answer) => {
+    console.log("ANSWER", answer)
+    this.socket.emit("answerQuestion", answer);
+    this.setState({answered: true});
+  }
 
   startCountdownTimer = () => {
     this.countdown = setInterval(() => {
@@ -127,6 +146,17 @@ class Game extends Component {
       if (this.state.countdownTimer === 0) clearInterval(this.countdown);
     }, 1000);
   };
+
+  startQuestionCountdownTimer = (questionTime) => {
+    this.setState({ questionCountdownTimer: questionTime });
+
+    this.questionCountdown = setInterval(() => {
+      this.setState(state => {
+        return { questionCountdownTimer: state.questionCountdownTimer - 1 };
+      });
+      if (this.state.questionCountdownTimer === 0) clearInterval(this.questionCountdown);
+    }, 1000);
+  }
 
   render() {
     return (
@@ -199,9 +229,9 @@ class Game extends Component {
                 <p className="questionCountdown">{this.state.questionCountdownTimer}</p>
               </div>
               <div className="answersContainer">
-                {this.props.answers.map((answer, key) => (
-                  <button key={key} className="answer">{answer}</button>
-                ))}
+                {(!this.state.answered && this.props.answers.map((answer, key) => (
+                  <button key={key} className="answer" onClick={() => {this.answerQuestion(key)}}>{answer}</button>
+                ))) || <div className="answerWaiting">Waiting for the other players<span>.</span><span>.</span><span>.</span></div>}
               </div>
             </div>
           </div>
