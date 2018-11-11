@@ -46,13 +46,12 @@ class Game extends Component {
     this.onNewHost();
     this.onGameStart();
     this.onNewQuestion();
+    this.onQuestionDone();
   };
 
   componentWillUnmount = () => {
     this.socket.close();
-    if (this.countdown !== null) {
-      clearInterval(this.countdown);
-    }
+    this.stopAllCountdownTimers();
   };
 
   onHostEvent = () => {
@@ -122,10 +121,10 @@ class Game extends Component {
         this.startQuestionCountdownTimer(10);
         setTimeout(() => {
           //TODO: Move to next "score" screen.
-         /*  this.setState({
-            moreQuestions:
-              data.questionNumber !== data.quiz.questions.length ? true : false
-          }); */
+          /*  this.setState({
+             moreQuestions:
+               data.questionNumber !== data.quiz.questions.length ? true : false
+           }); */
         }, 10000);
       }, 5000);
     });
@@ -135,23 +134,30 @@ class Game extends Component {
     this.socket.on("newQuestion", data => {
       this.props.getNewQuestion(data.room, data.quiz, data.questionNumber);
       this.startCountdownTimer();
-      
+
       this.setState({
         countdownTimer: 5,
         questionCountdownTimer: 10,
         answered: false
-      })
+      });
 
       setTimeout(() => {
         this.startQuestionCountdownTimer(10);
         setTimeout(() => {
           //TODO: Move to next "score" screen.
-          /* this.setState({
-            moreQuestions:
-              data.questionNumber !== data.quiz.questions.length ? true : false
-          }); */
+          this.setState({
+            questionDone: true
+          });
         }, 10000);
       }, 5000);
+    });
+  };
+
+  onQuestionDone = () => {
+    this.socket.on("questionDone", () => {
+      this.setState({
+        questionDone: true
+      });
     });
   };
 
@@ -166,6 +172,16 @@ class Game extends Component {
 
   nextQuestion = () => {
     this.socket.emit("nextQuestion", { room: currentRoom });
+    this.setState({ questionDone: false, answered: false });
+  };
+
+  stopAllCountdownTimers = () => {
+    if (this.countdown !== null) {
+      clearInterval(this.countdown);
+    }
+    if (this.questionCountdown !== null) {
+      clearInterval(this.questionCountdown);
+    }
   };
 
   startCountdownTimer = () => {
@@ -252,15 +268,17 @@ class Game extends Component {
           </div>
         )}
         {/*TODO: Continue with implementing the countdown and the active game container */}
-        <div className="gameInformationContainer activeGameContainer">
-          {!this.props.isStarting && this.props.isStarted && (
+        {!this.props.isStarting && this.props.isStarted && (
+          <div className="gameInformationContainer activeGameContainer">
             <div className="questionMainContainer">
-              <div className="questionContainer">
-                <div className="question">{this.props.question}</div>
-                <p className="questionCountdown">
-                  {this.state.questionCountdownTimer}
-                </p>
-              </div>
+              {!this.state.questionDone && (
+                <div className="questionContainer">
+                  <div className="question">{this.props.question}</div>
+                  <p className="questionCountdown">
+                    {this.state.questionCountdownTimer}
+                  </p>
+                </div>
+              )}
               <div className="answersContainer">
                 {(!this.state.answered &&
                   this.props.answers.map((answer, key) => (
@@ -273,23 +291,35 @@ class Game extends Component {
                     >
                       {answer}
                     </button>
-                  ))) || (
-                  <div className="answerWaiting">
-                    Waiting for the other players
-                    <span>.</span>
-                    <span>.</span>
-                    <span>.</span>
-                  </div>
+                  ))) ||
+                  ((!this.state.questionDone && (
+                    <div className="answerWaiting">
+                      Waiting for the other players
+                      <span>.</span>
+                      <span>.</span>
+                      <span>.</span>
+                    </div>
+                  )) ||
+                    (!this.props.isHost && (
+                      <div className="answerWaiting">
+                        Waiting for the next question
+                        <span>.</span>
+                        <span>.</span>
+                        <span>.</span>
+                      </div>
+                    )))}
+                {this.props.isHost && (
+                  <button
+                    onClick={this.nextQuestion}
+                    className="nextQuestionButton"
+                  >
+                    Next Question
+                  </button>
                 )}
               </div>
             </div>
-          )}
-          {this.props.isHost && 
-            <button onClick={this.nextQuestion} className="nextQuestionButton">
-              Next Question
-            </button>
-          }
-        </div>
+          </div>
+        )}
       </div>
     );
   }

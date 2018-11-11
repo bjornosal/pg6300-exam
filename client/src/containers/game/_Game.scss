@@ -173,6 +173,26 @@
                 .answerWaiting span:nth-child(3) {
                     animation-delay: .4s;
                 }
+
+
+                
+            }
+            .nextQuestionButton{
+                border: none;
+                margin: 0 auto; 
+                border-radius: .1em;
+                font-size: 2em;
+                background-color: $color4;
+                width: calc(75% - .4em);
+                height: 5em;
+                background-color: $color4;
+                font-size: 2em;
+                color: $color5;
+            }
+            .nextQuestionButton:hover {
+                cursor: pointer;
+                text-decoration: none;
+                background-color: $color2;
             }
         }
     }

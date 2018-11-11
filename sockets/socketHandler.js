@@ -9,6 +9,7 @@ const roomToHost = new Map();
 const roomToPlayers = new Map();
 const socketToUsername = new Map();
 const socketToScore = new Map();
+const socketToAnswer = new Map();
 const activeGames = new Map();
 const roomTimer = new Map();
 
@@ -17,8 +18,6 @@ let currentQuiz = null;
 /**
  * Shell of this taken from the course code.
  * Most code written by me.
- * @author arcuri82 and bjornosal
- * @param {*} server
  */
 const start = server => {
   io = socketIo(server);
@@ -72,20 +71,19 @@ const start = server => {
         const timerRoom = currentRoom;
         setTimeout(() => {
           roomTimer.set(timerRoom, Date.now());
-          console.log("TIMERS:", roomTimer);
         }, 5000);
         currentRoom = null;
         currentQuiz = null;
       }
     });
 
-    socket.on("answerQuestion", data => {
+    socket.on("answerQuestion", async data => {
       const gameInformation = activeGames.get(data.room);
 
       if (gameInformation) {
-        const correctAnswer =
-          gameInformation.quiz.questions[gameInformation.questionNumber]
-            .correct;
+        const correctAnswer = gameInformation.quiz.questions[gameInformation.questionNumber].correct;
+
+        socket["answered"] = true;
         if (correctAnswer === data.answer) {
           const answerTime = Date.now();
           const timeElaped = roomTimer.get(data.room) - answerTime;
@@ -93,6 +91,12 @@ const start = server => {
           socketToScore.get(socket.id)
             ? socketToScore.set(socket.id, socketToScore.get(socket.id) + score)
             : socketToScore.set(socket.id, score);
+        }
+
+        
+        
+        if (await everyoneHasAnswered(games, data.room)) {
+          games.to(data.room).emit("questionDone");
         }
       }
     });
@@ -105,6 +109,7 @@ const start = server => {
           quiz: gameInformation.quiz,
           questionNumber: gameInformation.questionNumber + 1
         });
+        setAllSocketsInRoomToNotAnswered(games, data.room);
       }
     });
 
@@ -151,6 +156,32 @@ const clearRoom = (namespace, room) => {
     roomToPlayers.delete(room);
   });
 };
+
+const setAllSocketsInRoomToNotAnswered = (namespace, room) => {
+  namespace.in(room).clients((error, ids) => {
+    if (error) throw error;
+    ids.forEach(id => {
+      namespace.connected[id]["answered"] = false;
+    });
+  });
+}
+
+const everyoneHasAnswered = async (namespace, room) => {
+  let allAnswered = true;
+  await namespace.in(room).clients((error, ids) => {
+    if (error) throw error;
+
+    ids.forEach(id => {
+      console.log(namespace.connected[id].answered);
+      //TODO: Continue here, check the answered state.
+      if(namespace.connected[id].answered === false ||
+         namespace.connected[id].answered === undefined)
+         allAnswered = false;
+    });
+  });
+  return allAnswered;
+}
+
 
 const joinRoom = (socket, username, room, host) => {
   if (
