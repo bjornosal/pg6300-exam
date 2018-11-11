@@ -62,7 +62,7 @@ const game = (state = [], action) => {
           ...state,
           [action.room]: {
             ...state[action.room],
-            players: [...state[action.room].players, action.username]
+            players: [state[action.room].players, action.username]
           }
         };
       return state;

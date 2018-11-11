@@ -13,7 +13,7 @@ import {
   getNewQuestion,
   finishGame
 } from "../../actions/Game";
-import { withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 let currentRoom;
 
@@ -369,6 +369,11 @@ class Game extends Component {
                       </table>
                     </div>
                   )}
+
+                  {this.state.questionDone &&
+                  this.props.lastQuestion && (
+                    <Link to="/" className="returnHomeButton">Return to main menu</Link>
+                    )}
               </div>
             </div>
           </div>
