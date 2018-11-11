@@ -95,7 +95,7 @@ class Game extends Component {
 
   onNewHost = () => {
     this.socket.on("newHost", data => {
-      console.log("New host??", this.socket.id)
+      console.log("New host??", this.socket.id);
       this.props.newHost(data.room);
     });
   };
@@ -196,7 +196,7 @@ class Game extends Component {
     if (this.introQuestionTimer !== null) {
       clearTimeout(this.introQuestionTimer);
     }
-  }
+  };
 
   startCountdownTimer = () => {
     this.countdown = setInterval(() => {
@@ -246,10 +246,10 @@ class Game extends Component {
                   </div>
                 ))
               ) : (
-                  <div className="player">
-                    {this.props.players ? this.props.players : "No players yet."}
-                  </div>
-                )}
+                <div className="player">
+                  {this.props.players ? this.props.players : "No players yet."}
+                </div>
+              )}
             </div>
             <div className="buttonContainer">
               {this.props.isHost && (
@@ -257,7 +257,7 @@ class Game extends Component {
                   className="quizButton startButton"
                   onClick={
                     this.props.players instanceof Array &&
-                      this.props.players.length > 1
+                    this.props.players.length > 1
                       ? this.startGame
                       : this.informWaitingForMorePlayers
                   }
@@ -322,7 +322,7 @@ class Game extends Component {
                         <span>.</span>
                       </div>
                     )))}
-                {this.props.isHost && (
+                {this.props.isHost && !this.props.lastQuestion && (
                   <button
                     onClick={this.nextQuestion}
                     className="nextQuestionButton"
@@ -364,7 +364,10 @@ const mapStateToProps = state => {
       : "Missing Question",
     answers: state.game[currentRoom]
       ? state.game[currentRoom].answers
-      : ["I don't know."]
+      : ["I don't know."],
+    lastQuestion: state.game[currentRoom]
+      ? state.game[currentRoom].lastQuestion
+      : false
   };
 };
 

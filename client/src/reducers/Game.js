@@ -10,7 +10,8 @@ import {
   NEW_HOST,
   GAME_STARTING,
   GAME_STARTED,
-  NEXT_QUESTION
+  NEXT_QUESTION,
+  LAST_QUESTION
 } from "../actionTypes";
 
 const game = (state = [], action) => {
@@ -136,6 +137,20 @@ const game = (state = [], action) => {
           answers: action.answers,
           isStarting: true,
           isStarted: false
+        }
+      };
+    case LAST_QUESTION:
+      console.log(LAST_QUESTION);
+      
+      return {
+        ...state,
+        [action.room]: {
+          ...state[action.room],
+          question: action.question,
+          answers: action.answers,
+          isStarting: true,
+          isStarted: false,
+          lastQuestion: action.lastQuestion
         }
       };
     default:

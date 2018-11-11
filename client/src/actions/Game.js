@@ -10,7 +10,8 @@ import {
   HOST_CHANGE,
   GAME_STARTING,
   GAME_STARTED,
-  NEXT_QUESTION
+  NEXT_QUESTION,
+  LAST_QUESTION
 } from "../actionTypes";
 
 export const authUserSocket = () => ({
@@ -79,11 +80,20 @@ const startingQuiz = (room, quizId, question, answers) => ({
 
 const newQuestion = (room, quizId, question, answers) => ({
   type: NEXT_QUESTION,
-  room, 
-  quizId, 
+  room,
+  quizId,
   question,
   answers
-}); 
+});
+
+const lastQuestion = (room, quizId, question, answers) => ({
+  type: LAST_QUESTION,
+  room,
+  quizId,
+  question,
+  answers,
+  lastQuestion: true
+});
 
 export const startingGame = (room, quiz, questionNumber) => {
   return dispatch => {
@@ -104,14 +114,29 @@ export const startingGame = (room, quiz, questionNumber) => {
 export const getNewQuestion = (room, quiz, questionNumber) => {
   return dispatch => {
     //TODO: add 5 second timeout
-    dispatch(
-      newQuestion(
-        room,
-        quiz.quiz_id,
-        quiz.questions[questionNumber].question,
-        quiz.questions[questionNumber].answers
-      )
-    );
+    console.log("QUIZ", quiz);
+    console.log("QUIZ", quiz.questions);
+    console.log("size", quiz.questions.size);
+    console.log("length", quiz.questions.length);
+    if ((quiz.questions.length - 1) === questionNumber) {
+      dispatch(
+        lastQuestion(
+          room,
+          quiz.quiz_id,
+          quiz.questions[questionNumber].question,
+          quiz.questions[questionNumber].answers
+        )
+      );
+    } else {
+      dispatch(
+        newQuestion(
+          room,
+          quiz.quiz_id,
+          quiz.questions[questionNumber].question,
+          quiz.questions[questionNumber].answers
+        )
+      );
+    }
     setTimeout(() => {
       dispatch({ type: GAME_STARTED, room });
     }, 5000);
