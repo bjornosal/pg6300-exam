@@ -7,9 +7,7 @@ let io;
 
 const roomToHost = new Map();
 const roomToPlayers = new Map();
-const socketToUsername = new Map();
 const socketToScore = new Map();
-const socketToAnswer = new Map();
 const activeGames = new Map();
 const roomTimer = new Map();
 
@@ -71,7 +69,7 @@ const start = server => {
         const timerRoom = currentRoom;
         setTimeout(() => {
           roomTimer.set(timerRoom, Date.now());
-        }, 5000);
+        }, 3000);
         currentRoom = null;
         currentQuiz = null;
       }
@@ -90,9 +88,12 @@ const start = server => {
           const answerTime = Date.now();
           const timeElaped = roomTimer.get(data.room) - answerTime;
           const score = 15000 + timeElaped;
-          socketToScore.get(socket.id)
-            ? socketToScore.set(socket.id, socketToScore.get(socket.id) + score)
-            : socketToScore.set(socket.id, score);
+
+          socket.score
+            ? socket.score = socket.score + score
+            : socket["score"] = score;
+          
+          console.log("SCORE:" , socket.score);
         }
 
         if (await everyoneHasAnswered(games, data.room)) {

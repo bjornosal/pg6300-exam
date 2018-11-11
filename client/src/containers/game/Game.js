@@ -24,10 +24,12 @@ class Game extends Component {
     let countdown = null;
     // eslint-disable-next-line
     let questionCountdown = null;
+    // eslint-disable-next-line
     let introQuestionTimer = null;
+    // eslint-disable-next-line
     let finishQuestionTimer = null;
     this.state = {
-      countdownTimer: 5,
+      countdownTimer: 3,
       questionCountdownTimer: 10,
       answered: false
     };
@@ -119,16 +121,14 @@ class Game extends Component {
       this.props.history.push("/game/" + data.room);
       this.props.startingGame(data.room, data.quiz, data.questionNumber);
       this.startCountdownTimer();
-      setTimeout(() => {
+      this.introQuestionTimer = setTimeout(() => {
         this.startQuestionCountdownTimer(10);
-        setTimeout(() => {
-          //TODO: Move to next "score" screen.
-          /*  this.setState({
-             moreQuestions:
-               data.questionNumber !== data.quiz.questions.length ? true : false
-           }); */
+        this.finishQuestionTimer = setTimeout(() => {
+          this.setState({
+            questionDone: true
+          });
         }, 10000);
-      }, 5000);
+      }, 3000);
     });
   };
 
@@ -139,7 +139,7 @@ class Game extends Component {
       this.props.getNewQuestion(data.room, data.quiz, data.questionNumber);
 
       this.setState({
-        countdownTimer: 5,
+        countdownTimer: 3,
         questionCountdownTimer: 10,
         answered: false,
         questionDone: false
@@ -154,7 +154,7 @@ class Game extends Component {
             questionDone: true
           });
         }, 10000);
-      }, 5000);
+      }, 3000);
     });
   };
 
@@ -246,10 +246,10 @@ class Game extends Component {
                   </div>
                 ))
               ) : (
-                <div className="player">
-                  {this.props.players ? this.props.players : "No players yet."}
-                </div>
-              )}
+                  <div className="player">
+                    {this.props.players ? this.props.players : "No players yet."}
+                  </div>
+                )}
             </div>
             <div className="buttonContainer">
               {this.props.isHost && (
@@ -257,7 +257,7 @@ class Game extends Component {
                   className="quizButton startButton"
                   onClick={
                     this.props.players instanceof Array &&
-                    this.props.players.length > 1
+                      this.props.players.length > 1
                       ? this.startGame
                       : this.informWaitingForMorePlayers
                   }
@@ -294,7 +294,8 @@ class Game extends Component {
                 </div>
               )}
               <div className="answersContainer">
-                {(!this.state.answered &&
+                {(!this.state.questionDone &&
+                  !this.state.answered &&
                   this.props.answers.map((answer, key) => (
                     <button
                       key={key}
@@ -306,7 +307,7 @@ class Game extends Component {
                       {answer}
                     </button>
                   ))) ||
-                  ((!this.state.questionDone && (
+                  ((!this.state.questionDone && !this.props.lastQuestion && (
                     <div className="answerWaiting">
                       Waiting for the other players
                       <span>.</span>
@@ -322,13 +323,19 @@ class Game extends Component {
                         <span>.</span>
                       </div>
                     )))}
-                {this.props.isHost && !this.props.lastQuestion && (
-                  <button
-                    onClick={this.nextQuestion}
-                    className="nextQuestionButton"
-                  >
-                    Next Question
-                  </button>
+                {this.props.isHost &&
+                  !this.props.lastQuestion &&
+                  this.state.questionDone && (
+                    <button
+                      onClick={this.nextQuestion}
+                      className="nextQuestionButton"
+                    >
+                      Next Question
+                    </button>
+                  )}
+
+                {this.state.questionDone && this.props.lastQuestion && (
+                  <div className="theScores">THE SCORES!</div>
                 )}
               </div>
             </div>

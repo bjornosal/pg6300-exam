@@ -107,17 +107,12 @@ export const startingGame = (room, quiz, questionNumber) => {
     );
     setTimeout(() => {
       dispatch({ type: GAME_STARTED, room });
-    }, 5000);
+    }, 3000);
   };
 };
 
 export const getNewQuestion = (room, quiz, questionNumber) => {
   return dispatch => {
-    //TODO: add 5 second timeout
-    console.log("QUIZ", quiz);
-    console.log("QUIZ", quiz.questions);
-    console.log("size", quiz.questions.size);
-    console.log("length", quiz.questions.length);
     if ((quiz.questions.length - 1) === questionNumber) {
       dispatch(
         lastQuestion(
@@ -139,7 +134,7 @@ export const getNewQuestion = (room, quiz, questionNumber) => {
     }
     setTimeout(() => {
       dispatch({ type: GAME_STARTED, room });
-    }, 5000);
+    }, 3000);
   };
 };
 
