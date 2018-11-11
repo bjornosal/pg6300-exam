@@ -46,6 +46,7 @@ class Game extends Component {
     this.onHostEvent();
     this.onJoinGame();
     this.onPlayerJoin();
+    this.onPlayerLeave();
     this.onHostChange();
     this.onNewHost();
     this.onGameStart();
@@ -92,6 +93,7 @@ class Game extends Component {
   };
 
   onPlayerLeave = () => {
+    
     this.socket.on("playerLeave", data => {
       this.props.playerLeave(data.room, data.username);
     });
@@ -276,13 +278,13 @@ class Game extends Component {
                   Start Game
                 </button>
               )}
-              <button
+              <Link to="/"
                 className={
                   this.props.isHost ? "quizButton leaveButton" : "quizButton"
                 }
               >
                 Leave Game
-              </button>
+              </Link>
             </div>
           </div>
         )}

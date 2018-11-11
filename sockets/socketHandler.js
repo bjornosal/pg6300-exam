@@ -266,6 +266,7 @@ const leaveRoom = (socket, room) => {
       ? roomToPlayers.get(room)
       : new Set()
   );
+  socket.to(room).emit("playerLeave", { room, username: socket.username });
 };
 
 const updateHost = async (namespace, room) => {

@@ -58,7 +58,6 @@ const game = (state = [], action) => {
       };
     case PLAYER_JOIN:
       if (!state[action.room].players.includes(action.username)) {
-        console.log("PLAYERS", state[action.room].players instanceof Array);
         return {
           ...state,
           [action.room]: {
@@ -74,6 +73,7 @@ const game = (state = [], action) => {
 
     case PLAYER_LEAVE:
       console.log(PLAYER_LEAVE);
+      console.log(action)
       let playerIndex = state[action.room].players.indexOf(action.username);
       /**
        * Source for removing with spread operator to keep immutability.
