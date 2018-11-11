@@ -16,7 +16,7 @@ const rocketLeagueQuestionQueries = quiz_id => {
       "Diamond"],
     2
   );
-  queries.createQuestion(
+   queries.createQuestion(
     queryTexts.createNewQuestionQuery,
     quiz_id,
     "What are the default team colors",
@@ -26,7 +26,7 @@ const rocketLeagueQuestionQueries = quiz_id => {
       "Red and Blue"],
     0
   );
-  queries.createQuestion(
+/*  queries.createQuestion(
     queryTexts.createNewQuestionQuery,
     quiz_id,
     "Who has the nickname 'The Mountain'",
@@ -45,7 +45,7 @@ const rocketLeagueQuestionQueries = quiz_id => {
       "Scrub Killa",
       "Post Gresql"],
     2
-  );
+  ); */
 };
 
 

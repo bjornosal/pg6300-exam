@@ -41,7 +41,6 @@ const start = server => {
         socket.join(currentRoom);
         socket["currentRoom"] = currentRoom;
         roomToPlayers.set(currentRoom, new Set([socket.id]));
-        
       } else {
         joinRoom(
           socket,
@@ -91,18 +90,24 @@ const start = server => {
           const score = 15000 + timeElaped;
 
           socket.score
-            ? socket.score = socket.score + score
-            : socket["score"] = score;
-          
-          console.log("SCORE:" , socket.score);
+            ? (socket.score = socket.score + score)
+            : (socket["score"] = score);
         }
 
         if (await everyoneHasAnswered(games, data.room)) {
           games.to(data.room).emit("questionDone");
-          if((gameInformation.quiz.questions.length - 1) === gameInformation.questionNumber) {
-            console.log("THE SCORES ARE BEING SENT OUT BY RAVENS!")
-            console.log("room to players with scores", roomToPlayers);
-            // games.to(data.room).emit("gameFinish", score);
+          if (
+            gameInformation.quiz.questions.length - 1 ===
+            gameInformation.questionNumber
+          ) {
+          
+            let scores = [];
+            for(let player of roomToPlayers.get(data.room).values()) {
+              games.connected[player] ? 
+              scores.push({[player]: games.connected[player].score}) : 
+              "";
+            }
+            games.to(data.room).emit("gameFinish",{sc: scores} ); 
           }
         }
       }
@@ -127,7 +132,6 @@ const start = server => {
     socket.on("disconnect", () => {
       const room = socket.currentRoom;
       if (room !== undefined) {
-        console.log("THE SIZE IS AMAZING: ", roomToPlayers.get(room).size);
         if (
           roomToHost.get(room) !== undefined &&
           roomToHost.get(room).socketId === socket.id &&
@@ -209,15 +213,13 @@ const joinRoom = async (socket, username, namespace, room, host) => {
     //TODO: Does this need a to?
     //TODO: IS SOCKET ID, not USERNAME RIGHT NOW
 
-    let allPlayers = []; 
+    let allPlayers = [];
     await namespace.in(room).clients((error, ids) => {
       if (error) throw error;
-        ids.forEach(id => {
-          allPlayers.push(namespace.connected[id].username);
+      ids.forEach(id => {
+        allPlayers.push(namespace.connected[id].username);
       });
-    })
-
-
+    });
 
     socket.emit("joinGame", {
       room,
@@ -271,12 +273,11 @@ const updateHost = async (namespace, room) => {
     if (error) throw error;
 
     ids.forEach(id => {
-      if (id === newHostKey){
-        newHostUsername = namespace.connected[id].username;}
+      if (id === newHostKey) {
+        newHostUsername = namespace.connected[id].username;
+      }
     });
-  })
-  console.log("HOST KEY", newHostKey);
-  console.log("HOST USERNAME", newHostUsername);
+  });
   roomToHost.set(room, { socketId: newHostKey, username: newHostUsername });
   namespace.to(newHostKey).emit("newHost", { room: room });
   namespace.emit("hostChange", { room: room, username: newHostUsername });

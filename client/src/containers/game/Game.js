@@ -50,6 +50,7 @@ class Game extends Component {
     this.onGameStart();
     this.onNewQuestion();
     this.onQuestionDone();
+    this.onGameFinish();
   };
 
   componentWillUnmount = () => {
@@ -107,6 +108,12 @@ class Game extends Component {
       this.props.hostChange(data.room, data.username);
     });
   };
+
+  onGameFinish = () => {
+    this.socket.on("gameFinish", data => {
+      console.log("GAME FINISHED:", data);
+    });
+  }
 
   authenticateSocket = socket => {
     this.props.authenticateUserSocket(socket, this.props.history);
