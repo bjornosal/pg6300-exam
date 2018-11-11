@@ -10,7 +10,8 @@ import {
   hostChange,
   newHost,
   startingGame,
-  getNewQuestion
+  getNewQuestion,
+  finishGame
 } from "../../actions/Game";
 import { withRouter } from "react-router-dom";
 
@@ -98,7 +99,6 @@ class Game extends Component {
 
   onNewHost = () => {
     this.socket.on("newHost", data => {
-      console.log("New host??", this.socket.id);
       this.props.newHost(data.room);
     });
   };
@@ -111,9 +111,14 @@ class Game extends Component {
 
   onGameFinish = () => {
     this.socket.on("gameFinish", data => {
-      console.log("GAME FINISHED:", data);
+      this.props.finishGame(
+        data.room,
+        data.players,
+        data.scores,
+        this.socket.id
+      );
     });
-  }
+  };
 
   authenticateSocket = socket => {
     this.props.authenticateUserSocket(socket, this.props.history);
@@ -184,7 +189,6 @@ class Game extends Component {
 
   nextQuestion = () => {
     this.socket.emit("nextQuestion", { room: currentRoom });
-    this.setState({ questionDone: false, answered: false });
   };
 
   stopAllCountdownTimers = () => {
@@ -322,7 +326,7 @@ class Game extends Component {
                       <span>.</span>
                     </div>
                   )) ||
-                    (!this.props.isHost && (
+                    (!this.props.isHost && !this.props.lastQuestion && (
                       <div className="answerWaiting">
                         Waiting for the next question
                         <span>.</span>
@@ -341,9 +345,30 @@ class Game extends Component {
                     </button>
                   )}
 
-                {this.state.questionDone && this.props.lastQuestion && (
-                  <div className="theScores">THE SCORES!</div>
-                )}
+                {this.state.questionDone &&
+                  this.props.lastQuestion &&
+                  this.props.scores !== undefined && (
+                    <div className="resultContainer">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Rank</th>
+                            <th>Username</th>
+                            <th>Score</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.props.scores.map((result, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{result[0]}</td>
+                              <td>{result[1] ? result[1] : 0}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -355,6 +380,7 @@ class Game extends Component {
 
 const mapStateToProps = state => {
   //TODO: Move the check for state.game[currentRoom] outside the return statement
+  console.log("state", state);
   return {
     players: state.game[currentRoom]
       ? state.game[currentRoom].players
@@ -381,7 +407,8 @@ const mapStateToProps = state => {
       : ["I don't know."],
     lastQuestion: state.game[currentRoom]
       ? state.game[currentRoom].lastQuestion
-      : false
+      : false,
+    scores: state.game[currentRoom] ? state.game[currentRoom].scores : []
   };
 };
 
@@ -396,6 +423,7 @@ export default connect(
     hostChange,
     newHost,
     startingGame,
-    getNewQuestion
+    getNewQuestion,
+    finishGame
   }
 )(withRouter(Game));

@@ -70,12 +70,12 @@ router.post('/api/wstoken', (req, res) =>  {
 });
 
 
-router.get("/api/quizzes", (req, res) => {
-  queries.getAmountOfQuizzes()
-  .then(res => {
-    console.log("Quiz? ", res)
-  })
-  res.send({ score: 2000 });
+router.get("/api/updateScore", (req, res) => {
+  if(!req.user){
+    res.status(401).send();
+    return;
+}
+  //TODO: Update score
 });
 
 module.exports = router;

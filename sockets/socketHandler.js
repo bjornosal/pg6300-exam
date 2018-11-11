@@ -100,14 +100,30 @@ const start = server => {
             gameInformation.quiz.questions.length - 1 ===
             gameInformation.questionNumber
           ) {
-          
-            let scores = [];
-            for(let player of roomToPlayers.get(data.room).values()) {
-              games.connected[player] ? 
-              scores.push({[player]: games.connected[player].score}) : 
-              "";
+            let socketIdToScore = {};
+            let usernameToScore = [];
+            for (let player of roomToPlayers.get(data.room).values()) {
+              games.connected[player]
+                ? (socketIdToScore[player] = games.connected[player].score)
+                : "";
+
+              games.connected[player]
+                ? usernameToScore.push([
+                    games.connected[player].username,
+                    games.connected[player].score ? games.connected[player].score : 0
+                  ])
+                : "";
+              usernameToScore.sort((a, b) => {
+                return b[1] - a[1];
+              });
             }
-            games.to(data.room).emit("gameFinish",{sc: scores} ); 
+            games
+              .to(data.room)
+              .emit("gameFinish", {
+                room: data.room,
+                players: socketIdToScore,
+                scores: usernameToScore
+              });
           }
         }
       }
@@ -241,8 +257,6 @@ const isUserAlreadyInRoom = (socketId, room) => {
 };
 
 const leaveRoom = (socket, room) => {
-  // const username = socket.username
-
   roomToPlayers.get(room) !== undefined
     ? roomToPlayers.get(room).delete(socket.id)
     : "";

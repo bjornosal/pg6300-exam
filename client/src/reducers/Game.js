@@ -11,7 +11,8 @@ import {
   GAME_STARTING,
   GAME_STARTED,
   NEXT_QUESTION,
-  LAST_QUESTION
+  LAST_QUESTION,
+  GAME_SCORES
 } from "../actionTypes";
 
 const game = (state = [], action) => {
@@ -151,6 +152,16 @@ const game = (state = [], action) => {
           isStarting: true,
           isStarted: false,
           lastQuestion: action.lastQuestion
+        }
+      };
+    case GAME_SCORES:
+      console.log(GAME_SCORES);
+      
+      return {
+        ...state,
+        [action.room]: {
+          ...state[action.room],
+          scores: action.scores
         }
       };
     default:

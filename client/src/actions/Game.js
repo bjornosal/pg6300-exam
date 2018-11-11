@@ -11,7 +11,9 @@ import {
   GAME_STARTING,
   GAME_STARTED,
   NEXT_QUESTION,
-  LAST_QUESTION
+  LAST_QUESTION,
+  FINISH_GAME,
+  GAME_SCORES
 } from "../actionTypes";
 
 export const authUserSocket = () => ({
@@ -94,6 +96,17 @@ const lastQuestion = (room, quizId, question, answers) => ({
   answers,
   lastQuestion: true
 });
+
+export const finishGame = (room, players, scores, socketId) => {
+  return dispatch => {
+   
+    console.log("###############################")
+    dispatch({type: GAME_SCORES, room, scores})
+    console.log(players[socketId]);
+    //TODO: Do api call for updating score thanks.
+    // dispatch({TYPE: FINISH_GAME, score: scores[socketId]})
+  }
+}
 
 export const startingGame = (room, quiz, questionNumber) => {
   return dispatch => {
@@ -182,3 +195,8 @@ const authenticateSocket = async socket => {
   socket.emit("login", payload);
   return response;
 };
+
+
+const updateUserScore = (score) => {
+  //TODO: perform an api call and update the score of the user.
+}

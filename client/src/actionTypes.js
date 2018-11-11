@@ -22,3 +22,5 @@ export const GAME_STARTING = "GAME_STARTING";
 export const GAME_STARTED = "GAME_STARTED";
 export const NEXT_QUESTION = "NEXT_QUESTION";
 export const LAST_QUESTION = "LAST_QUESTION";
+export const FINISH_GAME = "FINISH_GAME";
+export const GAME_SCORES = "GAME_SCORES";
