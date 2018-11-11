@@ -7,7 +7,6 @@ let io;
 
 const roomToHost = new Map();
 const roomToPlayers = new Map();
-const socketToScore = new Map();
 const activeGames = new Map();
 const roomTimer = new Map();
 
@@ -98,6 +97,11 @@ const start = server => {
 
         if (await everyoneHasAnswered(games, data.room)) {
           games.to(data.room).emit("questionDone");
+          if((gameInformation.quiz.questions.length - 1) === gameInformation.questionNumber) {
+            console.log("THE SCORES ARE BEING SENT OUT BY RAVENS!")
+            console.log("room to players with scores", roomToPlayers);
+            // games.to(data.room).emit("gameFinish", score);
+          }
         }
       }
     });
