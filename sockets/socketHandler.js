@@ -40,11 +40,13 @@ const start = server => {
           .emit("hostJoin", { room: currentRoom, username, quiz: currentQuiz });
         socket.join(currentRoom);
         socket["currentRoom"] = currentRoom;
-        roomToPlayers.set(currentRoom, new Set(username));
+        roomToPlayers.set(currentRoom, new Set([socket.id]));
+        
       } else {
         joinRoom(
           socket,
           username,
+          games,
           currentRoom,
           roomToHost.get(currentRoom)
             ? roomToHost.get(currentRoom).username
@@ -125,6 +127,7 @@ const start = server => {
     socket.on("disconnect", () => {
       const room = socket.currentRoom;
       if (room !== undefined) {
+        console.log("THE SIZE IS AMAZING: ", roomToPlayers.get(room).size);
         if (
           roomToHost.get(room) !== undefined &&
           roomToHost.get(room).socketId === socket.id &&
@@ -195,39 +198,51 @@ const everyoneHasAnswered = async (namespace, room) => {
   return allAnswered;
 };
 
-const joinRoom = (socket, username, room, host) => {
+const joinRoom = async (socket, username, namespace, room, host) => {
   if (
     !isUserAlreadyInRoom(username, room) &&
     roomToPlayers.get(room) !== undefined
   ) {
     socket.join(room);
     socket["currentRoom"] = room;
-    roomToPlayers.set(room, roomToPlayers.get(room).add(username));
+    roomToPlayers.set(room, roomToPlayers.get(room).add(socket.id));
     //TODO: Does this need a to?
+    //TODO: IS SOCKET ID, not USERNAME RIGHT NOW
+
+    let allPlayers = []; 
+    await namespace.in(room).clients((error, ids) => {
+      if (error) throw error;
+        ids.forEach(id => {
+          allPlayers.push(namespace.connected[id].username);
+      });
+    })
+
+
+
     socket.emit("joinGame", {
       room,
-      players: [...roomToPlayers.get(room)],
+      players: allPlayers,
       host,
       quiz: currentQuiz
     });
-    console.log(username, "JOINED", room);
+
     socket.to(room).emit("playerJoin", { room, username });
   } else {
     socket.emit("update", { error: "You are already in this room." });
   }
 };
 
-const isUserAlreadyInRoom = (username, room) => {
+const isUserAlreadyInRoom = (socketId, room) => {
   return roomToPlayers.get(room) && roomToPlayers.get(room).size > 1
-    ? roomToPlayers.get(room).has(username)
+    ? roomToPlayers.get(room).has(socketId)
     : false;
 };
 
 const leaveRoom = (socket, room) => {
-  const username = socket.username
+  // const username = socket.username
 
   roomToPlayers.get(room) !== undefined
-    ? roomToPlayers.get(room).delete(username)
+    ? roomToPlayers.get(room).delete(socket.id)
     : "";
   roomToPlayers.set(
     room,
@@ -239,27 +254,29 @@ const leaveRoom = (socket, room) => {
 
 const updateHost = async (namespace, room) => {
   const players = roomToPlayers.get(room).values();
-  let newHostUsername;
+  let newHostKey;
   let potentialHost = players.next().value;
-  while (newHostUsername === undefined && potentialHost !== undefined) {
-    if (potentialHost !== roomToHost.get(room).username) {
-      newHostUsername = potentialHost;
+  while (newHostKey === undefined && potentialHost !== undefined) {
+    if (potentialHost !== roomToHost.get(room).socketId) {
+      newHostKey = potentialHost;
     } else {
       potentialHost = players.next().value;
     }
   }
 
-  if (newHostUsername === undefined) return;
+  if (newHostKey === undefined) return;
 
-  let newHostKey;
+  let newHostUsername;
   await namespace.in(room).clients((error, ids) => {
     if (error) throw error;
+
     ids.forEach(id => {
-      if (namespace.connected[id].username === newHostUsername)
-        newHostKey = id;
+      if (id === newHostKey){
+        newHostUsername = namespace.connected[id].username;}
     });
   })
-
+  console.log("HOST KEY", newHostKey);
+  console.log("HOST USERNAME", newHostUsername);
   roomToHost.set(room, { socketId: newHostKey, username: newHostUsername });
   namespace.to(newHostKey).emit("newHost", { room: room });
   namespace.emit("hostChange", { room: room, username: newHostUsername });
