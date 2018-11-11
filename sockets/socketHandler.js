@@ -36,6 +36,7 @@ const start = server => {
       socket["username"] = username;
       console.log(currentRoom);
       if (currentRoom === null) {
+        console.log("ENTERED MY OWN ROOM");
         currentRoom = uuid();
         roomToHost.set(currentRoom, { socketId: socket.id, username });
         currentQuiz = await getRandomQuiz();
@@ -127,7 +128,6 @@ const start = server => {
     */
       //TODO: find the room
       const room = socket.currentRoom;
-      console.log("The new room >>>", room);
       if (room !== undefined) {
         if (
           roomToHost.get(room) !== undefined &&
@@ -140,10 +140,11 @@ const start = server => {
           leaveRoom(socket, room);
         }
 
-        console.log("RTP 2 >>>", roomToPlayers)
         if (roomToPlayers.get(room).size === 0) {
-          currentRoom = null;
-          currentQuiz = null;
+          if (room === currentRoom) {
+            currentRoom = null;
+            currentQuiz = null;
+          }
         }
       }
       console.log("user disconnected");
@@ -202,7 +203,7 @@ const everyoneHasAnswered = async (namespace, room) => {
 
 const joinRoom = (socket, username, room, host) => {
   console.log("ALREADY HERE: ", isUserAlreadyInRoom(username, room));
-if (
+  if (
     !isUserAlreadyInRoom(username, room) &&
     roomToPlayers.get(room) !== undefined
   ) {
@@ -233,18 +234,18 @@ const leaveRoom = (socket, room) => {
   const username = socket.username
 
   console.log("RTP >> ", roomToPlayers.get(room))
-  
+
   roomToPlayers.get(room) !== undefined
-  ? roomToPlayers.get(room).delete(username)
-  : "";
+    ? roomToPlayers.get(room).delete(username)
+    : "";
   roomToPlayers.set(
     room,
     roomToPlayers.get(room) && roomToPlayers.get(room).size > 0
-    ? roomToPlayers.get(room)
-    : new Set()
-    );
-    console.log("RTP >> ", roomToPlayers.get(room))
-  };
+      ? roomToPlayers.get(room)
+      : new Set()
+  );
+  console.log("RTP >> ", roomToPlayers.get(room))
+};
 
 const updateHost = async (namespace, room) => {
   const players = roomToPlayers.get(room).values();
@@ -264,17 +265,17 @@ const updateHost = async (namespace, room) => {
   await namespace.in(room).clients((error, ids) => {
     if (error) throw error;
     ids.forEach(id => {
-      if(namespace.connected[id].username === newHostUsername)
+      if (namespace.connected[id].username === newHostUsername)
         newHostKey = id;
     });
   })
-    
+
   //Source: https://stackoverflow.com/questions/47135661/how-to-get-a-key-in-a-javascript-map-by-its-value
- /*  const newHostKey = [...socketToUsername.entries()]
-    .filter(({ 1: v }) => v === newHostUsername)
-    .map(e => console.log(e));
-    // .map(([k]) => k)
- */
+  /*  const newHostKey = [...socketToUsername.entries()]
+     .filter(({ 1: v }) => v === newHostUsername)
+     .map(e => console.log(e));
+     // .map(([k]) => k)
+  */
 
   roomToHost.set(room, { socketId: newHostKey, username: newHostUsername });
   namespace.to(newHostKey).emit("newHost", { room: room });
