@@ -57,14 +57,19 @@ const game = (state = [], action) => {
         }
       };
     case PLAYER_JOIN:
-      if (!state[action.room].players.includes(action.username))
+      if (!state[action.room].players.includes(action.username)) {
+        console.log("PLAYERS", state[action.room].players instanceof Array);
         return {
           ...state,
           [action.room]: {
             ...state[action.room],
-            players: [state[action.room].players, action.username]
+            players:
+              state[action.room].players instanceof Array
+                ? [...state[action.room].players, action.username]
+                : [state[action.room].players, action.username]
           }
         };
+      }
       return state;
 
     case PLAYER_LEAVE:
@@ -107,7 +112,7 @@ const game = (state = [], action) => {
       };
     case GAME_STARTING:
       console.log(GAME_STARTING);
-       return {
+      return {
         ...state,
         [action.room]: {
           ...state[action.room],
@@ -118,7 +123,7 @@ const game = (state = [], action) => {
       };
     case GAME_STARTED:
       console.log(GAME_STARTED);
-      
+
       return {
         ...state,
         [action.room]: {
@@ -129,7 +134,7 @@ const game = (state = [], action) => {
       };
     case NEXT_QUESTION:
       console.log(NEXT_QUESTION);
-      
+
       return {
         ...state,
         [action.room]: {
@@ -142,7 +147,7 @@ const game = (state = [], action) => {
       };
     case LAST_QUESTION:
       console.log(LAST_QUESTION);
-      
+
       return {
         ...state,
         [action.room]: {
@@ -156,7 +161,7 @@ const game = (state = [], action) => {
       };
     case GAME_SCORES:
       console.log(GAME_SCORES);
-      
+
       return {
         ...state,
         [action.room]: {
