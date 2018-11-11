@@ -33,8 +33,8 @@ const start = server => {
       }
 
       const username = data.username;
-      socketToUsername.set(socket.id, username);
-
+      socket["username"] = username;
+      console.log(currentRoom);
       if (currentRoom === null) {
         currentRoom = uuid();
         roomToHost.set(currentRoom, { socketId: socket.id, username });
@@ -43,6 +43,7 @@ const start = server => {
           .to(roomToHost.get(currentRoom).socketId)
           .emit("hostJoin", { room: currentRoom, username, quiz: currentQuiz });
         socket.join(currentRoom);
+        socket["currentRoom"] = currentRoom;
         roomToPlayers.set(currentRoom, new Set(username));
       } else {
         joinRoom(
@@ -81,7 +82,9 @@ const start = server => {
       const gameInformation = activeGames.get(data.room);
 
       if (gameInformation) {
-        const correctAnswer = gameInformation.quiz.questions[gameInformation.questionNumber].correct;
+        const correctAnswer =
+          gameInformation.quiz.questions[gameInformation.questionNumber]
+            .correct;
 
         socket["answered"] = true;
         if (correctAnswer === data.answer) {
@@ -93,19 +96,21 @@ const start = server => {
             : socketToScore.set(socket.id, score);
         }
 
-        
-        
         if (await everyoneHasAnswered(games, data.room)) {
           games.to(data.room).emit("questionDone");
         }
       }
     });
 
-    socket.on("nextQuestion", (data) => {
+    socket.on("nextQuestion", data => {
       const gameInformation = activeGames.get(data.room);
       if (gameInformation) {
         games.to(data.room).emit("newQuestion", {
           room: data.room,
+          quiz: gameInformation.quiz,
+          questionNumber: gameInformation.questionNumber + 1
+        });
+        activeGames.set(data.room, {
           quiz: gameInformation.quiz,
           questionNumber: gameInformation.questionNumber + 1
         });
@@ -114,22 +119,33 @@ const start = server => {
     });
 
     socket.on("disconnect", () => {
-      if (
-        roomToHost.get(currentRoom) !== undefined &&
-        roomToHost.get(currentRoom).socketId === socket.id &&
-        roomToPlayers.get(currentRoom).size > 1
-      ) {
-        updateHost(games, currentRoom);
-        leaveRoom(socket, currentRoom);
-      } else {
-        leaveRoom(socket, currentRoom);
-      }
+      console.log();
+      /*    findRoomOfSocket(games).then(res => {
+           console.log("ROOMS:",res)
+   
+         })
+    */
+      //TODO: find the room
+      const room = socket.currentRoom;
+      console.log("The new room >>>", room);
+      if (room !== undefined) {
+        if (
+          roomToHost.get(room) !== undefined &&
+          roomToHost.get(room).socketId === socket.id &&
+          roomToPlayers.get(room).size > 1
+        ) {
+          updateHost(games, room);
+          leaveRoom(socket, room);
+        } else {
+          leaveRoom(socket, room);
+        }
 
-      if (roomToPlayers.get(currentRoom).size === 0) {
-        currentRoom = null;
-        currentQuiz = null;
+        console.log("RTP 2 >>>", roomToPlayers)
+        if (roomToPlayers.get(room).size === 0) {
+          currentRoom = null;
+          currentQuiz = null;
+        }
       }
-
       console.log("user disconnected");
     });
   });
@@ -164,7 +180,7 @@ const setAllSocketsInRoomToNotAnswered = (namespace, room) => {
       namespace.connected[id]["answered"] = false;
     });
   });
-}
+};
 
 const everyoneHasAnswered = async (namespace, room) => {
   let allAnswered = true;
@@ -174,22 +190,24 @@ const everyoneHasAnswered = async (namespace, room) => {
     ids.forEach(id => {
       console.log(namespace.connected[id].answered);
       //TODO: Continue here, check the answered state.
-      if(namespace.connected[id].answered === false ||
-         namespace.connected[id].answered === undefined)
-         allAnswered = false;
+      if (
+        namespace.connected[id].answered === false ||
+        namespace.connected[id].answered === undefined
+      )
+        allAnswered = false;
     });
   });
   return allAnswered;
-}
-
+};
 
 const joinRoom = (socket, username, room, host) => {
-  if (
+  console.log("ALREADY HERE: ", isUserAlreadyInRoom(username, room));
+if (
     !isUserAlreadyInRoom(username, room) &&
     roomToPlayers.get(room) !== undefined
   ) {
-    console.log("players in room:", roomToPlayers.get(room));
     socket.join(room);
+    socket["currentRoom"] = room;
     roomToPlayers.set(room, roomToPlayers.get(room).add(username));
     //TODO: Does this need a to?
     socket.emit("joinGame", {
@@ -212,20 +230,23 @@ const isUserAlreadyInRoom = (username, room) => {
 };
 
 const leaveRoom = (socket, room) => {
-  const username = socketToUsername.get(socket.id);
+  const username = socket.username
+
+  console.log("RTP >> ", roomToPlayers.get(room))
+  
   roomToPlayers.get(room) !== undefined
-    ? roomToPlayers.get(room).delete(username)
-    : "";
+  ? roomToPlayers.get(room).delete(username)
+  : "";
   roomToPlayers.set(
     room,
     roomToPlayers.get(room) && roomToPlayers.get(room).size > 0
-      ? roomToPlayers.get(room)
-      : new Set()
-  );
-  socketToUsername.delete(socket.id);
-};
+    ? roomToPlayers.get(room)
+    : new Set()
+    );
+    console.log("RTP >> ", roomToPlayers.get(room))
+  };
 
-const updateHost = (namespace, room) => {
+const updateHost = async (namespace, room) => {
   const players = roomToPlayers.get(room).values();
   let newHostUsername;
   let potentialHost = players.next().value;
@@ -239,13 +260,24 @@ const updateHost = (namespace, room) => {
 
   if (newHostUsername === undefined) return;
 
+  let newHostKey;
+  await namespace.in(room).clients((error, ids) => {
+    if (error) throw error;
+    ids.forEach(id => {
+      if(namespace.connected[id].username === newHostUsername)
+        newHostKey = id;
+    });
+  })
+    
   //Source: https://stackoverflow.com/questions/47135661/how-to-get-a-key-in-a-javascript-map-by-its-value
-  const newHostKey = [...socketToUsername.entries()]
+ /*  const newHostKey = [...socketToUsername.entries()]
     .filter(({ 1: v }) => v === newHostUsername)
-    .map(([k]) => k);
+    .map(e => console.log(e));
+    // .map(([k]) => k)
+ */
 
-  roomToHost.set(room, { socketId: newHostKey[0], username: newHostUsername });
-  namespace.to(newHostKey[0]).emit("newHost", { room: room });
+  roomToHost.set(room, { socketId: newHostKey, username: newHostUsername });
+  namespace.to(newHostKey).emit("newHost", { room: room });
   namespace.emit("hostChange", { room: room, username: newHostUsername });
 };
 

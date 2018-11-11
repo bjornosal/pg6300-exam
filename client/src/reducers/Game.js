@@ -95,7 +95,7 @@ const game = (state = [], action) => {
         }
       };
     case NEW_HOST:
-      console.log(HOST_CHANGE);
+      console.log(NEW_HOST);
       return {
         ...state,
         [action.room]: {

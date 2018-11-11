@@ -94,6 +94,7 @@ class Game extends Component {
 
   onNewHost = () => {
     this.socket.on("newHost", data => {
+      console.log("New host??",  this.socket.id)
       this.props.newHost(data.room);
     });
   };
@@ -138,7 +139,8 @@ class Game extends Component {
       this.setState({
         countdownTimer: 5,
         questionCountdownTimer: 10,
-        answered: false
+        answered: false,
+        questionDone: false
       });
 
       setTimeout(() => {
