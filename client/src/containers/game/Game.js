@@ -18,7 +18,7 @@ let currentRoom;
 class Game extends Component {
   constructor(props) {
     super(props);
-    
+
     // eslint-disable-next-line
     let countdown = null;
     // eslint-disable-next-line
@@ -32,7 +32,6 @@ class Game extends Component {
 
     this.socket = undefined;
     currentRoom = null;
-    
   }
 
   componentWillMount = () => {
@@ -115,7 +114,7 @@ class Game extends Component {
   onGameStart = () => {
     this.socket.on("startingGame", data => {
       this.props.history.push("/game/" + data.room);
-      this.props.startingGame(data.room, data.quiz);
+      this.props.startingGame(data.room, data.quiz, data.questionNumber);
       this.startCountdownTimer();
       setTimeout(() => {
         this.startQuestionCountdownTimer(10);
@@ -131,12 +130,10 @@ class Game extends Component {
     alert("Waiting for more players");
   };
 
-
   answerQuestion = (answer) => {
-    console.log("ANSWER", answer)
-    this.socket.emit("answerQuestion", answer);
-    this.setState({answered: true});
-  }
+    this.socket.emit("answerQuestion", {room: currentRoom, answer});
+    this.setState({ answered: true });
+  };
 
   startCountdownTimer = () => {
     this.countdown = setInterval(() => {
@@ -147,16 +144,17 @@ class Game extends Component {
     }, 1000);
   };
 
-  startQuestionCountdownTimer = (questionTime) => {
+  startQuestionCountdownTimer = questionTime => {
     this.setState({ questionCountdownTimer: questionTime });
 
     this.questionCountdown = setInterval(() => {
       this.setState(state => {
         return { questionCountdownTimer: state.questionCountdownTimer - 1 };
       });
-      if (this.state.questionCountdownTimer === 0) clearInterval(this.questionCountdown);
+      if (this.state.questionCountdownTimer === 0)
+        clearInterval(this.questionCountdown);
     }, 1000);
-  }
+  };
 
   render() {
     return (
@@ -226,12 +224,30 @@ class Game extends Component {
             <div className="questionMainContainer">
               <div className="questionContainer">
                 <div className="question">{this.props.question}</div>
-                <p className="questionCountdown">{this.state.questionCountdownTimer}</p>
+                <p className="questionCountdown">
+                  {this.state.questionCountdownTimer}
+                </p>
               </div>
               <div className="answersContainer">
-                {(!this.state.answered && this.props.answers.map((answer, key) => (
-                  <button key={key} className="answer" onClick={() => {this.answerQuestion(key)}}>{answer}</button>
-                ))) || <div className="answerWaiting">Waiting for the other players<span>.</span><span>.</span><span>.</span></div>}
+                {(!this.state.answered &&
+                  this.props.answers.map((answer, key) => (
+                    <button
+                      key={key}
+                      className="answer"
+                      onClick={() => {
+                        this.answerQuestion(key);
+                      }}
+                    >
+                      {answer}
+                    </button>
+                  ))) || (
+                  <div className="answerWaiting">
+                    Waiting for the other players
+                    <span>.</span>
+                    <span>.</span>
+                    <span>.</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -261,10 +277,10 @@ const mapStateToProps = state => {
     isStarted: state.game[currentRoom]
       ? state.game[currentRoom].isStarted
       : false,
-      question: state.game[currentRoom] 
+    question: state.game[currentRoom]
       ? state.game[currentRoom].question
       : "Missing Question",
-      answers: state.game[currentRoom]
+    answers: state.game[currentRoom]
       ? state.game[currentRoom].answers
       : ["I don't know."]
   };

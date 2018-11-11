@@ -9,6 +9,7 @@ const roomToHost = new Map();
 const roomToPlayers = new Map();
 const socketToUsername = new Map();
 const activeGames = new Map();
+const roomTimer = new Map();
 
 let currentRoom = null;
 let currentQuiz = null;
@@ -58,18 +59,41 @@ const start = server => {
     socket.on("startGame", () => {
       //TODO: Make this usable for any room, not just the current one.
       if (currentRoom !== null && currentQuiz !== null) {
-        activeGames.set(currentRoom, { quiz: currentQuiz });
+        activeGames.set(currentRoom, { quiz: currentQuiz, questionNumber: 0 });
 
         games.to(currentRoom).emit("startingGame", {
           room: currentRoom,
           quiz: activeGames.get(currentRoom)
             ? activeGames.get(currentRoom).quiz
-            : { error: "No quiz" }
+            : { error: "No quiz" },
+          questionNumber: 0
         });
-
+        const timerRoom = currentRoom;
+        setTimeout(() => {
+          roomTimer.set(timerRoom, Date.now());
+          console.log("TIMERS:", roomTimer);
+        }, 5000);
         currentRoom = null;
         currentQuiz = null;
       }
+    });
+
+    socket.on("answerQuestion", data => {
+      
+      const gameInformation = activeGames.get(data.room);
+
+      if(gameInformation) {
+        const correctAnswer = gameInformation.quiz.questions[gameInformation.questionNumber].correct;
+        if(correctAnswer === data.answer){
+          const answerTime = Date.now();
+          const timeElaped = roomTimer.get(data.room) - answerTime;
+          const score = 15000 + timeElaped;
+          
+          
+        }
+      }
+      console.log(socket.id);
+      console.log("ANSWER", data);
     });
 
     socket.on("disconnect", () => {
@@ -84,7 +108,7 @@ const start = server => {
         leaveRoom(socket, currentRoom);
       }
 
-      if(roomToPlayers.get(currentRoom).size === 0) {
+      if (roomToPlayers.get(currentRoom).size === 0) {
         currentRoom = null;
         currentQuiz = null;
       }

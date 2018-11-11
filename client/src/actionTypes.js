@@ -20,3 +20,4 @@ export const NEW_HOST = "NEW_HOST";
 export const HOST_CHANGE = "HOST_CHANGE";
 export const GAME_STARTING = "GAME_STARTING";
 export const GAME_STARTED = "GAME_STARTED";
+export const NEXT_QUESTION = "NEXT_QUESTION";

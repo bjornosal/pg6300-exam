@@ -9,7 +9,8 @@ import {
   NEW_HOST,
   HOST_CHANGE,
   GAME_STARTING,
-  GAME_STARTED
+  GAME_STARTED,
+  NEXT_QUESTION
 } from "../actionTypes";
 
 export const authUserSocket = () => ({
@@ -21,7 +22,13 @@ export const startGame = payload => ({
   payload
 });
 
-export const hostGame = (room, username, isHost, quizName, amountOfQuestions) => ({
+export const hostGame = (
+  room,
+  username,
+  isHost,
+  quizName,
+  amountOfQuestions
+) => ({
   type: HOST_GAME,
   room,
   username,
@@ -30,7 +37,7 @@ export const hostGame = (room, username, isHost, quizName, amountOfQuestions) =>
   amountOfQuestions
 });
 
-export const joinGame = (room, players, host,  quizName, amountOfQuestions) => ({
+export const joinGame = (room, players, host, quizName, amountOfQuestions) => ({
   type: JOIN_GAME,
   room,
   players,
@@ -70,12 +77,41 @@ const startingQuiz = (room, quizId, question, answers) => ({
   answers
 });
 
-export const startingGame = (room, quiz) => {
+const nextQuestion = (room, quizId, question, answers) => ({
+  type: NEXT_QUESTION,
+  room, 
+  quizId, 
+  question,
+  answers
+}); 
+
+export const startingGame = (room, quiz, questionNumber) => {
   return dispatch => {
-    dispatch(startingQuiz(room, quiz.quiz_id, quiz.questions[0].question, quiz.questions[0].answers));
+    dispatch(
+      startingQuiz(
+        room,
+        quiz.quiz_id,
+        quiz.questions[questionNumber].question,
+        quiz.questions[questionNumber].answers
+      )
+    );
     setTimeout(() => {
       dispatch({ type: GAME_STARTED, room });
     }, 5000);
+  };
+};
+
+export const getNextQuestion = (room, quiz, questionNumber) => {
+  return dispatch => {
+    //TODO: add 5 second timeout
+    dispatch(
+      nextQuestion(
+        room,
+        quiz.quiz_id,
+        quiz.questions[questionNumber].question,
+        quiz.questions[questionNumber].answers
+      )
+    );
   };
 };
 
