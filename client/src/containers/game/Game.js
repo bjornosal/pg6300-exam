@@ -24,7 +24,8 @@ class Game extends Component {
     let countdown = null;
     // eslint-disable-next-line
     let questionCountdown = null;
-
+    let introQuestionTimer = null;
+    let finishQuestionTimer = null;
     this.state = {
       countdownTimer: 5,
       questionCountdownTimer: 10,
@@ -94,7 +95,7 @@ class Game extends Component {
 
   onNewHost = () => {
     this.socket.on("newHost", data => {
-      console.log("New host??",  this.socket.id)
+      console.log("New host??", this.socket.id)
       this.props.newHost(data.room);
     });
   };
@@ -133,8 +134,9 @@ class Game extends Component {
 
   onNewQuestion = () => {
     this.socket.on("newQuestion", data => {
+      this.stopAllCountdownTimers();
+      this.stopFinishQuestionTimer();
       this.props.getNewQuestion(data.room, data.quiz, data.questionNumber);
-      this.startCountdownTimer();
 
       this.setState({
         countdownTimer: 5,
@@ -143,10 +145,11 @@ class Game extends Component {
         questionDone: false
       });
 
-      setTimeout(() => {
+      this.startCountdownTimer();
+
+      this.introQuestionTimer = setTimeout(() => {
         this.startQuestionCountdownTimer(10);
-        setTimeout(() => {
-          //TODO: Move to next "score" screen.
+        this.finishQuestionTimer = setTimeout(() => {
           this.setState({
             questionDone: true
           });
@@ -185,6 +188,15 @@ class Game extends Component {
       clearInterval(this.questionCountdown);
     }
   };
+
+  stopFinishQuestionTimer = () => {
+    if (this.finishQuestionTimer !== null) {
+      clearTimeout(this.finishQuestionTimer);
+    }
+    if (this.introQuestionTimer !== null) {
+      clearTimeout(this.introQuestionTimer);
+    }
+  }
 
   startCountdownTimer = () => {
     this.countdown = setInterval(() => {
@@ -234,10 +246,10 @@ class Game extends Component {
                   </div>
                 ))
               ) : (
-                <div className="player">
-                  {this.props.players ? this.props.players : "No players yet."}
-                </div>
-              )}
+                  <div className="player">
+                    {this.props.players ? this.props.players : "No players yet."}
+                  </div>
+                )}
             </div>
             <div className="buttonContainer">
               {this.props.isHost && (
@@ -245,7 +257,7 @@ class Game extends Component {
                   className="quizButton startButton"
                   onClick={
                     this.props.players instanceof Array &&
-                    this.props.players.length > 1
+                      this.props.players.length > 1
                       ? this.startGame
                       : this.informWaitingForMorePlayers
                   }
