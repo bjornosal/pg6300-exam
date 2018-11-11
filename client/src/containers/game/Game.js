@@ -9,7 +9,8 @@ import {
   playerLeave,
   hostChange,
   newHost,
-  startingGame
+  startingGame,
+  getNewQuestion
 } from "../../actions/Game";
 import { withRouter } from "react-router-dom";
 
@@ -44,6 +45,7 @@ class Game extends Component {
     this.onHostChange();
     this.onNewHost();
     this.onGameStart();
+    this.onNewQuestion();
   };
 
   componentWillUnmount = () => {
@@ -120,7 +122,34 @@ class Game extends Component {
         this.startQuestionCountdownTimer(10);
         setTimeout(() => {
           //TODO: Move to next "score" screen.
-          //TODO: Can this be in the thunk?
+         /*  this.setState({
+            moreQuestions:
+              data.questionNumber !== data.quiz.questions.length ? true : false
+          }); */
+        }, 10000);
+      }, 5000);
+    });
+  };
+
+  onNewQuestion = () => {
+    this.socket.on("newQuestion", data => {
+      this.props.getNewQuestion(data.room, data.quiz, data.questionNumber);
+      this.startCountdownTimer();
+      
+      this.setState({
+        countdownTimer: 5,
+        questionCountdownTimer: 10,
+        answered: false
+      })
+
+      setTimeout(() => {
+        this.startQuestionCountdownTimer(10);
+        setTimeout(() => {
+          //TODO: Move to next "score" screen.
+          /* this.setState({
+            moreQuestions:
+              data.questionNumber !== data.quiz.questions.length ? true : false
+          }); */
         }, 10000);
       }, 5000);
     });
@@ -130,9 +159,13 @@ class Game extends Component {
     alert("Waiting for more players");
   };
 
-  answerQuestion = (answer) => {
-    this.socket.emit("answerQuestion", {room: currentRoom, answer});
+  answerQuestion = answer => {
+    this.socket.emit("answerQuestion", { room: currentRoom, answer });
     this.setState({ answered: true });
+  };
+
+  nextQuestion = () => {
+    this.socket.emit("nextQuestion", { room: currentRoom });
   };
 
   startCountdownTimer = () => {
@@ -218,9 +251,9 @@ class Game extends Component {
             <div className="countdownTimer">{this.state.countdownTimer}</div>
           </div>
         )}
-        {!this.props.isStarting && this.props.isStarted && (
-          /*TODO: Continue with implementing the countdown and the active game container */
-          <div className="gameInformationContainer activeGameContainer">
+        {/*TODO: Continue with implementing the countdown and the active game container */}
+        <div className="gameInformationContainer activeGameContainer">
+          {!this.props.isStarting && this.props.isStarted && (
             <div className="questionMainContainer">
               <div className="questionContainer">
                 <div className="question">{this.props.question}</div>
@@ -250,8 +283,13 @@ class Game extends Component {
                 )}
               </div>
             </div>
-          </div>
-        )}
+          )}
+          {this.props.isHost && 
+            <button onClick={this.nextQuestion} className="nextQuestionButton">
+              Next Question
+            </button>
+          }
+        </div>
       </div>
     );
   }
@@ -296,6 +334,7 @@ export default connect(
     hostGame,
     hostChange,
     newHost,
-    startingGame
+    startingGame,
+    getNewQuestion
   }
 )(withRouter(Game));

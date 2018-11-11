@@ -8,6 +8,7 @@ let io;
 const roomToHost = new Map();
 const roomToPlayers = new Map();
 const socketToUsername = new Map();
+const socketToScore = new Map();
 const activeGames = new Map();
 const roomTimer = new Map();
 
@@ -79,21 +80,32 @@ const start = server => {
     });
 
     socket.on("answerQuestion", data => {
-      
       const gameInformation = activeGames.get(data.room);
 
-      if(gameInformation) {
-        const correctAnswer = gameInformation.quiz.questions[gameInformation.questionNumber].correct;
-        if(correctAnswer === data.answer){
+      if (gameInformation) {
+        const correctAnswer =
+          gameInformation.quiz.questions[gameInformation.questionNumber]
+            .correct;
+        if (correctAnswer === data.answer) {
           const answerTime = Date.now();
           const timeElaped = roomTimer.get(data.room) - answerTime;
           const score = 15000 + timeElaped;
-          
-          
+          socketToScore.get(socket.id)
+            ? socketToScore.set(socket.id, socketToScore.get(socket.id) + score)
+            : socketToScore.set(socket.id, score);
         }
       }
-      console.log(socket.id);
-      console.log("ANSWER", data);
+    });
+
+    socket.on("nextQuestion", (data) => {
+      const gameInformation = activeGames.get(data.room);
+      if (gameInformation) {
+        games.to(data.room).emit("newQuestion", {
+          room: data.room,
+          quiz: gameInformation.quiz,
+          questionNumber: gameInformation.questionNumber + 1
+        });
+      }
     });
 
     socket.on("disconnect", () => {

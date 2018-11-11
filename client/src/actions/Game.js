@@ -77,7 +77,7 @@ const startingQuiz = (room, quizId, question, answers) => ({
   answers
 });
 
-const nextQuestion = (room, quizId, question, answers) => ({
+const newQuestion = (room, quizId, question, answers) => ({
   type: NEXT_QUESTION,
   room, 
   quizId, 
@@ -101,17 +101,20 @@ export const startingGame = (room, quiz, questionNumber) => {
   };
 };
 
-export const getNextQuestion = (room, quiz, questionNumber) => {
+export const getNewQuestion = (room, quiz, questionNumber) => {
   return dispatch => {
     //TODO: add 5 second timeout
     dispatch(
-      nextQuestion(
+      newQuestion(
         room,
         quiz.quiz_id,
         quiz.questions[questionNumber].question,
         quiz.questions[questionNumber].answers
       )
     );
+    setTimeout(() => {
+      dispatch({ type: GAME_STARTED, room });
+    }, 5000);
   };
 };
 
