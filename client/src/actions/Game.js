@@ -99,25 +99,35 @@ const lastQuestion = (room, quizId, question, answers) => ({
 
 export const finishGame = (room, players, scores, socketId) => {
   return dispatch => {
-   
-    console.log("###############################")
-    dispatch({type: GAME_SCORES, room, scores})
+    console.log("###############################");
+    dispatch({ type: GAME_SCORES, room, scores });
     console.log(players[socketId]);
     //TODO: Do api call for updating score thanks.
     // dispatch({TYPE: FINISH_GAME, score: scores[socketId]})
-  }
-}
+  };
+};
 
 export const startingGame = (room, quiz, questionNumber) => {
   return dispatch => {
-    dispatch(
-      startingQuiz(
-        room,
-        quiz.quiz_id,
-        quiz.questions[questionNumber].question,
-        quiz.questions[questionNumber].answers
-      )
-    );
+    if (quiz.questions.length - 1 === questionNumber) {
+      dispatch(
+        lastQuestion(
+          room,
+          quiz.quiz_id,
+          quiz.questions[questionNumber].question,
+          quiz.questions[questionNumber].answers
+        )
+      );
+    } else {
+      dispatch(
+        newQuestion(
+          room,
+          quiz.quiz_id,
+          quiz.questions[questionNumber].question,
+          quiz.questions[questionNumber].answers
+        )
+      );
+    }
     setTimeout(() => {
       dispatch({ type: GAME_STARTED, room });
     }, 3000);
@@ -126,7 +136,7 @@ export const startingGame = (room, quiz, questionNumber) => {
 
 export const getNewQuestion = (room, quiz, questionNumber) => {
   return dispatch => {
-    if ((quiz.questions.length - 1) === questionNumber) {
+    if (quiz.questions.length - 1 === questionNumber) {
       dispatch(
         lastQuestion(
           room,
@@ -196,7 +206,6 @@ const authenticateSocket = async socket => {
   return response;
 };
 
-
-const updateUserScore = (score) => {
+const updateUserScore = score => {
   //TODO: perform an api call and update the score of the user.
-}
+};

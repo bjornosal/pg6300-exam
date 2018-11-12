@@ -220,9 +220,10 @@ const everyoneHasAnswered = async (namespace, room) => {
 
 const joinRoom = async (socket, username, namespace, room, host) => {
   if (
-    !isUserAlreadyInRoom(username, room) &&
+    await !isUserAlreadyInRoom(socket, namespace, room) &&
     roomToPlayers.get(room) !== undefined
   ) {
+    console.log("Did I enter the room??")
     socket.join(room);
     socket["currentRoom"] = room;
     roomToPlayers.set(room, roomToPlayers.get(room).add(socket.id));
@@ -246,14 +247,23 @@ const joinRoom = async (socket, username, namespace, room, host) => {
 
     socket.to(room).emit("playerJoin", { room, username });
   } else {
-    socket.emit("update", { error: "You are already in this room." });
+    namespace.to(socket.id).emit("alreadyInRoom");
   }
 };
 
-const isUserAlreadyInRoom = (socketId, room) => {
-  return roomToPlayers.get(room) && roomToPlayers.get(room).size > 1
-    ? roomToPlayers.get(room).has(socketId)
-    : false;
+const isUserAlreadyInRoom = async (socket, namespace, room) => {
+  let isInRoom = false;
+  await namespace.in(room).clients((error, ids) => {
+    if (error) throw error;
+
+    ids.forEach(id => {
+      if (namespace.connected[id].username === socket.username) {
+        isInRoom = true;  
+        console.log("WHAT is, ",true);
+      }
+    });
+  });
+  return isInRoom;
 };
 
 const leaveRoom = (socket, room) => {

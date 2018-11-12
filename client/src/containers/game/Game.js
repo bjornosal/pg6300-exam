@@ -48,6 +48,7 @@ class Game extends Component {
     this.onPlayerJoin();
     this.onPlayerLeave();
     this.onHostChange();
+    this.onAlreadyInRoom();
     this.onNewHost();
     this.onGameStart();
     this.onNewQuestion();
@@ -110,6 +111,12 @@ class Game extends Component {
       this.props.hostChange(data.room, data.username);
     });
   };
+  
+  onAlreadyInRoom = () => {
+    this.socket.on("alreadyInRoom", () => {
+      this.props.history.push("/");
+    });
+  };
 
   onGameFinish = () => {
     this.socket.on("gameFinish", data => {
@@ -134,6 +141,7 @@ class Game extends Component {
     this.socket.on("startingGame", data => {
       this.props.history.push("/game/" + data.room);
       this.props.startingGame(data.room, data.quiz, data.questionNumber);
+      //TODO: Move the timers to server.
       this.startCountdownTimer();
       this.introQuestionTimer = setTimeout(() => {
         this.startQuestionCountdownTimer(10);
@@ -160,7 +168,7 @@ class Game extends Component {
       });
 
       this.startCountdownTimer();
-
+      //TODO: Move the timers to server.
       this.introQuestionTimer = setTimeout(() => {
         this.startQuestionCountdownTimer(10);
         this.finishQuestionTimer = setTimeout(() => {
@@ -351,6 +359,8 @@ class Game extends Component {
                   this.props.lastQuestion &&
                   this.props.scores !== undefined && (
                     <div className="resultContainer">
+                      <h2>Scores</h2>
+                      <div className="winnerContainer">Winner winner {this.props.scores ? this.props.scores[0][0] + " with " + this.props.scores[0][1]  : "Unknown winner"}</div>
                       <table>
                         <thead>
                           <tr>
