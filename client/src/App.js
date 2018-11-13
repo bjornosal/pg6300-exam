@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./scss/App.scss";
 import { BrowserRouter } from "react-router-dom";
 import Routes from "./containers/routes/Routes";
-import Footer from "./containers/footer/Footer";
 import Header from "./containers/header/Header";
 import { connect } from "react-redux";
 

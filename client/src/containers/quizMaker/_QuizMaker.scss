@@ -66,11 +66,17 @@
     }
 
     .selectAnswer{
-        padding-top:1em;
+        padding-top:.5em;
         border: none;
         border-radius: 0;
         margin: 0 auto;
         width: 30%;
         
+    }
+    text-align: center;
+
+    label {
+        margin-top: 1em;
+        color: $color5;
     }
 }
