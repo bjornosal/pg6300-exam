@@ -11,7 +11,8 @@ class QuizMaker extends Component {
 
     this.state = {
       answerCounter: 0,
-      answers: []
+      answers: [],
+      questions: []
     };
   }
 
@@ -31,21 +32,32 @@ class QuizMaker extends Component {
     }));
   };
 
+  addQuestion = () => {
+    this.setState(state => {
+      return {
+        answers: [...state.answers].concat(
+          <Field
+            name={"answer-" + state.answerCounter}
+            type="text"
+            component={QuizMakerInputField}
+            label={"Answer " + (state.answerCounter + 1)}
+            key={state.answerCounter}
+            id={state.answerCounter}
+          />
+        ),
+        answerCounter: state.answerCounter + 1
+      };
+    });
+  };
+
+  setCorrectAnswer = (index) => {
+    this.setState(({ correctAnswer: index }))
+  }
+
+
   render() {
     const { handleSubmit, isSubmitting } = this.props;
-
-    /**
-     * TODO: Creating one quiz. What is required?
-     * On setup, a question, and an answer will be created.
-     * Their state will be stored with Redux
-     *
-     *
-     *
-     */
-
-    console.log("PROPS length", this.props.answers.length);
-    console.log("state answerscounter", this.state.answerCounter);
-    console.log(this.props.answers.length === this.state.answerCounter);
+    console.log("correct answer", this.state);
     return (
       <div className="quizMakerContainer">
         <h2>Quiz Maker</h2>
@@ -66,6 +78,7 @@ class QuizMaker extends Component {
 
           <label>Correct answer</label>
           <Select
+            onChange={(e) => this.setCorrectAnswer(e.value)}
             className="selectAnswer"
             options={this.props.answersWithId.map(answer => {
               console.log("id", answer.id);
@@ -110,17 +123,19 @@ const getAnswerInformation = answerName => {
 const mapStateToProps = state => {
   let answersWithId = [];
   let answerValues = [];
+
   if (state.form.quizMaker && state.form.quizMaker.values) {
     Object.entries(state.form.quizMaker.values)
       .sort()
       .map(answer => {
         const answerInfo = getAnswerInformation(answer[0]);
-        if(answerInfo[0] === "answer") {
-        answersWithId.push({ id: answerInfo[1], answer: answer[1] });
-        answerValues.push(answer[1]);
-      }
+        if (answerInfo[0] === "answer") {
+          answersWithId.push({ id: answerInfo[1], answer: answer[1] });
+          answerValues.push(answer[1]);
+        }
       });
   }
+
   return {
     answers: answerValues,
     answersWithId: answersWithId,
