@@ -11,6 +11,7 @@ class QuizMaker extends Component {
 
     this.state = {
       answerCounter: 0,
+      questionCounter: 0,
       answers: [],
       questions: []
     };
@@ -32,32 +33,35 @@ class QuizMaker extends Component {
     }));
   };
 
+  canCreateQuestion = state => {
+    return (
+      this.props.question !== undefined &&
+      state.answerCounter > 0 &&
+      this.state.correctAnswer
+    );
+  };
+
   addQuestion = () => {
     this.setState(state => {
-      return {
-        answers: [...state.answers].concat(
-          <Field
-            name={"answer-" + state.answerCounter}
-            type="text"
-            component={QuizMakerInputField}
-            label={"Answer " + (state.answerCounter + 1)}
-            key={state.answerCounter}
-            id={state.answerCounter}
-          />
-        ),
-        answerCounter: state.answerCounter + 1
-      };
+      console.log("state", state);
+      if (this.canCreateQuestion(state)) {
+        return {
+          questions: [...state.questions].concat({
+            question: this.props.question,
+            answers: state.answers,
+            correctAnswer: state.correctAnswer
+          })
+        };
+      }
     });
   };
 
-  setCorrectAnswer = (index) => {
-    this.setState(({ correctAnswer: index }))
-  }
-
+  setCorrectAnswer = index => {
+    this.setState({ correctAnswer: index });
+  };
 
   render() {
     const { handleSubmit, isSubmitting } = this.props;
-    console.log("correct answer", this.state);
     return (
       <div className="quizMakerContainer">
         <h2>Quiz Maker</h2>
@@ -78,10 +82,9 @@ class QuizMaker extends Component {
 
           <label>Correct answer</label>
           <Select
-            onChange={(e) => this.setCorrectAnswer(e.value)}
+            onChange={e => this.setCorrectAnswer(e.value)}
             className="selectAnswer"
             options={this.props.answersWithId.map(answer => {
-              console.log("id", answer.id);
               return {
                 value: answer.id,
                 label: answer.answer
@@ -94,7 +97,11 @@ class QuizMaker extends Component {
                 <button type="button" onClick={() => this.addAnswer()}>
                   Add answer
                 </button>
-                <button type="button">Add question</button>
+
+                {/* TODO: SHow button if the question can be made as well*/}
+                <button type="button" onClick={this.addQuestion}>
+                  Add question
+                </button>
               </div>
             )}
           {this.props.answers.length === this.state.answerCounter && (
@@ -123,7 +130,7 @@ const getAnswerInformation = answerName => {
 const mapStateToProps = state => {
   let answersWithId = [];
   let answerValues = [];
-
+  let question = undefined;
   if (state.form.quizMaker && state.form.quizMaker.values) {
     Object.entries(state.form.quizMaker.values)
       .sort()
@@ -134,14 +141,19 @@ const mapStateToProps = state => {
           answerValues.push(answer[1]);
         }
       });
+    question =
+      Object.values(state.form.quizMaker.values) &&
+        Object.values(state.form.quizMaker.values).length > 1
+        ? Object.values(state.form.quizMaker.values)[0]
+        : undefined;
   }
-
   return {
     answers: answerValues,
     answersWithId: answersWithId,
     createdQuestions: state.form.quizMaker
       ? Object.keys(state.form.quizMaker.registeredFields).length - 1
-      : -1
+      : -1,
+    question: question !== undefined ? question : undefined
   };
 };
 
