@@ -31,10 +31,6 @@ class QuizMaker extends Component {
     }));
   };
 
-  getAnswerInformation = answerName => {
-    return answerName.split("-");
-  };
-
   render() {
     const { handleSubmit, isSubmitting } = this.props;
 
@@ -47,7 +43,9 @@ class QuizMaker extends Component {
      *
      */
 
-     console.log(this.props.answers);
+    console.log("PROPS length", this.props.answers.length);
+    console.log("state answerscounter", this.state.answerCounter);
+    console.log(this.props.answers.length === this.state.answerCounter);
     return (
       <div className="quizMakerContainer">
         <h2>Quiz Maker</h2>
@@ -69,44 +67,67 @@ class QuizMaker extends Component {
           <label>Correct answer</label>
           <Select
             className="selectAnswer"
-            options={
-              this.state.answers instanceof Array
-                ? this.state.answers.map(answer => {
-                  return {
-                    value: answer.id,
-                    label: "MAP STATE TO PROPS THX"
-                  };
-                })
-                : "NO"
-            }
+            options={this.props.answersWithId.map(answer => {
+              console.log("id", answer.id);
+              return {
+                value: answer.id,
+                label: answer.answer
+              };
+            })}
           />
           {this.state.answers.length < 10 &&
-            <div className="addItemQuizButtonContainer">
-              <button type="button" onClick={() => this.addAnswer()}>
-                Add answer
-            </button>
-              <button type="button">Add question</button>
+            this.props.answers.length === this.state.answerCounter && (
+              <div className="addItemQuizButtonContainer">
+                <button type="button" onClick={() => this.addAnswer()}>
+                  Add answer
+                </button>
+                <button type="button">Add question</button>
+              </div>
+            )}
+          {this.props.answers.length === this.state.answerCounter && (
+            <div className="createQuizButtonContainer">
+              <button type="submit" disabled={isSubmitting}>
+                Finish Quiz
+              </button>
             </div>
-          }
-          <div className="createQuizButtonContainer">
-            <button type="submit" disabled={isSubmitting}>
-              Finish Quiz
-            </button>
-          </div>
+          )}
+
+          {this.props.answers.length !== this.state.answerCounter && (
+            <div>
+              <p className="questionError">You need to fill in all answers</p>
+            </div>
+          )}
         </form>
       </div>
     );
   }
 }
 
+const getAnswerInformation = answerName => {
+  return answerName.split("-");
+};
+
 const mapStateToProps = state => {
+  let answersWithId = [];
   let answerValues = [];
   if (state.form.quizMaker && state.form.quizMaker.values) {
-    Object.entries(state.form.quizMaker.values).sort().map(answer => {
-      answerValues.push(answer[1]);
-    });
+    Object.entries(state.form.quizMaker.values)
+      .sort()
+      .map(answer => {
+        const answerInfo = getAnswerInformation(answer[0]);
+        if(answerInfo[0] === "answer") {
+        answersWithId.push({ id: answerInfo[1], answer: answer[1] });
+        answerValues.push(answer[1]);
+      }
+      });
   }
-  return {answers: answerValues};
+  return {
+    answers: answerValues,
+    answersWithId: answersWithId,
+    createdQuestions: state.form.quizMaker
+      ? Object.keys(state.form.quizMaker.registeredFields).length - 1
+      : -1
+  };
 };
 
 export default reduxForm({
