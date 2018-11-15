@@ -47,6 +47,7 @@ const game = (state = [], action) => {
       };
     case JOIN_GAME:
       console.log(JOIN_GAME);
+      console.log("players", action.players);
       return {
         ...state,
         [action.room]: {

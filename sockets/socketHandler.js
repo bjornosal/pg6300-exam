@@ -223,43 +223,43 @@ const joinRoom = async (socket, username, namespace, room, host) => {
     await !isUserAlreadyInRoom(socket, namespace, room) &&
     roomToPlayers.get(room) !== undefined
   ) {
-    console.log("Did I enter the room??")
     socket.join(room);
     socket["currentRoom"] = room;
     roomToPlayers.set(room, roomToPlayers.get(room).add(socket.id));
-    //TODO: Does this need a to?
-    //TODO: IS SOCKET ID, not USERNAME RIGHT NOW
 
     let allPlayers = [];
-    await namespace.in(room).clients((error, ids) => {
+    await namespace.in(room).clients(async (error, ids) => {
       if (error) throw error;
-      ids.forEach(id => {
+      await ids.forEach(id => {
         allPlayers.push(namespace.connected[id].username);
+        console.log("Connected id: ", namespace.connected[id].username)
       });
-    });
 
-    socket.emit("joinGame", {
-      room,
-      players: allPlayers,
-      host,
-      quiz: currentQuiz
-    });
+      console.log("Players", allPlayers)
 
-    socket.to(room).emit("playerJoin", { room, username });
+      socket.emit("joinGame", {
+        room,
+        players: allPlayers,
+        host,
+        quiz: currentQuiz
+      });
+  
+      socket.to(room).emit("playerJoin", { room, username });
+    });
+    
   } else {
     namespace.to(socket.id).emit("alreadyInRoom");
   }
 };
 
-const isUserAlreadyInRoom = async (socket, namespace, room) => {
+const isUserAlreadyInRoom = (socket, namespace, room) => {
   let isInRoom = false;
-  await namespace.in(room).clients((error, ids) => {
+   namespace.in(room).clients((error, ids) => {
     if (error) throw error;
-
+    
     ids.forEach(id => {
       if (namespace.connected[id].username === socket.username) {
-        isInRoom = true;  
-        console.log("WHAT is, ",true);
+        isInRoom = true;
       }
     });
   });
