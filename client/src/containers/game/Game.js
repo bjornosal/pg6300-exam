@@ -397,7 +397,6 @@ class Game extends Component {
 
 const mapStateToProps = state => {
   //TODO: Move the check for state.game[currentRoom] outside the return statement
-  console.log("state", state);
   return {
     players: state.game[currentRoom]
       ? state.game[currentRoom].players

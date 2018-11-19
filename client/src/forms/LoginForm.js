@@ -15,7 +15,6 @@ class LoginForm extends React.Component {
   }
 
   componentDidUpdate = () => {
-    //Close as it gets. Handle this on backend?
     if(this.props.loggedIn) {
       this.props.history.push("/");
     }

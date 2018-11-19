@@ -27,6 +27,7 @@
     .createQuizButtonContainer {
         width: 100%;
         text-align: center;
+        display: flex;
         button {
             background-color: $color2;
             border: none;
@@ -35,7 +36,12 @@
             height: 2em;
             margin-top: 1em;
             text-emphasis: bold;
-            
+        }
+        p {
+            width:50%;
+            display:block;
+            color: $color5;
+            font-size: 1.2em;
         }
 
         button:hover{

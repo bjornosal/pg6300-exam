@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import QuizMakerInputField from "../../components/quizMakerInputField/QuizMakerInputField";
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm, reset } from "redux-form";
 import Select from "react-select";
+import InputField from "../../components/inputField/InputField";
 
 class QuizMaker extends Component {
   constructor(props) {
@@ -42,22 +43,50 @@ class QuizMaker extends Component {
   };
 
   addQuestion = () => {
+    const { dispatch } = this.props;
+    if (this.state.correctAnswer && this.props.question) {
+      this.setState(
+        state => {
+          if (this.canCreateQuestion(state)) {
+            return {
+              questions: [...state.questions].concat({
+                question: this.props.question,
+                answers: state.answers,
+                correctAnswer: state.correctAnswer
+              })
+            };
+          }
+        },
+        () => {
+          dispatch(reset("quizMaker"));
+          this.clearAnswerFields();
+        }
+      );
+    } else {
+      this.setState({
+        answerError:
+          "To create a new question, you need to write a question, supply the answers and choose the correct one."
+      });
+    }
+  };
+
+  clearAnswerFields = () => {
     this.setState(state => {
-      console.log("state", state);
-      if (this.canCreateQuestion(state)) {
-        return {
-          questions: [...state.questions].concat({
-            question: this.props.question,
-            answers: state.answers,
-            correctAnswer: state.correctAnswer
-          })
-        };
-      }
+      return {
+        answers: [],
+        answerCounter: 0,
+        correctAnswer: null,
+        questionCounter: state.questionCounter + 1,
+        answerError: ""
+      };
     });
   };
 
   setCorrectAnswer = index => {
-    this.setState({ correctAnswer: index });
+    this.setState({
+      correctAnswer: index,
+      answerError: ""
+    });
   };
 
   render() {
@@ -65,7 +94,7 @@ class QuizMaker extends Component {
     return (
       <div className="quizMakerContainer">
         <h2>Quiz Maker</h2>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={handleSubmit(this.addQuestion)}>
           {/* TODO: Extract to component? A question component mebe */}
           <Field
             name="question"
@@ -106,6 +135,8 @@ class QuizMaker extends Component {
             )}
           {this.props.answers.length === this.state.answerCounter && (
             <div className="createQuizButtonContainer">
+              <p>Questions: {this.state.questionCounter + "/10"} </p>
+
               <button type="submit" disabled={isSubmitting}>
                 Finish Quiz
               </button>
@@ -115,6 +146,12 @@ class QuizMaker extends Component {
           {this.props.answers.length !== this.state.answerCounter && (
             <div>
               <p className="questionError">You need to fill in all answers</p>
+            </div>
+          )}
+
+          {this.state.answerError !== "" && (
+            <div>
+              <p className="questionError">{this.state.answerError}</p>
             </div>
           )}
         </form>
@@ -143,7 +180,7 @@ const mapStateToProps = state => {
       });
     question =
       Object.values(state.form.quizMaker.values) &&
-        Object.values(state.form.quizMaker.values).length > 1
+      Object.values(state.form.quizMaker.values).length > 1
         ? Object.values(state.form.quizMaker.values)[0]
         : undefined;
   }
