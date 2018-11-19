@@ -70,6 +70,18 @@ class QuizMaker extends Component {
     }
   };
 
+  createQuiz = () => {
+    this.doCreateQuiz().then(() => {
+      this.setState({
+        questionCounter: 0,
+        answerCounter: 0,
+        answers: [],
+        answerError: "",
+        correctAnswer: null
+      });
+    });
+  };
+
   clearAnswerFields = () => {
     this.setState(state => {
       return {
@@ -89,13 +101,44 @@ class QuizMaker extends Component {
     });
   };
 
+  doCreateQuiz = async () => {
+    const url = "/api/quiz";
+
+    let response;
+
+    const payload = {
+      quizName: this.props.quizName,
+      questions: this.state.questions
+    };
+
+    try {
+      response = await fetch(url, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      return "Failed to connect to server";
+    }
+
+    return response;
+  };
+
   render() {
     const { handleSubmit, isSubmitting } = this.props;
     return (
       <div className="quizMakerContainer">
         <h2>Quiz Maker</h2>
-        <form onSubmit={handleSubmit(this.addQuestion)}>
-          {/* TODO: Extract to component? A question component mebe */}
+        <form onSubmit={handleSubmit(this.createQuiz)}>
+          <Field
+            name="quizName"
+            type="text"
+            component={QuizMakerInputField}
+            label="Quiz Name"
+          />
+
           <Field
             name="question"
             type="text"
@@ -190,7 +233,11 @@ const mapStateToProps = state => {
     createdQuestions: state.form.quizMaker
       ? Object.keys(state.form.quizMaker.registeredFields).length - 1
       : -1,
-    question: question !== undefined ? question : undefined
+    question: question !== undefined ? question : undefined,
+    quizName:
+      state.form.quizMaker && state.form.quizMaker.values
+        ? state.form.quizMaker.values["quizName"]
+        : undefined
   };
 };
 
@@ -199,8 +246,6 @@ export default reduxForm({
 })(
   connect(
     mapStateToProps,
-    {
-      //TODO: add the async shit here
-    }
+    {}
   )(withRouter(QuizMaker))
 );
