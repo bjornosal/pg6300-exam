@@ -101,7 +101,8 @@ const createUser = async (username, password) => {
       try {
         await client.query(queryTexts.createNewUserWithUsernameQuery, [
           username,
-          hashedPassword
+          hashedPassword,
+          0
         ]);
         return true;
       } catch (err) {
@@ -148,6 +149,10 @@ const getQuizWithQuestionsById = async id => {
   return quiz;
 };
 
+const updateScoreOfUser = async (score, user_id) => {
+  return await client.query(queryTexts.updateScoreOfUser, [score, user_id]);
+} 
+
 module.exports = {
   createTable,
   createQuiz,
@@ -157,5 +162,6 @@ module.exports = {
   createUser,
   defaultDataInit,
   getAmountOfQuizzes,
-  getQuizWithQuestionsById
+  getQuizWithQuestionsById,
+  updateScoreOfUser
 };

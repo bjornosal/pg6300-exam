@@ -75,18 +75,16 @@ router.post("/api/updateScore", (req, res) => {
     res.status(401).send();
     return;
   }
-  //TODO: Update score
+
+  queries.updateScoreOfUser(req.body.score, req.user.user_id);
 });
 
 
 router.post("/api/quiz", (req, res) => {
-  //TODO: Implement again
-  /*  if (!req.user) {
+   if (!req.user) {
     res.status(401).send();
     return;
-  } */
-
-  const user = req.user;
+  }
 
   let questionQueries = quiz_id => {
     req.body.questions.forEach(question => {
@@ -100,15 +98,6 @@ router.post("/api/quiz", (req, res) => {
     });
   };
 
- 
-    
-// console.log(req.body.questions);
-
-/* 
-  for(let question in ) {
-    console.log("question",question)
-  } */
-
   queries
     .createQuiz(
       queryTexts.createNewQuizQuery,
@@ -116,7 +105,6 @@ router.post("/api/quiz", (req, res) => {
       questionQueries
     )
     .then(result => {
-      console.log("RESULT", result)
       if (!result) {
         res.status(400).send();
         return;

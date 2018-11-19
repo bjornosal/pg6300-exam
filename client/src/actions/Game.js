@@ -97,11 +97,14 @@ const lastQuestion = (room, quizId, question, answers) => ({
   lastQuestion: true
 });
 
-
-//TODO: Does this work?
 export const finishGame = (room, players, scores, socketId) => {
   return dispatch => {
+    console.log("###############################");
     dispatch({ type: GAME_SCORES, room, scores });
+    //TODO: Do api call for updating score thanks.
+    updateUserScore(players[socketId])
+
+    // dispatch({TYPE: FINISH_GAME, score: scores[socketId]})
   };
 };
 
@@ -204,6 +207,19 @@ const authenticateSocket = async socket => {
   return response;
 };
 
-const updateUserScore = score => {
-  //TODO: perform an api call and update the score of the user.
+const updateUserScore = async score => {
+  const url = "/api/updateScore";
+  let response;
+  try {
+    response = await fetch(url, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ score: score })
+    });
+  } catch (err) {
+    return "Failed to connect to server: " + err;
+  }
+  return response;
 };

@@ -24,8 +24,8 @@ module.exports = {
     FOREIGN KEY (quiz_id) REFERENCES quiz(quiz_id)
 );`,
 
-	createNewUserWithUsernameQuery: `INSERT INTO user_information (username, password)
-	VALUES($1, $2) RETURNING *`,
+	createNewUserWithUsernameQuery: `INSERT INTO user_information (username, password, score)
+	VALUES($1, $2, $3) RETURNING *`,
 
 	createNewQuizQuery: `INSERT INTO quiz(name) VALUES($1)
 	ON CONFLICT ON CONSTRAINT quiz_name_key DO NOTHING RETURNING *;`,
@@ -35,9 +35,13 @@ module.exports = {
 
 	findUserWithUsername: `SELECT * FROM user_information WHERE username = $1;`,
 
-	getAmountOfQuizzes: `SELECT COUNT(*) FROM quiz`,
+	getAmountOfQuizzes: `SELECT COUNT(*) FROM quiz;`,
 
-	getQuizById: `SELECT * from quiz WHERE quiz_id = $1`,
+	getQuizById: `SELECT * from quiz WHERE quiz_id = $1;`,
 
-	getAllQuestionsByQuizId: `SELECT * from question where quiz_id = $1`
+	getAllQuestionsByQuizId: `SELECT * from question where quiz_id = $1;`,
+	
+	updateScoreOfUser: `UPDATE user_information SET score = score + $1 WHERE user_id = $2;`,
+
+	getAllUserNamesWithScores: `SELECT username, score FROM user_information;`
 };
