@@ -232,10 +232,7 @@ const joinRoom = async (socket, username, namespace, room, host) => {
       if (error) throw error;
       await ids.forEach(id => {
         allPlayers.push(namespace.connected[id].username);
-        console.log("Connected id: ", namespace.connected[id].username)
       });
-
-      console.log("Players", allPlayers)
 
       socket.emit("joinGame", {
         room,

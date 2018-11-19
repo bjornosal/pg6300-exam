@@ -14,7 +14,8 @@ class QuizMaker extends Component {
       answerCounter: 0,
       questionCounter: 0,
       answers: [],
-      questions: []
+      questions: [],
+      quizName: ""
     };
   }
 
@@ -44,7 +45,7 @@ class QuizMaker extends Component {
 
   addQuestion = () => {
     const { dispatch } = this.props;
-    if (this.state.correctAnswer && this.props.question) {
+    if (this.state.correctAnswer && this.props.question && this.state.quizName) {
       this.setState(
         state => {
           if (this.canCreateQuestion(state)) {
@@ -71,15 +72,18 @@ class QuizMaker extends Component {
   };
 
   createQuiz = () => {
-    this.doCreateQuiz().then(() => {
-      this.setState({
-        questionCounter: 0,
-        answerCounter: 0,
-        answers: [],
-        answerError: "",
-        correctAnswer: null
+    if (this.state.questionCounter > 0 && this.state.quizName) {
+      this.doCreateQuiz().then(() => {
+        this.setState({
+          questionCounter: 0,
+          answerCounter: 0,
+          answers: [],
+          answerError: "",
+          correctAnswer: null
+        });
+        this.props.history.push("/");
       });
-    });
+    };
   };
 
   clearAnswerFields = () => {
@@ -107,7 +111,7 @@ class QuizMaker extends Component {
     let response;
 
     const payload = {
-      quizName: this.props.quizName,
+      quizName: this.state.quizName,
       questions: this.state.questions
     };
 
@@ -122,23 +126,27 @@ class QuizMaker extends Component {
     } catch (err) {
       return "Failed to connect to server";
     }
-
     return response;
   };
+
+  handleQuizNameChange = (e) => {
+    this.setState({quizName: e.target.value});
+  }
 
   render() {
     const { handleSubmit, isSubmitting } = this.props;
     return (
       <div className="quizMakerContainer">
         <h2>Quiz Maker</h2>
-        <form onSubmit={handleSubmit(this.createQuiz)}>
-          <Field
+          <InputField
             name="quizName"
+            value={this.state.quizName}
             type="text"
-            component={QuizMakerInputField}
             label="Quiz Name"
+            onChange={this.handleQuizNameChange}
           />
 
+        <form onSubmit={handleSubmit(this.createQuiz)}>
           <Field
             name="question"
             type="text"
@@ -233,11 +241,7 @@ const mapStateToProps = state => {
     createdQuestions: state.form.quizMaker
       ? Object.keys(state.form.quizMaker.registeredFields).length - 1
       : -1,
-    question: question !== undefined ? question : undefined,
-    quizName:
-      state.form.quizMaker && state.form.quizMaker.values
-        ? state.form.quizMaker.values["quizName"]
-        : undefined
+    question: question !== undefined ? question : undefined
   };
 };
 

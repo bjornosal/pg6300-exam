@@ -16,31 +16,19 @@ const createTable = (queryText, tableName) => {
   );
 };
 
-const createQuiz = (queryText, quizname, questionQueries) => {
-  client
-    .query(queryText, quizname)
-    .then(res => {
-      questionQueries(res.rows[0].quiz_id);
-    })
-    .catch(err => {
-      console.log("Issues inserting: ", err);
-    });
+const createQuiz = async (queryText, quizname, questionQueries) => {
+  try {
+    const res = await client.query(queryText, quizname);
+    questionQueries(res.rows[0].quiz_id);
+    return res.rows[0].quiz_id;
+  } catch (err) {
+    console.log("Issues inserting: ", err);
+  }
 };
 
-const createQuestion = (
-  queryText,
-  quizId,
-  question,
-  answers,
-  correct
-) => {
+const createQuestion = (queryText, quizId, question, answers, correct) => {
   client
-    .query(queryText, [
-      quizId,
-      question,
-      answers,
-      correct
-    ])
+    .query(queryText, [quizId, question, answers, correct])
     .then(res => {
       console.log("INSERTED QUESTION INTO QUIZ WITH ID: ", quizId);
     })
@@ -67,8 +55,6 @@ const defaultDataInit = rocketLeagueQuestionQueries => {
     createTable(queryTexts.createUserInformationTableQuery, "USER_INFORMATION");
     createTable(queryTexts.createQuizTableQuery, "QUIZ");
     createTable(queryTexts.createQuestionTableQuery, "QUESTION");
-
-    //TODO: Consider using pool for the queries below?
 
     createQuiz(
       queryTexts.createNewQuizQuery,
@@ -150,19 +136,17 @@ const getQuizById = async id => {
 };
 
 const getAllQuestionsByQuizId = async id => {
-  return client
-  .query(queryTexts.getAllQuestionsByQuizId, [id])
-  .then(res => {
-    return res.rows
-  })
-}
+  return client.query(queryTexts.getAllQuestionsByQuizId, [id]).then(res => {
+    return res.rows;
+  });
+};
 
 const getQuizWithQuestionsById = async id => {
-  const quiz = await getQuizById(id); 
+  const quiz = await getQuizById(id);
   const quizQuestions = await getAllQuestionsByQuizId(id);
   quiz["questions"] = quizQuestions;
   return quiz;
-}
+};
 
 module.exports = {
   createTable,

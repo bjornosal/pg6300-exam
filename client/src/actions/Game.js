@@ -97,13 +97,11 @@ const lastQuestion = (room, quizId, question, answers) => ({
   lastQuestion: true
 });
 
+
+//TODO: Does this work?
 export const finishGame = (room, players, scores, socketId) => {
   return dispatch => {
-    console.log("###############################");
     dispatch({ type: GAME_SCORES, room, scores });
-    console.log(players[socketId]);
-    //TODO: Do api call for updating score thanks.
-    // dispatch({TYPE: FINISH_GAME, score: scores[socketId]})
   };
 };
 

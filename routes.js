@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 const queries = require("./queries");
 const token = require("./sockets/tokenHandler")
+const queryTexts = require("./databaseQueries");
 
 
 /**
@@ -31,7 +32,6 @@ router.post("/api/signup", (req, res) => {
       });
     })
     .catch(err => {
-      //TODO: Is this correct?
       res.status(500).send();
     });
 });
@@ -70,12 +70,59 @@ router.post('/api/wstoken', (req, res) =>  {
 });
 
 
-router.get("/api/updateScore", (req, res) => {
-  if(!req.user){
+router.post("/api/updateScore", (req, res) => {
+  if (!req.user) {
     res.status(401).send();
     return;
-}
+  }
   //TODO: Update score
+});
+
+
+router.post("/api/quiz", (req, res) => {
+  //TODO: Implement again
+  /*  if (!req.user) {
+    res.status(401).send();
+    return;
+  } */
+
+  const user = req.user;
+
+  let questionQueries = quiz_id => {
+    req.body.questions.forEach(question => {
+      queries.createQuestion(
+        queryTexts.createNewQuestionQuery,
+        quiz_id,
+        question.question,
+        question.answers,
+        question.correctAnswer
+      )
+    });
+  };
+
+ 
+    
+// console.log(req.body.questions);
+
+/* 
+  for(let question in ) {
+    console.log("question",question)
+  } */
+
+  queries
+    .createQuiz(
+      queryTexts.createNewQuizQuery,
+      [req.body.quizName],
+      questionQueries
+    )
+    .then(result => {
+      console.log("RESULT", result)
+      if (!result) {
+        res.status(400).send();
+        return;
+      }
+      res.status(204).send();
+    });
 });
 
 module.exports = router;
