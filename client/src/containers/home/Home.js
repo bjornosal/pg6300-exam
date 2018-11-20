@@ -25,6 +25,7 @@ class Home extends Component {
               Auto
             </Link>
           </div>
+
           <div className="gamemodeChooser gameModeLobby">
             <div className="gameModeImageContainer">
               <img className="gameModeImage" src={listIcon} alt="" />
@@ -37,8 +38,16 @@ class Home extends Component {
               Leaderboard
             </Link>
           </div>
-        </div>
+        <div className="quizMakerPageContainer">
+            <p className="quizMakerInfo">
+                Create your own quiz!
+            </p>
+            <Link to={"/quizMaker"} className="quizMakerButton">
+              Quiz Maker
+            </Link>
+          </div>
       </div>
+        </div>
     );
   }
 }

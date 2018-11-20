@@ -44,7 +44,7 @@ export default class Leaderboard extends Component {
   render() {
     return (
       <div className="leaderboardContainer">
-        <h2 className="leaderboardHeader">Leaderboard</h2>
+        <h2 className="leaderboardHeader">Leaderboard - Top 25 Worldwide</h2>
         <div className="leaderboard">
           <table>
             <thead>
