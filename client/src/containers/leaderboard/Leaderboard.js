@@ -3,8 +3,45 @@ import React, { Component } from 'react'
 
 export default class Leaderboard extends Component {
 
+  constructor(props) {
+    super(props)
 
+    this.state = {
+      scores: []
+    }
+  }
+
+  componentDidMount = () => {
+    this.getLeaderboardInfo();
+  }
+
+  doGetScores = async () => {
+    const url = "/api/scores";
+    let response;
+    try {
+      response = await fetch(url, {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+    } catch (err) {
+      return;
+    }
   
+    return response;
+  };
+
+  getLeaderboardInfo = () => {
+    return this.doGetScores().then(res => {
+      if(res.status === 200) {
+        res.json().then(body => {
+          this.setState({ scores:  body});
+        })
+      }
+    })
+  }
+
   render() {
     return (
       <div className="leaderboardContainer">
@@ -12,26 +49,5 @@ export default class Leaderboard extends Component {
       </div>
     )
   }
-
-  //TODO: 19.11
 }
-
-//TODO: Implement a leaderboard. Use the quiz query and print them all out. 
-const checkLoggedInState = async () => {
-  const url = "/api/user";
-  // const payload = { username: values.username, password: values.password };
-  let response;
-  try {
-    response = await fetch(url, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-  } catch (err) {
-    return;
-  }
-
-  return response;
-};
 

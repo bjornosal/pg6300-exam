@@ -43,5 +43,5 @@ module.exports = {
 	
 	updateScoreOfUser: `UPDATE user_information SET score = score + $1 WHERE user_id = $2;`,
 
-	getAllUserNamesWithScores: `SELECT username, score FROM user_information;`
+	getAllUserNamesWithScores: `SELECT username, score FROM user_information ORDER BY score DESC LIMIT 25;`
 };

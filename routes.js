@@ -2,12 +2,11 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const queries = require("./queries");
-const token = require("./sockets/tokenHandler")
+const token = require("./sockets/tokenHandler");
 const queryTexts = require("./databaseQueries");
 
-
 /**
- * Auth endpoints taken from course repository. 
+ * Auth endpoints taken from course repository.
  * Adapted to suit my own needs, and added database functionality.
  * @author arcuri82 and bjornosal
  */
@@ -26,7 +25,7 @@ router.post("/api/signup", (req, res) => {
       passport.authenticate("local")(req, res, () => {
         req.session.save(err => {
           if (err) return next(err);
-          
+
           res.status(200).send(req.user);
         });
       });
@@ -36,39 +35,49 @@ router.post("/api/signup", (req, res) => {
     });
 });
 
-router.post('/api/logout', function(req, res){
-
+router.post("/api/logout", function(req, res) {
   req.logout();
   res.status(204).send();
 });
 
-router.get('/api/user', function (req, res) {
-
-  if(! req.user){
-      res.status(401).send();
-      return;
+router.get("/api/user", function(req, res) {
+  if (!req.user) {
+    res.status(401).send();
+    return;
   }
 
-  res.status(200).json({userId: req.user.user_id, username: req.user.username});
+  res
+    .status(200)
+    .json({ userId: req.user.user_id, username: req.user.username });
 });
-
 
 /**
  * @author arcuri82
- * Code from course material in PG6300, by lecturer Andrea Arcuri. 
+ * Code from course material in PG6300, by lecturer Andrea Arcuri.
  * Adapted to fit my use.
  */
-router.post('/api/wstoken', (req, res) =>  {
-
-  if(!req.user){
-      res.status(401).send();
-      return;
+router.post("/api/wstoken", (req, res) => {
+  if (!req.user) {
+    res.status(401).send();
+    return;
   }
 
   const generatedToken = token.createToken(req.user.user_id);
-  res.status(201).json({wstoken: generatedToken, username: req.user.username});
+  res
+    .status(201)
+    .json({ wstoken: generatedToken, username: req.user.username });
 });
 
+router.get("/api/scores", (req, res) => {
+  queries
+    .getAllUsernamesWithScores()
+    .then(result => {
+      res.status(200).json(result.rows);
+    })
+    .catch(err => {
+      res.status(500).send();
+    });
+});
 
 router.post("/api/updateScore", (req, res) => {
   if (!req.user) {
@@ -79,9 +88,8 @@ router.post("/api/updateScore", (req, res) => {
   queries.updateScoreOfUser(req.body.score, req.user.user_id);
 });
 
-
 router.post("/api/quiz", (req, res) => {
-   if (!req.user) {
+  if (!req.user) {
     res.status(401).send();
     return;
   }
@@ -94,7 +102,7 @@ router.post("/api/quiz", (req, res) => {
         question.question,
         question.answers,
         question.correctAnswer
-      )
+      );
     });
   };
 

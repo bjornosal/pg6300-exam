@@ -151,7 +151,11 @@ const getQuizWithQuestionsById = async id => {
 
 const updateScoreOfUser = async (score, user_id) => {
   return await client.query(queryTexts.updateScoreOfUser, [score, user_id]);
-} 
+}
+
+const getAllUsernamesWithScores = async () => {
+  return await client.query(queryTexts.getAllUserNamesWithScores);
+}
 
 module.exports = {
   createTable,
@@ -163,5 +167,6 @@ module.exports = {
   defaultDataInit,
   getAmountOfQuizzes,
   getQuizWithQuestionsById,
-  updateScoreOfUser
+  updateScoreOfUser,
+  getAllUsernamesWithScores
 };
