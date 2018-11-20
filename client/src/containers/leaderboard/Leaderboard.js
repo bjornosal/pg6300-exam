@@ -1,19 +1,18 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 // import { connect } from 'react-redux'
 
 export default class Leaderboard extends Component {
-
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       scores: []
-    }
+    };
   }
 
   componentDidMount = () => {
     this.getLeaderboardInfo();
-  }
+  };
 
   doGetScores = async () => {
     const url = "/api/scores";
@@ -28,26 +27,45 @@ export default class Leaderboard extends Component {
     } catch (err) {
       return;
     }
-  
+
     return response;
   };
 
   getLeaderboardInfo = () => {
     return this.doGetScores().then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         res.json().then(body => {
-          this.setState({ scores:  body});
-        })
+          this.setState({ scores: body });
+        });
       }
-    })
-  }
+    });
+  };
 
   render() {
     return (
       <div className="leaderboardContainer">
-        <h2>Leaderboard</h2>
+        <h2 className="leaderboardHeader">Leaderboard</h2>
+        <div className="leaderboard">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.scores.map((scoreInfo, index) => (
+                <tr className={index % 2 === 0 ? "even" : "odd"} key={index}>
+                  <td>{index + 1}</td>
+                  <td>{scoreInfo.username}</td>
+                  <td>{scoreInfo.score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    )
+    );
   }
 }
-

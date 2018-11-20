@@ -1,0 +1,27 @@
+.leaderboardContainer {
+
+    .leaderboardHeader{
+        color: $color5;
+        text-align:center;
+
+    }
+
+    .leaderboard{
+        margin: 0 auto;
+        text-align:center;
+        width: 50%;
+        table {
+            margin: auto;
+            background-color: $color4;
+        }
+        .even {
+            background: rgba(255, 255, 255, 0.8);
+
+        }
+        .odd {
+            background: rgba(0, 0 , 0, 0.2);
+            color: $color5;
+        }
+    }
+
+}
