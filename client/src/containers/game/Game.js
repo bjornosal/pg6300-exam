@@ -235,8 +235,10 @@ class Game extends Component {
       this.setState(state => {
         return { questionCountdownTimer: state.questionCountdownTimer - 1 };
       });
-      if (this.state.questionCountdownTimer === 0)
+      if (this.state.questionCountdownTimer === 0){
         clearInterval(this.questionCountdown);
+        this.answerQuestion(-1);
+      }
     }, 1000);
   };
 

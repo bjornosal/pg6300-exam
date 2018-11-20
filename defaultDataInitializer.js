@@ -26,6 +26,7 @@ const rocketLeagueQuestionQueries = quiz_id => {
       "Red and Blue"],
     0
   );
+  //TODO: Add questions back.
 /*  queries.createQuestion(
     queryTexts.createNewQuestionQuery,
     quiz_id,

@@ -142,6 +142,9 @@ const start = server => {
           questionNumber: gameInformation.questionNumber + 1
         });
         setAllSocketsInRoomToNotAnswered(games, data.room);
+        setTimeout(() => {
+          roomTimer.set(data.room, Date.now());
+        }, 3000);
       }
     });
 
