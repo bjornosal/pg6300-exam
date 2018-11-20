@@ -21,7 +21,8 @@
     "start": "node server",
     "dev": "nodemon server",
     "dockerPg": "docker run -p 5432:5432 postgres:10",
-    "_prod": "cd client && npm run build && cd .. && node server"
+    "_prod": "npm install && cd client && npm install && npm run build && cd .. && node server",
+    "_grading": "npm install && cd client && npm install && cd .. && node server"
   },
   "eslintConfig": {
     "extends": "react-app"

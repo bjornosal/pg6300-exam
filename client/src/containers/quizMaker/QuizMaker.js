@@ -127,7 +127,7 @@ class QuizMaker extends Component {
   };
 
   handleQuizNameChange = (e) => {
-    this.setState({quizName: e.target.value});
+    this.setState({ quizName: e.target.value });
   }
 
   render() {
@@ -135,13 +135,13 @@ class QuizMaker extends Component {
     return (
       <div className="quizMakerContainer">
         <h2>Quiz Maker</h2>
-          <InputField
-            name="quizName"
-            value={this.state.quizName}
-            type="text"
-            label="Quiz Name"
-            onChange={this.handleQuizNameChange}
-          />
+        <InputField
+          name="quizName"
+          value={this.state.quizName}
+          type="text"
+          label="Quiz Name"
+          onChange={this.handleQuizNameChange}
+        />
 
         <form onSubmit={handleSubmit(this.createQuiz)}>
           <Field
@@ -175,11 +175,19 @@ class QuizMaker extends Component {
                   Add answer
                 </button>
 
-                <button type="button" onClick={this.addQuestion}>
-                  Add question
-                </button>
               </div>
             )}
+
+          {this.state.questions.length < 10 &&
+            this.props.answers.length === this.state.answerCounter && (
+
+              <div className="addItemQuizButtonContainer">
+                <button type="button" onClick={this.addQuestion}>
+                  Add question
+            </button>
+              </div>
+            )
+          }
           {this.props.answers.length === this.state.answerCounter && (
             <div className="createQuizButtonContainer">
               <p>Questions: {this.state.questionCounter + "/10"} </p>
@@ -227,7 +235,7 @@ const mapStateToProps = state => {
       });
     question =
       Object.values(state.form.quizMaker.values) &&
-      Object.values(state.form.quizMaker.values).length > 1
+        Object.values(state.form.quizMaker.values).length > 1
         ? Object.values(state.form.quizMaker.values)[0]
         : undefined;
   }
