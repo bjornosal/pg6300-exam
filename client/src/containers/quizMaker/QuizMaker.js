@@ -175,7 +175,6 @@ class QuizMaker extends Component {
                   Add answer
                 </button>
 
-                {/* TODO: SHow button if the question can be made as well*/}
                 <button type="button" onClick={this.addQuestion}>
                   Add question
                 </button>

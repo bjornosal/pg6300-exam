@@ -27,14 +27,10 @@ const createQuiz = async (queryText, quizname, questionQueries) => {
 };
 
 const createQuestion = (queryText, quizId, question, answers, correct) => {
-  console.log("queryText", queryText)
-  console.log("quizId", quizId)
-  console.log("answers", answers)
-  console.log("correct", correct)
   client
     .query(queryText, [quizId, question, answers, correct])
     .then(res => {
-      console.log("INSERTED QUESTION INTO QUIZ WITH ID: ", quizId);
+      // console.log("INSERTED QUESTION INTO QUIZ WITH ID: ", quizId);
     })
     .catch(err => {
       console.log("INSERT INTO ERROR:", err);
@@ -44,7 +40,7 @@ const createQuestion = (queryText, quizId, question, answers, correct) => {
 const defaultDataInit = rocketLeagueQuestionQueries => {
   client.connect(err => {
     if (err) {
-      return console.error("Could not connect to server.", err);
+      return console.error("Could not connect to server. \nIs server running? \nRun command 'npm run dockerPg' to start it.");
     }
     client.query("DROP TABLE IF EXISTS QUESTION").catch(err => {
       console.log("DROPPING TABLE USER_INFORMATION FAILED", err);

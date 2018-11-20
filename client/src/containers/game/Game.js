@@ -299,12 +299,10 @@ class Game extends Component {
           </div>
         )}
         {this.props.isStarting && !this.props.isStarted && (
-          /*TODO: Continue with implementing the countdown and the active game container */
           <div className="gameInformationContainer countdownContainer">
             <div className="countdownTimer">{this.state.countdownTimer}</div>
           </div>
         )}
-        {/*TODO: Continue with implementing the countdown and the active game container */}
         {!this.props.isStarting && this.props.isStarted && (
           <div className="gameInformationContainer activeGameContainer">
             <div className="questionMainContainer">
@@ -398,7 +396,6 @@ class Game extends Component {
 }
 
 const mapStateToProps = state => {
-  //TODO: Move the check for state.game[currentRoom] outside the return statement
   return {
     players: state.game[currentRoom]
       ? state.game[currentRoom].players

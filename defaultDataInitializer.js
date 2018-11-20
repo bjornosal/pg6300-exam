@@ -26,8 +26,7 @@ const rocketLeagueQuestionQueries = quiz_id => {
       "Red and Blue"],
     0
   );
-  //TODO: Add questions back.
-/*  queries.createQuestion(
+ queries.createQuestion(
     queryTexts.createNewQuestionQuery,
     quiz_id,
     "Who has the nickname 'The Mountain'",
@@ -46,7 +45,7 @@ const rocketLeagueQuestionQueries = quiz_id => {
       "Scrub Killa",
       "Post Gresql"],
     2
-  ); */
+  );
 };
 
 

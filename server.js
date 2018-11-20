@@ -9,7 +9,7 @@ const defaultDataInitializer = require("./defaultDataInitializer");
 const session = require("express-session");
 const routes = require("./routes");
 const queries = require("./queries");
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 const socketHandler = require("./sockets/socketHandler")
 const http = require('http').Server(app);
 
@@ -17,13 +17,11 @@ socketHandler.start(http);
 
 defaultDataInitializer.connectToServerAndCreateTables();
 
-//TODO: Implement this again?
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/build")));
 }
 app.use(bodyParser.json());
 
-//FIXME: WHY
 app.use(
   session({
     secret: "a secret used to encrypt the session cookies",

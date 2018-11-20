@@ -22,7 +22,6 @@ export default function Routes({ loggedIn }) {
       <Route exact path="/home" component={Home} />
       <Route exact path="/" component={Home} />
       <Route path="/game" component={Game} />
-      {/* TODO: Add not found page? */}
       <Route path="/" component={Home} />
     </Switch>
   );

@@ -99,12 +99,8 @@ const lastQuestion = (room, quizId, question, answers) => ({
 
 export const finishGame = (room, players, scores, socketId) => {
   return dispatch => {
-    console.log("###############################");
     dispatch({ type: GAME_SCORES, room, scores });
-    //TODO: Do api call for updating score thanks.
     updateUserScore(players[socketId])
-
-    // dispatch({TYPE: FINISH_GAME, score: scores[socketId]})
   };
 };
 
