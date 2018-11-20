@@ -18,9 +18,9 @@ socketHandler.start(http);
 defaultDataInitializer.connectToServerAndCreateTables();
 
 //TODO: Implement this again?
-// if (process.env.NODE_ENV === "production") {
-app.use(express.static(path.join(__dirname, "client/build")));
-// }
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+}
 app.use(bodyParser.json());
 
 //FIXME: WHY
