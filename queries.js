@@ -1,8 +1,8 @@
 const pg = require("pg");
 const queryTexts = require("./databaseQueries");
 const connection =
-  process.env.ELEPHANTSQL_URL || "postgres://postgres:5432@localhost/postgres";
-const client = new pg.Client(connection);
+  process.env.DATABASE_URL  || "postgres://postgres:5432@localhost/postgres";
+const client = new pg.Client({ connectionString: connection, ssl: process.env.DATABASE_URL ? true : false });
 const bcrypt = require("bcrypt");
 
 const createTable = (queryText, tableName) => {
@@ -151,11 +151,11 @@ const getQuizWithQuestionsById = async id => {
 
 const updateScoreOfUser = async (score, user_id) => {
   return await client.query(queryTexts.updateScoreOfUser, [score, user_id]);
-}
+};
 
 const getAllUsernamesWithScores = async () => {
   return await client.query(queryTexts.getAllUserNamesWithScores);
-}
+};
 
 module.exports = {
   createTable,
