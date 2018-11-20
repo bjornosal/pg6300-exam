@@ -27,6 +27,10 @@ const createQuiz = async (queryText, quizname, questionQueries) => {
 };
 
 const createQuestion = (queryText, quizId, question, answers, correct) => {
+  console.log("queryText", queryText)
+  console.log("quizId", quizId)
+  console.log("answers", answers)
+  console.log("correct", correct)
   client
     .query(queryText, [quizId, question, answers, correct])
     .then(res => {

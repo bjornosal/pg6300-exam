@@ -89,10 +89,7 @@ router.post("/api/updateScore", (req, res) => {
 });
 
 router.post("/api/quiz", (req, res) => {
-  if (!req.user) {
-    res.status(401).send();
-    return;
-  }
+  console.log("Questions", req.body.questions);
 
   let questionQueries = quiz_id => {
     req.body.questions.forEach(question => {
@@ -103,9 +100,11 @@ router.post("/api/quiz", (req, res) => {
         question.answers,
         question.correctAnswer
       );
+      console.log("Question", question);
     });
   };
 
+  
   queries
     .createQuiz(
       queryTexts.createNewQuizQuery,
