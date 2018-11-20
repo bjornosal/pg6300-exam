@@ -45,7 +45,7 @@ Quizzes can be created by the developer, with infinite amount of questions, or b
 
 If the users want, they are able to look up the global leaderboards, which keeps track of the 25 players in the world with the highest score.
 
-## Structure
+## Structure 
 
 To function as a single-instance node application, the folder structure is set up so that the client is within the server. This makes it easy to host on a cloud-provider, as well as building hosting the application locally. 
 
@@ -62,12 +62,91 @@ Authentication and authorization is handled through the framework passportjs.
 Sockets are set up using socket.io, as presented in the course. 
 For the sockets, I am using namespaces and rooms to more effectively handle sockets in the different rooms. That way it is easy to run multiple rooms and quizzes, and send messages to the users based on which room they are in. 
 
+The sockethandler is built to handle a lobby, where the user can choose which games he wants to join. It is lacking some minor tweaks, testing, and a decent page to be able to work, therefore the default lobby page and the routes has been removed.
+
 #### Client 
 
+The client mostly consists of containers, and a few components. There are more elements of the application that could have been extracted into components, which would have made the solution more streamlined. 
 
+__State__
 
-## Implementation
+For state handling throughout my application I make use of Redux with Redux Thunk to make asyncronous calls. Almost all state, except the one of the quiz maker and the leaderboard is handled through Redux. The state on the mentioned pages are handled in the component state instead. 
+
+Using Redux makes sharing information throughout the application easy. But it would most likely be faster to use only component state for an application of this size, but has been implemented  as an extra addition the the exam. 
+
+__Navigation__ 
+Navigation throughout the application is handled using React Router. 
+
+__Forms__
+For my forms, such as login, and signup, I am using Redux Forms, which works quite well with Redux.
+
+## Implementation 
+
+I focused most of my development on the sockets and having a smooth handling of the sockets in the quiz part of the application, and as previously stated, implemented it using namespaces and rooms which is a part of socket.io. 
+
+This way there is not a ton of redundant REST calls through the application, as the websockets are able to handle most of the logic, including starting matches, keeping track of hosts, points and more.
+
+Authentication is handled with passportjs and bcrypt. Using bcrypt before persisting to the database so that the password won't be saved as plain text.
 
 ## Technologies
 
+I've used the following technologies: 
+
+__Standard:__
+- React
+- Node.js
+- Express.js
+
+__Other:__
+
+Server: 
+- Express session for session based authentication
+- PassportJs 
+- Bcrypt
+- Socket.io
+- pg - PostgreSQL in NodeJS
+- uuid for making room names
+- Nodemon for simple reload on development.
+
+Client: 
+- Prop-types
+- Redux
+- React Router
+- React-Select (Used on Quiz Maker page)
+- Redux Form
+- Redux Thunk
+- Socket.io client version
+
 ## Extra
+
+The following has been done in addition the the requirements presented by the assignment.
+
+#### Deployment
+The application has been deployed to Heroku, and can be seen here: [Quhoot](https://pg6300-bjornosal.herokuapp.com).
+
+
+#### Host Change 
+As mentioned earlier in the README, I've implemented the ability to change hosts if the original host leaves. This required quite some logic and thinkering on both server and client side, which is why I consider it an extra. It also gives the user a better experience using the application. 
+
+#### Quiz Maker
+Being able to make your own quizzes was one of my main planned features, which would be even more visible with a lobby game mode. Fortunately it brings a lot of extra functionality to the existing game as well, bringing the user the ability to get a bigger arsenal of quizzes that will be chosen randomly from. 
+
+What it lacks in styling, it brings back with functionality.
+
+#### Leaderboard
+Implementing the leaderboard requires more REST calls to the server, and queries to the database, even if the styling isn't all there.
+
+#### Authentication
+The users are able to sign up to the service, and log back in at a later time if they want to. 
+Their score will be saved on their user, and will be shown on the leaderboard if they are within the top 25 globally.
+
+#### Redux
+
+Implemented Redux for state handling, with Redux Thunk as an addition which gives the possibility to do async actions. Even if, as I previously mentioned, it was a bit too complex  for this size an application, using redux thunk for dispatching, and in the end emitting, was a very good addition to the structure of the application. 
+
+#### Styling
+Styling was done as an extra, with most parts of the application having a decent design, which makes the experience better as a whole. 
+
+
+#### Lobby (Not completed)
+Most of the socket implementation was built with a Lobby gamemode in mind. Almost all of the functionality is there, but the implementation of it will have to wait until a later time. 
