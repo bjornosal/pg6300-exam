@@ -107,13 +107,11 @@ class QuizMaker extends Component {
 
   doCreateQuiz = async () => {
     const url = "/api/quiz";
-    console.log(this.state.questions);
     let response;
     const payload = {
       quizName: this.state.quizName,
       questions: this.state.questions
     };
-    console.log(payload)
     try {
       response = await fetch(url, {
         method: "post",

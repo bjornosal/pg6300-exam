@@ -89,7 +89,6 @@ router.post("/api/updateScore", (req, res) => {
 });
 
 router.post("/api/quiz", (req, res) => {
-  console.log("Questions", req.body.questions);
 
   let questionQueries = quiz_id => {
     req.body.questions.forEach(question => {
@@ -100,7 +99,6 @@ router.post("/api/quiz", (req, res) => {
         question.answers,
         question.correctAnswer
       );
-      console.log("Question", question);
     });
   };
 
