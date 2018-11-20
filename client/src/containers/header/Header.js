@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { logoutUser, checkUserToken } from "../../actions/Login";
-import { colors } from "react-select/lib/theme";
 
 class Header extends Component {
   isLoggedIn = () => {

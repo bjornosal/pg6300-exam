@@ -18,20 +18,16 @@ import {
 const game = (state = [], action) => {
   switch (action.type) {
     case AUTH_USER_SOCKET:
-      console.log(AUTH_USER_SOCKET);
       return { ...state, loginError: false };
     case AUTH_USER_SOCKET_ERROR:
-      console.log(AUTH_USER_SOCKET_ERROR);
       return { ...state, loginError: true, errorMsg: action.payload };
     case START_GAME:
-      console.log(START_GAME);
       return {
         ...state,
         loginError: false,
         errorMsg: "TRYING TO START THE GAME"
       };
     case HOST_GAME:
-      console.log(HOST_GAME);
       return {
         ...state,
         [action.room]: {
@@ -46,8 +42,6 @@ const game = (state = [], action) => {
         }
       };
     case JOIN_GAME:
-      console.log(JOIN_GAME);
-      console.log("players", action.players);
       return {
         ...state,
         [action.room]: {
@@ -73,8 +67,6 @@ const game = (state = [], action) => {
       return state;
 
     case PLAYER_LEAVE:
-      console.log(PLAYER_LEAVE);
-      console.log(action)
       let playerIndex = state[action.room].players.indexOf(action.username);
       /**
        * Source for removing with spread operator to keep immutability.
@@ -94,7 +86,6 @@ const game = (state = [], action) => {
         }
       };
     case HOST_CHANGE:
-      console.log(HOST_CHANGE);
       return {
         ...state,
         [action.room]: {
@@ -103,7 +94,6 @@ const game = (state = [], action) => {
         }
       };
     case NEW_HOST:
-      console.log(NEW_HOST);
       return {
         ...state,
         [action.room]: {
@@ -112,7 +102,6 @@ const game = (state = [], action) => {
         }
       };
     case GAME_STARTING:
-      console.log(GAME_STARTING);
       return {
         ...state,
         [action.room]: {
@@ -123,7 +112,6 @@ const game = (state = [], action) => {
         }
       };
     case GAME_STARTED:
-      console.log(GAME_STARTED);
 
       return {
         ...state,
@@ -134,7 +122,6 @@ const game = (state = [], action) => {
         }
       };
     case NEXT_QUESTION:
-      console.log(NEXT_QUESTION);
 
       return {
         ...state,
@@ -147,7 +134,6 @@ const game = (state = [], action) => {
         }
       };
     case LAST_QUESTION:
-      console.log(LAST_QUESTION);
 
       return {
         ...state,
@@ -161,7 +147,6 @@ const game = (state = [], action) => {
         }
       };
     case GAME_SCORES:
-      console.log(GAME_SCORES);
 
       return {
         ...state,

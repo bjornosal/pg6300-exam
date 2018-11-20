@@ -11,7 +11,6 @@ import { withRouter } from "react-router-dom";
 
 class SignUpForm extends React.Component {
   handleSignUp = fields => {
-    // console.log("PROPS", this.props);
     this.props.signUpUserAsync(fields, this.props.history);
   };
 
@@ -20,7 +19,6 @@ class SignUpForm extends React.Component {
   }
 
   componentDidUpdate = () => {
-    //Close as it gets. Handle this on backend?
     if(this.props.loggedIn) {
       this.props.history.push("/");
     }

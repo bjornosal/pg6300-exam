@@ -169,11 +169,15 @@ const start = server => {
           }
         }
       }
-      console.log("user disconnected");
     });
   });
 };
 
+/**
+ * Ended up not using this. Was supposed to be used to clear a room by a host/admin.
+ * @param {*} namespace 
+ * @param {*} room 
+ */
 const clearRoom = (namespace, room) => {
   namespace.in(room).clients((error, ids) => {
     if (error) throw error;
@@ -305,10 +309,6 @@ const getRandomQuiz = () => {
       return quiz;
     });
   });
-};
-
-const enoughPlayersInRoom = room => {
-  return roomToPlayers.get(room).size > 1;
 };
 
 /**

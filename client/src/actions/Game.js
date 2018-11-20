@@ -12,7 +12,6 @@ import {
   GAME_STARTED,
   NEXT_QUESTION,
   LAST_QUESTION,
-  FINISH_GAME,
   GAME_SCORES
 } from "../actionTypes";
 
@@ -70,14 +69,6 @@ export const hostChange = (room, username) => ({
   type: HOST_CHANGE,
   room,
   username
-});
-
-const startingQuiz = (room, quizId, question, answers) => ({
-  type: GAME_STARTING,
-  room,
-  quizId,
-  question,
-  answers
 });
 
 const newQuestion = (room, quizId, question, answers) => ({

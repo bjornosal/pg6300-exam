@@ -7,9 +7,8 @@ import {
   UPDATE_LOGIN_STATUS
 } from "../actionTypes";
 
-export const loginUser = payload => ({
+export const loginUser = () => ({
   type: LOGIN_USER
-  //   payload
 });
 
 export const loginSuccess = user => ({
@@ -112,7 +111,6 @@ const login = async values => {
 
 const checkLoggedInState = async () => {
   const url = "/api/user";
-  // const payload = { username: values.username, password: values.password };
   let response;
   try {
     response = await fetch(url, {

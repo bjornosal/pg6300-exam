@@ -30,7 +30,6 @@ const createQuestion = (queryText, quizId, question, answers, correct) => {
   client
     .query(queryText, [quizId, question, answers, correct])
     .then(res => {
-      // console.log("INSERTED QUESTION INTO QUIZ WITH ID: ", quizId);
     })
     .catch(err => {
       console.log("INSERT INTO ERROR:", err);
