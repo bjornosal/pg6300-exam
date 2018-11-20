@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { logoutUser, checkUserToken } from "../../actions/Login";
+import { colors } from "react-select/lib/theme";
 
 class Header extends Component {
   isLoggedIn = () => {
@@ -25,16 +26,12 @@ class Header extends Component {
     return (
       <div className="headerContainer">
         <Link to="/" className="headerLink headerLogo">
-          Quiz Logo
+          Quhoot
         </Link>
 
         <div className="headerNavigationContainer">
           <Link to="/quizmaker" className="headerLink">
-            New Quiz
-          </Link>
-
-          <Link to="/lobby" className="headerLink">
-            Quiz Lobby
+            Quizmaker
           </Link>
 
           <Link to="/Leaderboard" className="headerLink">
@@ -53,7 +50,7 @@ class Header extends Component {
           )}
 
           {this.isLoggedIn() && (
-            <div className="headerLink">{"USER:" + this.props.username}</div>
+            <div className="headerLink" style={{borderWidth: "1px", borderColor: "black", borderStyle: "solid", margin: "1em" , borderRadius: ".1em"}}>{"USER - " + this.props.username}</div>
           )}
 
           {this.isLoggedIn() && (

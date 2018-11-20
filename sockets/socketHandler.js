@@ -169,16 +169,6 @@ const start = server => {
       console.log("user disconnected");
     });
   });
-
-  const lobby = io.of("/lobby");
-
-  lobby.on("connection", socket => {
-    console.log("a user connected to the lobby");
-
-    socket.on("disconnect", () => {
-      console.log("user disconnected from the lobby");
-    });
-  });
 };
 
 const clearRoom = (namespace, room) => {

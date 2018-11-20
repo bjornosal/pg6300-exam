@@ -30,15 +30,11 @@ class Home extends Component {
               <img className="gameModeImage" src={listIcon} alt="" />
             </div>
             <p className="gameModeInfo">
-              Go to the lobby to find a game there!
-              <br /> Are your friends playing?
+              Go check out the scores!
+              <br /> Have your friends played?
             </p>
-            <Link to={
-                this.props.loggedIn === undefined || !this.props.loggedIn
-                  ? "/login"
-                  : "/lobby"
-              } className="gamemodeButton">
-              Lobby
+            <Link to={"/leaderboard"} className="gamemodeButton">
+              Leaderboard
             </Link>
           </div>
         </div>
